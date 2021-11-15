@@ -1,0 +1,358 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap');
+
+@import '../src/styles/variables.scss';
+@import '../src/styles/LoadingIndicators.scss';
+
+// transitions
+
+@keyframes pulse {
+	0% {
+		transform: scale(0.7);
+	}
+
+	70% {
+		transform: scale(1.2);
+	}
+
+	100% {
+		transform: scale(0.7);
+	}
+}
+
+@keyframes fadeIn { 
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.loading-screen {
+  position: fixed;
+  top: 0;
+  background-color: black;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  z-index: 3;
+
+  >div {
+    display: flex;
+    flex-direction: column;
+	  animation: pulse 2s infinite;
+
+    h1 {
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+  
+    p {
+      font-size: 14px;
+      margin: 0;
+      padding: 0;
+    }
+  }
+}
+
+@keyframes slideInFromTop {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromBottom {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromLeft {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes wipe-enter {
+	0% {
+		transform: scale(0, .025);
+	}
+	50% {
+		transform: scale(1, .025);
+	}
+}
+
+//css transitions
+.page-enter {
+  opacity: 0;
+  transform: scale(1.01);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 500ms, transform 500ms;
+}
+
+.page-exit {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.page-exit-active {
+  opacity: 0;
+  transform: scale(0.99);
+  transition: opacity 500ms, transform 500ms;
+}
+
+// animation: 1s ease-out 0s 1 slideInFromTop;
+
+.App {
+  text-align: center;
+  background: $background;
+  color: $body;
+  font-family: $fontFamily !important;
+}
+
+button {
+  font-family: $fontFamily;
+
+  &:disabled,
+  &[disabled]{
+    border: 1px solid #999999;
+    background-color: #cccccc;
+    color: #666666;
+
+    &:hover {
+      background-color: #cccccc;
+      color: #666666; 
+      pointer-events: none;
+    }
+  }
+}
+
+a {
+  font-family: $fontFamily !important;
+}
+
+h1 {
+  font-size: $titleFontSize;
+  text-transform: uppercase;
+}
+
+h2 {
+  font-size: $h2FontSize;
+  text-transform: uppercase;
+}
+
+h3 {
+  font-size: 18px;
+  text-transform: uppercase;
+}
+
+.is-active {
+  color: $accent !important;
+}
+
+::placeholder {
+  font-family: $fontFamily;
+}
+
+//language dropdown styles
+.Dropdown {
+
+  &-control {
+    background-color: black !important;
+    color: $body !important;
+    border-color: rgba(192, 192, 192, 0.5) !important;
+    margin-right: 50px;
+  }
+
+  &-option {
+    top: auto !important;
+    background-color: black !important;
+    color: $body !important;
+
+  }
+
+  &-menu {
+    border: 1px solid rgba(192, 192, 192, 0.5) !important;
+  }
+
+  &-option.is-selected {
+    background-color: rgba(0, 0, 0, 0.842) !important;
+  }
+}
+
+.body-wrapper {
+  min-height: 80vh;
+  padding-top: $navbarHeight; 
+}
+
+.accent-color {
+  color: $accent;
+  word-break: break-word;
+  // background: -webkit-linear-gradient(rgb(221,217,93), rgb(24,200,200));
+  // -webkit-background-clip: text;
+  // -webkit-text-fill-color: transparent;
+}
+
+
+button {
+  text-decoration: none;
+  font-size: 16px;
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: bold;
+  width: -moz-fit-content;
+  width: fit-content;
+  margin: 10px;
+  padding: 10px 40px 10px 40px;
+  border-radius: 100px;
+  background-color: white;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  &:active {
+    background-color: $accent;
+    color: white;
+    border-color: $accent;
+  }
+}
+
+//buttons styles
+.action-button {
+  background-color: $accent;
+  color: white;
+  border: 1px solid transparent;
+
+  &:hover {
+    color: white;
+    background-color: rgb(1, 80, 60);
+    // box-shadow: 5px 10px $accent;
+    // box-shadow: rgb(68, 68, 67) 0px 1px 2px, rgb(68, 68, 67) 0px 2px 4px, rgb(68, 68, 67) 0px 4px 8px, rgb(68, 68, 67) 0px 8px 10px,rgb(68, 68, 67) 0px 5px 5px, rgb(68, 68, 67) 0px 5px 5px;
+  }
+}
+
+.secondary-button {
+  color: $accent;
+  background-color: transparent;
+  border: 1px solid;
+  color: $accent;
+  border-color: $accent;
+
+  &:hover {
+    background-color: black;
+  }
+
+  > a {
+    &:hover {
+      color: white !important;
+    }
+  }
+
+}
+
+//button that has a link
+.button-link {
+  text-decoration: none;
+  color: white;
+
+  &:hover {
+    color: black;
+  }
+}
+
+//calendly button
+.calendly-button {
+  position: fixed;
+  bottom: -10px;
+  right: 30px;
+  z-index: 3;
+  visibility: hidden;
+  box-shadow: rgb(0 0 0) 0px 13px 27px -5px, rgb(0 0 0 / 42%) 0px 8px 16px -8px;
+}
+
+.visible {
+  visibility: visible !important;
+  animation: 1.5s ease-out 0s 1 slideInFromBottom;
+  bottom: 30px;
+  right: 30px;
+}
+
+// background image
+.background-image {
+  background-position: center !important;
+  background-size: cover !important;
+}
+
+//dropdown menu styles
+.MuiButton-text{ 
+  color: black !important;
+  border: 1px solid black !important;
+  padding: 6px 15px !important; 
+}
+
+.MuiButton-root {
+  margin-right: 50px !important;
+}
+
+// .MuiMenu-list {
+//   //TODO: CHANGE BACKGROUND COLOR
+//   background: black;
+//   color: white;
+// }
+
+
+@media only screen and (max-width: 425px) {
+  h2 {
+    font-size: $smallh2FontSize;
+    padding: 20px;
+  }
+
+  .calendly-button {
+    visibility: hidden !important;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  h2 {
+    font-size: $mediumh2FontSize;
+  }
+}
+
+@media only screen and (max-width: 1440px) {
+
+}
+
+@media only screen and (min-width: 1440px) {
+  h2 {
+    font-size: $largeh2FontSize;
+  }
+}

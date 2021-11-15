@@ -1,0 +1,9 @@
+{
+    "Test": "Test",
+    "Navbar": {
+        "Home": "Home",
+        "TournamentCalendar": "Tournament Calendar",
+        "Rankings": "Rankings",
+        "Players": "Players"
+    }
+}

@@ -1,0 +1,41 @@
+@import '../../styles/variables.scss';
+
+//navbar styles
+.navbar-wrapper {
+  position: fixed;
+  width: 100%;
+  z-index: 4;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 30px 10px 30px;
+  color: $body;
+  background-color: rgb(0, 128, 96);
+  /* This section calls the slideInFromTop animation we defined above */
+  animation: 1s ease-out 0s 1 slideInFromTop;
+
+
+  a {
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-right: 40px;
+    text-decoration: none;
+    color: $body;
+    font-size: 18px;
+
+    &:hover {
+      color: $accent !important;
+      transition: 0.15s;
+    }
+  } 
+
+  .links-wrapper {
+    display: flex;
+    flex-direction: row;
+  }
+}
+
+.logo-wrapper {
+  font-weight: bold;
+}

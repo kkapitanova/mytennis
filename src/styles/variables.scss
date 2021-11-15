@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+
+// test colors
+$qkiqoranjev: rgb(243, 110, 49);
+$gotinosinio:  rgb(49, 182, 243);
+$qkozeleno: rgb(110, 243, 49);
+$purplecool: rgb(93, 103, 243);
+$drugoqkosinio: rgb(83, 158, 255);
+$pakqk: rgb(27, 75, 207);
+
+// default settings
+// $background: linear-gradient(90deg, rgba(19,19,19,1) 0%, rgba(36,36,36,1) 84%, rgba(52,52,52,1) 100%);
+$body: black;
+$background: white;
+// $fontFamily: 'Montserrat', sans-serif;
+$fontFamily: 'Lato', sans-serif;
+$accent: rgb(0, 128, 96);
+
+
+// navbar
+$navbarHeight: 60px;
+
+
+// font sizes
+$largeTitleFontSize: 84px; // > 1440px
+$titleFontSize: 64px; // > 1024px; < 1440px;
+$mediumTitleFontSize: 48px; // > 768px; < 1024px;
+$smalltitleFontSize: 36px; // > 768px;
+
+$largeh2FontSize: 40px; // > 1440px
+$h2FontSize: 32px; // > 1024px; < 1440px;
+$mediumh2FontSize: 28px; // > 768px; < 1024px;
+$smallh2FontSize: 20px; // > 768px;
+
+
+
