@@ -26,7 +26,7 @@ import {
   Players,
   Rankings,
   TournamentCalendar,
-} from './components'
+} from './containers'
 
 //translation
 import { useTranslation } from 'react-i18next';
@@ -38,9 +38,21 @@ const firebaseConfig = {
   projectID: 'my-tennis-platform'
 }
 
-const app = firebase.initializeApp(firebaseConfig)
 
+const app = firebase.initializeApp(firebaseConfig)
 const dbRef = ref(getDatabase(app));
+
+// const firebaseui = require('firebaseui');
+// const ui = new firebaseui.auth.AuthUI(firebase.auth());
+
+// ui.start('#firebaseui-auth-container', {
+//   signInOptions: [
+//     firebase.auth.EmailAuthProvider.PROVIDER_ID
+//   ],
+//   // Other config options...
+// });
+
+
 
 
 const App = () => {
@@ -53,7 +65,7 @@ const App = () => {
   }
 
   const unauthenticatedRoutes = [
-    // { path: '/', name: t("Navbar.Home"), Component: Home },
+    { path: '/', name: t("Navbar.Home"), Component: Home },
     { path: '/tournament-calendar', name: t("Navbar.TournamentCalendar"), Component: TournamentCalendar },
     { path: '/players', name: t("Navbar.Players"), Component: Players },
     { path: '/rankings', name: t("Navbar.Rankings"), Component: Rankings },
@@ -62,7 +74,7 @@ const App = () => {
 
   const getData = () => {
       // example data getting method
-    get(child(dbRef, `TEST`)).then((snapshot) => {
+    get(child(dbRef, 'TEST')).then((snapshot) => {
       if (snapshot.exists()) {
         setValue(snapshot.val())
       } else {
@@ -71,6 +83,7 @@ const App = () => {
     }).catch((error) => {
       console.error("error", error);
     });
+
   }
 
   useEffect(() => {
@@ -82,20 +95,18 @@ const App = () => {
       <Router>
           <NavBar routes={unauthenticatedRoutes}/>
           <div style={{paddingTop: 100}}></div>
-          <div>TEST DATA FROM FIREBASE: {JSON.stringify(value)}</div>
-          <div>Test translation: {t("Test")}</div>
-          <button onClick={() => changeLanguage('bg')} disabled={localStorage.getItem('i18nextLng') === "bg"}className="action-button">бг</button>
-          <button onClick={() => changeLanguage('en')} disabled={localStorage.getItem('i18nextLng') === "en"}className="action-button">en</button>
-          {/* <Switch>
+          {/* <div>TEST DATA FROM FIREBASE: {JSON.stringify(value)}</div>
+          <div>Test translation: {t("Test")}</div> */}
+          <Switch>
             <div className="body-wrapper">
               {unauthenticatedRoutes.map(({ path, Component }) => (
                 <Route key={path} exact path={path} component={Component}>
                 </Route>
               ))}
-              <Route path="/*" component={Footer} />
-              <Redirect to="/" />
+              {/* <Route path="/*" component={Footer} /> */}
+              {/* <Redirect to="/" /> */}
             </div>
-          </Switch> */}
+          </Switch>
         </Router>
     </div>
   );
