@@ -335,6 +335,11 @@ button {
   margin-right: 50px !important;
 }
 
+.MuiTableCell-root.MuiTableCell-head {
+  font-weight: bold !important;
+  color: $accent;
+}
+
 .MuiTableBody-root .MuiTableRow-root {
 
   &:hover {

@@ -14,13 +14,13 @@
 //     return displayedIcon
 // }
 
-export const sortData = (data) => {
+export const sortData = (data, sortingParameter) => {
 
     let sortedData = []
 
     if (data) {
-        sortedData = data.sort(function(a, b) {
-            return b.id - a.id;
+        sortedData = data.sort((a, b) => {
+            return b[sortingParameter] - a[sortingParameter];
         });
     }
 

@@ -24,6 +24,14 @@ const mockRanking = [
     {
         playerId: 4,
         pointsWon: 450,
+    },
+    {
+        playerId: 5,
+        pointsWon: 600,
+    },
+    {
+        playerId: 6,
+        pointsWon: 450,
     }
 ]
 
@@ -60,6 +68,22 @@ const mockPlayerData = [
         nationCompetingFor: 'Czech Republic',
         dateOfBirth: 'May 2, 1992 03:24:00'
     },
+    {
+        playerId: 5,
+        firstName: 'Tsvetana',
+        familyName: 'Pironkova',
+        gender: 'female',
+        nationCompetingFor: 'Bulgaria',
+        dateOfBirth: 'May 2, 1992 03:24:00'
+    },
+    {
+        playerId: 6,
+        firstName: 'Caroline',
+        familyName: 'Wozniacki',
+        gender: 'female',
+        nationCompetingFor: 'Poland',
+        dateOfBirth: 'May 2, 1992 03:24:00'
+    },
 ]
 
 const getAge = (dateOfBirth) => { 
@@ -91,6 +115,8 @@ const tableData = mockRanking.map(p => {
 })
 
 const sortedTableData = sortData(tableData, "pointsWon")
+
+console.log(sortedTableData)
 const organizedTableData = sortedTableData.map((player, index) => {
     return {
         ranking: index + 1,
@@ -147,6 +173,7 @@ const Home = () => {
                     id="outlined-basic"
                     label="Search by name"
                     variant="outlined"
+                    color="secondary"
                     size="small"
                     value={search.name}
                     onChange={handleSearchChange}
@@ -157,6 +184,7 @@ const Home = () => {
                     id="outlined-basic"
                     label="Search by nation"
                     variant="outlined"
+                    color="secondary"
                     size="small"
                     value={search.nationCompetingFor} onChange={handleSearchChange}
                     style={{marginRight: 10}}
@@ -166,6 +194,7 @@ const Home = () => {
                     name="ageGroup"
                     select
                     label="Age Group"
+                    color="secondary"
                     value={search.ageGroups}
                     onChange={(e) => {console.log(e)}}
                     size="small"
