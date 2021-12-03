@@ -81,8 +81,6 @@ const NavBar = ({ routes }) => {
 
     const expandMenu = () => {
 
-        console.log("here")
-
         const navbar = document.getElementById("navbar");
 
         if (navbar.className === "navbar") {
@@ -101,18 +99,23 @@ const NavBar = ({ routes }) => {
                 <div className="logo-wrapper">
                     <Link to={"/"}>MYTennis</Link>
                 </div>
-                <div className="links-wrapper">
+                <div className="flex links-wrapper">
                     {routes && routes.map(route => (
-                    <NavLink
-                        key={route.path}
-                        exact 
-                        to={route.path}
-                        activeClassName="is-active"
-                        className="route-link"
-                        onClick={expandMenu}
-                    >
-                        {route.name}
-                    </NavLink>
+                        <div className="flex-column">
+                            <NavLink
+                                key={route.path}
+                                exact 
+                                to={route.path}
+                                activeClassName="is-active"
+                                className="route-link"
+                                onClick={expandMenu}
+                            >
+                                <>
+                                    <span>{route.name}</span>
+                                    {route.dropdown && <div className="route-link-dropdown-content">{route.dropdown.content}</div>}
+                                </>
+                            </NavLink>
+                        </div>
                     ))}
                     <LanguageDropDownMenu mobile={true}/>
                 </div>

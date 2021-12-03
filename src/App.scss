@@ -97,6 +97,10 @@
   }
 }
 
+.slide-in-left {
+  animation: 0.5s slideInFromLeft;
+}
+
 @keyframes wipe-enter {
 	0% {
 		transform: scale(0, .025);
@@ -155,6 +159,12 @@ button {
   }
 }
 
+img {
+  object-fit: cover;
+  object-position: center;
+  z-index: 1;
+}
+
 a {
   font-family: $fontFamily !important;
 }
@@ -190,8 +200,21 @@ h3 {
   }
 }
 
-.justify-between {
-  justify-content: space-between;
+.align {
+  &-center {
+    align-items: center;
+  }
+}
+
+.justify {
+
+  &-between {
+    justify-content: space-between;
+  }
+
+  &-end {
+    justify-content: flex-end;
+  }
 }
 
 //language dropdown styles
@@ -221,6 +244,7 @@ h3 {
 }
 
 .body-wrapper {
+  padding-top: 60px;
   min-height: 80vh;
   padding-top: $navbarHeight; 
 }
@@ -242,9 +266,8 @@ button {
   font-weight: bold;
   width: -moz-fit-content;
   width: fit-content;
-  margin: 10px;
   padding: 10px 40px 10px 40px;
-  border-radius: 100px;
+  border-radius: 10px;
   background-color: white;
 
   &:hover {
@@ -255,6 +278,10 @@ button {
     background-color: $accent;
     color: white;
     border-color: $accent;
+  }
+
+  &.small {
+    font-size: 14px;
   }
 }
 
@@ -280,7 +307,8 @@ button {
   border-color: $accent;
 
   &:hover {
-    background-color: black;
+    background-color: $accent !important;
+    color: white;
   }
 
   > a {
