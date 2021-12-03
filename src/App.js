@@ -10,8 +10,8 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Redirect
-  // NavLink,
+  Redirect,
+  NavLink,
   // Link,
   // Redirect,
   // useLocation,
@@ -59,16 +59,46 @@ const App = () => {
 
   const [ value, setValue ] = useState()
   const { t, i18n } = useTranslation()
+  const [initialLoad, setInitialLoad] = useState(false)
 
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
   }
 
   const unauthenticatedRoutes = [
-    { path: '/', name: t("Navbar.Home"), Component: Home },
-    { path: '/tournament-calendar', name: t("Navbar.TournamentCalendar"), Component: TournamentCalendar },
-    { path: '/players', name: t("Navbar.Players"), Component: Players },
-    { path: '/rankings', name: t("Navbar.Rankings"), Component: Rankings },
+    {
+      path: '/',
+      name: t("Navbar.Home"),
+      Component: Home 
+    },
+    {
+      path: '/tournament-calendar',
+      name: t("Navbar.TournamentCalendar"),
+      Component: TournamentCalendar,
+      dropdown: {
+        content: <div className="flex-column slide-in-left">
+          <div><NavLink to='/tournament-calendar/women'>Women's Calendar</NavLink></div>
+          <div><NavLink to='/tournament-calendar/men'>Men's Calendar</NavLink></div>
+        </div>
+      } 
+    },
+    {
+      path: '/players',
+      name: t("Navbar.Players"), 
+      Component: Players 
+    },
+    {
+      path: '/rankings', 
+      name: t("Navbar.Rankings"),
+      Component: Rankings,
+      dropdown: {
+        content: <div className="flex-column slide-in-left">
+          <div><NavLink to='/rankings/women'>Women's Rankings</NavLink></div>
+          <div><NavLink to='/rankings/men'>Men's Rankings</NavLink></div>
+          <div><NavLink to='/rankings/mixed-doubles'>Mixed Doubles Rankings</NavLink></div>
+        </div>
+      }
+    },
     // { path: '/about', name: t("Navbar.About"), Component: About }, //this is optional
   ]
 
@@ -90,11 +120,14 @@ const App = () => {
     getData()
   }, [])
 
+  useEffect(() => {
+    window.scrollTo(0,0)
+  }, [initialLoad])
+
   return (
     <div className="App">
       <Router>
           <NavBar routes={unauthenticatedRoutes}/>
-          <div style={{paddingTop: 100}}></div>
           {/* <div>TEST DATA FROM FIREBASE: {JSON.stringify(value)}</div>
           <div>Test translation: {t("Test")}</div> */}
           <Switch>
