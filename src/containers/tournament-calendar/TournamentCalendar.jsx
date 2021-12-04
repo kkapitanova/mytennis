@@ -150,7 +150,7 @@
 
 import React from 'react'
 const TournamentCalendar = () => {
-    return <div>test</div>
+    return <div>This it the tournament calendar</div>
 
 }
 

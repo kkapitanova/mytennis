@@ -3,8 +3,8 @@ import { Table } from '../../components';
 import { sortData, getAge } from '../../utils/helpers'
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
-import { useHistory } from 'react-router';
-import { ageGroups } from '../../data/constants';
+import { useHistory, useLocation } from 'react-router';
+import { ageGroups, genderGroups } from '../../data/constants';
 import { mockPlayerData, mockRanking } from '../../data/dummyData';
 
 const tableRowHeaders = [
@@ -13,11 +13,13 @@ const tableRowHeaders = [
 
 const Rankings = () => {
 
+    const location = useLocation()
     const [initialLoad, setInitialLoad] = useState(false)
     const [search, setSearch] = useState({
         name: '',
         nationCompetingFor: '',
         ageGroup: 'U40',
+        genderGroup: 'Male'
     }) 
     const [data, setData] = useState([])
     const [dataByAgeGroup, setDataByAgeGroup] = useState([])
@@ -26,7 +28,7 @@ const Rankings = () => {
         let rankingData = []
 
         mockRanking.forEach(r => {
-            if (r.ageGroup === search.ageGroup) {
+            if (r.ageGroup === search.ageGroup && r.genderGroup.toLowerCase() === search.genderGroup.toLowerCase()) {
                 rankingData = r.players
             }
         })
@@ -78,12 +80,22 @@ const Rankings = () => {
     useEffect(() => {
         getData()
         setData(getData())
-    }, [search.ageGroup])
+    }, [search.ageGroup, search.genderGroup])
 
     useEffect(() => {
       window.scrollTo(0,0)
       setInitialLoad(true)
     }, [initialLoad])
+
+    useEffect(() => {
+
+        const searchGenderGroup = location.pathname.split('/')[2]
+
+        setSearch({
+            ...search,
+            genderGroup: searchGenderGroup === "women" ? 'Female' : searchGenderGroup === "men" ? 'Male' : searchGenderGroup === "mixed-doubles" ? 'Mixed' : 'Female'
+        })
+    }, [location])
 
     return (
         <div style={{padding: '0 50px 50px 50px'}}>
@@ -111,6 +123,23 @@ const Rankings = () => {
                     onChange={handleSearchChange}
                     style={{marginRight: 10}}
                 />
+                <TextField
+                    id="outlined-select-currency"
+                    name="genderGroup"
+                    select
+                    label="Gender Group"
+                    color="secondary"
+                    value={search.genderGroup}
+                    onChange={(e) => handleSearchChange(e)}
+                    size="small"
+                    style={{width: 150, marginRight: 10}}
+                >
+                    {genderGroups.map((option, index) => (
+                        <MenuItem key={index} value={option}>
+                            {option}
+                        </MenuItem>
+                    ))}
+                </TextField>
                 <TextField
                     id="outlined-select-currency"
                     name="ageGroup"

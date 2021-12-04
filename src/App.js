@@ -26,6 +26,7 @@ import {
   Players,
   Rankings,
   TournamentCalendar,
+  Footer,
 } from './containers'
 
 //translation
@@ -69,12 +70,14 @@ const App = () => {
     {
       path: '/',
       name: t("Navbar.Home"),
+      exact: true,
       Component: Home 
     },
     {
       path: '/tournament-calendar',
       name: t("Navbar.TournamentCalendar"),
       Component: TournamentCalendar,
+      exact: false,
       dropdown: {
         content: <div className="flex-column slide-in-left">
           <div><NavLink to='/tournament-calendar/women'>Women's Calendar</NavLink></div>
@@ -84,13 +87,15 @@ const App = () => {
     },
     {
       path: '/players',
-      name: t("Navbar.Players"), 
+      name: t("Navbar.Players"),
+      exact: true, 
       Component: Players 
     },
     {
       path: '/rankings', 
       name: t("Navbar.Rankings"),
       Component: Rankings,
+      exact: false,
       dropdown: {
         content: <div className="flex-column slide-in-left">
           <div><NavLink to='/rankings/women'>Women's Rankings</NavLink></div>
@@ -132,11 +137,11 @@ const App = () => {
           <div>Test translation: {t("Test")}</div> */}
           <Switch>
             <div className="body-wrapper">
-              {unauthenticatedRoutes.map(({ path, Component }) => (
-                <Route key={path} exact path={path} component={Component}>
+              {unauthenticatedRoutes.map(({ path, exact, Component }) => (
+                <Route key={path} exact={exact} path={path} component={Component}>
                 </Route>
               ))}
-              {/* <Route path="/*" component={Footer} /> */}
+              <Route path="/*" component={Footer} />
               {/* <Redirect to="/" /> */}
             </div>
           </Switch>

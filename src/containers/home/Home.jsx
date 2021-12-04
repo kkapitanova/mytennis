@@ -4,7 +4,7 @@ import { sortData, getAge } from '../../utils/helpers'
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import { useHistory } from 'react-router';
-import { ageGroups } from '../../data/constants';
+import { ageGroups, genderGroups } from '../../data/constants';
 import { mockPlayerData, mockRanking } from '../../data/dummyData';
 import sampleBackground from '../../assets/images/sample_background.jpeg';
 
@@ -20,13 +20,13 @@ const Home = () => {
         name: '',
         nationCompetingFor: '',
         ageGroup: 'U40',
-        pointsWon: null,
+        genderGroup: 'Female'
     }) 
 
     let rankingData = []
     
     mockRanking.forEach(r => {
-        if (r.ageGroup === search.ageGroup) {
+        if (r.ageGroup === search.ageGroup && r.genderGroup.toLowerCase() === search.genderGroup.toLowerCase()) {
             rankingData = r.players
         }
     })
@@ -54,9 +54,10 @@ const Home = () => {
         }
     })
 
-    const handleAgeGroupChange = (e) => {
+    const handleSearchChange = (e) => {
         const val = e.target.value
-        setSearch({...search, ageGroup: val})
+        const name = e.target.name
+        setSearch({...search, [name]: val})
     }
 
 
@@ -78,27 +79,46 @@ const Home = () => {
             <div style={{margin: 50}}>
                 <div className="flex justify-between align-center">
                     <h3 className="accent-color" style={{textAlign: "left"}}>Top Players Currently</h3>
-                    <TextField
-                        id="outlined-select-currency"
-                        name="ageGroup"
-                        select
-                        label="Age Group"
-                        color="secondary"
-                        value={search.ageGroup}
-                        onChange={(e) => handleAgeGroupChange(e)}
-                        size="small"
-                        style={{width: 150}}
-                    >
-                        {ageGroups.map((option, index) => (
-                            <MenuItem key={index} value={option}>
-                                {option}
-                            </MenuItem>
-                        ))}
-                    </TextField>
+                    <div>
+                        <TextField
+                            id="outlined-select-currency"
+                            name="ageGroup"
+                            select
+                            label="Age Group"
+                            color="secondary"
+                            value={search.ageGroup}
+                            onChange={(e) => handleSearchChange(e)}
+                            size="small"
+                            style={{width: 150, marginRight: 10}}
+                        >
+                            {ageGroups.map((option, index) => (
+                                <MenuItem key={index} value={option}>
+                                    {option}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+                        <TextField
+                            id="outlined-select-currency"
+                            name="genderGroup"
+                            select
+                            label="Gender Group"
+                            color="secondary"
+                            value={search.genderGroup}
+                            onChange={(e) => handleSearchChange(e)}
+                            size="small"
+                            style={{width: 150}}
+                        >
+                            {genderGroups.map((option, index) => (
+                                <MenuItem key={index} value={option}>
+                                    {option}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+                    </div>
                 </div>
                 {organizedTableData && organizedTableData.length > 0 && <Table tableData={organizedTableData.slice(0, 10)} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>}
-                {organizedTableData && !organizedTableData.length && <div>NO DATA AVAILABLE</div>}
-                <div className="flex justify-end" style={{marginTop: 10}}><button className="secondary-button small" onClick={() => history.push('/players')}>See All</button></div>
+                {organizedTableData && !organizedTableData.length && <div>NO RESULTS FOUND</div>}
+                <div className="flex justify-end" style={{marginTop: 10}}><button className="secondary-button small" onClick={() => history.push('/rankings/')}>See All</button></div>
             </div>
         </div>
     )
