@@ -127,7 +127,7 @@ const TournamentCalendar = () => {
 
     return (
         <div style={{padding: '0 50px 50px 50px'}}>
-            <h3 className="accent-color" style={{textAlign: 'left'}}>Search Players</h3>
+            <h3 className="accent-color" style={{textAlign: 'left'}}>Search Tournaments</h3>
             <div className="flex">
                 <TextField
                     name="location"
