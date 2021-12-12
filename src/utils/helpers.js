@@ -14,13 +14,17 @@
 //     return displayedIcon
 // }
 
-export const sortData = (data, sortingParameter) => {
+export const sortData = (data, sortingParameter, direction = 'desc') => {
 
     let sortedData = []
 
     if (data) {
         sortedData = data.sort((a, b) => {
-            return b[sortingParameter] - a[sortingParameter];
+            if (direction === 'desc') {
+                return b[sortingParameter] - a[sortingParameter]
+            } else if (direction === 'asc') {
+                return a[sortingParameter] - b[sortingParameter]
+            }
         });
     }
 

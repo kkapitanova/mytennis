@@ -31,9 +31,26 @@ const BasicTable = ({ tableData, rowHeaders, onRowClick }) => {
                         key={index}
                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                     >
-                        {Object.keys(dataItem).map((key, index) => (
-                            <TableCell align={`${index === Object.keys(dataItem).length - 1 ? "right" : 'left'}`} onClick={() => onRowClick(dataItem)}>{dataItem[key]}</TableCell>
-                        ))}
+                        {Object.keys(dataItem).map((key, index) => { 
+
+                            let value = dataItem[key]
+
+                            if (typeof dataItem[key] === 'object') {
+                                let newValue = ''
+
+                                dataItem[key].map((item, index) => {
+                                    newValue = index < dataItem[key].length - 1 ? newValue + item + ", " : newValue + item
+                                })
+
+                                value = newValue
+                            }
+
+                            if (index < rowHeaders.length) {
+                                return (
+                                    <TableCell align={`${index === rowHeaders.length - 1 ? "right" : 'left'}`} onClick={() => onRowClick(dataItem)}>{value}</TableCell>
+                                )
+                            }
+                        })}
 
                         {/* <TableCell>{index + 1}</TableCell>
                         <TableCell>{player.name}</TableCell>
