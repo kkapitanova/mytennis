@@ -66,11 +66,11 @@ const Home = () => {
     }
 
     useEffect(() => {
-        setInitialLoad(true)
     }, [])
 
     useEffect(() => {
       window.scrollTo(0,0)
+      setInitialLoad(true)
     }, [initialLoad])
 
     return (
