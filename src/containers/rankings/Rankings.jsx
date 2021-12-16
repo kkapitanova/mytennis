@@ -28,7 +28,7 @@ const Rankings = () => {
         let rankingData = []
 
         mockRanking.forEach(r => {
-            if (r.ageGroup === search.ageGroup && r.genderGroup.toLowerCase() === search.genderGroup.toLowerCase()) {
+            if ((search.ageGroup ? r.ageGroup === search.ageGroup : true) && (search.genderGroup ? r.genderGroup.toLowerCase() === search.genderGroup.toLowerCase() : true)) {
                 rankingData = r.players
             }
         })
@@ -91,16 +91,19 @@ const Rankings = () => {
 
         const searchGenderGroup = location.pathname.split('/')[2]
 
+        const rand = Math.floor(Math.random()*10)
+        const randomGenderGroup = rand % 2 === 0 ? 'Female' : 'Male'
+
         setSearch({
             ...search,
-            genderGroup: searchGenderGroup === "women" ? 'Female' : searchGenderGroup === "men" ? 'Male' : searchGenderGroup === "mixed-doubles" ? 'Mixed' : 'Female'
+            genderGroup: searchGenderGroup === "women" ? 'Female' : searchGenderGroup === "men" ? 'Male' : searchGenderGroup === "mixed-doubles" ? 'Mixed' : randomGenderGroup
         })
     }, [location])
 
     return (
         <div style={{padding: '0 50px 50px 50px'}}>
             <h3 className="accent-color" style={{textAlign: 'left'}}>Search Players</h3>
-            <div className="flex">
+            <div className="flex wrap">
                 <TextField
                     name="name"
                     id="outlined-basic"
@@ -110,7 +113,7 @@ const Rankings = () => {
                     size="small"
                     value={search.name}
                     onChange={handleSearchChange}
-                    style={{marginRight: 10}}
+                    style={{minWidth: 200, margin: '0 5px 10px 0'}}
                 />
                 <TextField
                     name="nationCompetingFor"
@@ -121,7 +124,7 @@ const Rankings = () => {
                     size="small"
                     value={search.nationCompetingFor}
                     onChange={handleSearchChange}
-                    style={{marginRight: 10}}
+                    style={{minWidth: 200, margin: '0 5px 10px 0'}}
                 />
                 <TextField
                     id="outlined-select-currency"
@@ -132,7 +135,7 @@ const Rankings = () => {
                     value={search.genderGroup}
                     onChange={(e) => handleSearchChange(e)}
                     size="small"
-                    style={{width: 150, marginRight: 10}}
+                    style={{width: 150, margin: '0 5px 10px 0'}}
                 >
                     {genderGroups.map((option, index) => (
                         <MenuItem key={index} value={option}>
@@ -149,7 +152,7 @@ const Rankings = () => {
                     value={search.ageGroup}
                     onChange={handleSearchChange}
                     size="small"
-                    style={{width: 150}}
+                    style={{width: 150, marginBottom: 10}}
                 >
                     {ageGroups.map((option, index) => (
                         <MenuItem key={index} value={option}>
