@@ -7,9 +7,37 @@ import { useHistory, useLocation } from 'react-router';
 import { ageGroups, genderGroups, months, years } from '../../data/constants';
 import { mockTournamentData } from '../../data/dummyData';
 
+import Backdrop from '@mui/material/Backdrop';
+import Box from '@mui/material/Box';
+import Modal from '@mui/material/Modal';
+import Fade from '@mui/material/Fade';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+
+const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '90%',
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+};
+
 const tableRowHeaders = [
     'Location', 'Name', 'Start Date', 'End Date', 'Gender Group', 'Age Groups', 'Draw Types', 'Status'
 ]
+
+const getDateString = dateMillis => {
+    const UTCString = new Date(dateMillis).toUTCString();
+    const options = { month: "long", day: "numeric", year: "numeric" };
+    const date = new Date(UTCString);
+    const formattedDate = new Intl.DateTimeFormat("en-GB", options).format(date);
+
+    return formattedDate
+}
 
 const TournamentCalendar = () => {
 
@@ -26,6 +54,10 @@ const TournamentCalendar = () => {
     }) 
     const [data, setData] = useState([])
     const [dataByCategories, setDataByCategories] = useState([])
+    const [currentTournament, setCurrentTournament] = useState()
+    const [open, setOpen] = useState(false)
+
+    const handleClose = () => setOpen(false);
 
     const getData = () => {
         let tournamentData = []
@@ -55,18 +87,9 @@ const TournamentCalendar = () => {
             }
         })
 
-        const getString = dateMillis => {
-            const UTCString = new Date(dateMillis).toUTCString();
-            const options = { month: "long", day: "numeric", year: "numeric" };
-            const date = new Date(UTCString);
-            const formattedDate = new Intl.DateTimeFormat("en-GB", options).format(date);
-
-            return formattedDate
-        }
-
         const sortedTableData = sortData(tournamentData, "startDate", 'asc')
         const organizedTableData = sortedTableData.map(t => {
-            return {...t, startDate: getString(t.startDate), endDate: getString(t.endDate)}
+            return {...t, startDate: getDateString(t.startDate), endDate: getDateString(t.endDate)}
         })
 
         setDataByCategories([...organizedTableData])
@@ -75,7 +98,12 @@ const TournamentCalendar = () => {
     }
 
     const handleRowClick = (tournamentData) => {
-        console.log(tournamentData)
+        const tournamentIndex =  mockTournamentData.findIndex(el => el.tournamentID === tournamentData.id)
+        const current = mockTournamentData[tournamentIndex]
+
+        console.log(current)
+        setCurrentTournament(current)
+        setOpen(true)
     }
 
     const handleSearchChange = (e) => {
@@ -86,12 +114,6 @@ const TournamentCalendar = () => {
         setSearch({
             ...search,
             [name]: value
-        })
-
-        dataByCategories.map(t => {
-            console.log(t)
-
-            console.log(t[name])
         })
 
         let sortedAndFilteredData = []
@@ -222,6 +244,38 @@ const TournamentCalendar = () => {
             </div>
             {data && data.length > 0 && <Table tableData={data} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>}
             {!data || !data.length > 0 && <div>No Results Found</div>}
+            <Modal
+                aria-labelledby="transition-modal-title"
+                aria-describedby="transition-modal-description"
+                open={open}
+                onClose={handleClose}
+                closeAfterTransition
+                BackdropComponent={Backdrop}
+                BackdropProps={{
+                timeout: 500,
+                }}
+            >
+                <Fade in={open}>
+                <Box sx={style}>
+                    <div className="flex-column">
+                        <h2 style={{fontWeight: '500'}}>{currentTournament?.name}</h2>
+                        <div style={{marginBottom: 5}}>
+                            {currentTournament?.dates && <div>{getDateString(new Date (currentTournament?.dates?.startDate).getTime())} - {getDateString(new Date (currentTournament?.dates?.endDate).getTime())}</div>}
+                        </div>
+                        <div style={{marginBottom: 5}}>{currentTournament?.site}</div>
+                        <div style={{marginBottom: 5}}>{currentTournament?.location?.city}, {currentTournament?.location?.country}</div>
+                        <h3 style={{fontWeight: '600', marginTop: 40}}>Terms of Play</h3>
+                        <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
+                        <h3 style={{fontWeight: '600', marginTop: 40}}>Section Title</h3>
+                        <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
+                        <h3 style={{fontWeight: '600', marginTop: 40}}>Section Title</h3>
+                        <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
+
+
+                    </div>
+                </Box>
+                </Fade>
+            </Modal>
         </div>
     )
 }
