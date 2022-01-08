@@ -196,6 +196,7 @@ h3 {
   display: flex;
 
   &-column {
+    display: flex;
     flex-direction: column;
   }
 }
@@ -208,6 +209,25 @@ h3 {
   &-center {
     align-items: center;
   }
+  &-start {
+    align-items: flex-start;
+  }
+}
+
+.left-align-text {
+  text-align: left;
+}
+
+input {
+  border-radius: 5px;
+  height: 40px;
+  border: 1px solid silver;
+  font-size: 16px;
+}
+
+textarea {
+  padding: 16.5px 14px;
+  font: inherit;
 }
 
 .justify {

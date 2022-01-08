@@ -31,6 +31,7 @@ import {
 
 //translation
 import { useTranslation } from 'react-i18next';
+import TournamentSubmission from './containers/tournament-submission/TournamentSubmission';
 
 const firebaseConfig = {
   apiKey: "AIzaSyCZ70cdaIdr7-Od3fnhztu9aFLC4EOtSfQ", //process.env.FIREBASE_PUBLIC_PROJECT_WEB_API,
@@ -66,7 +67,7 @@ const App = () => {
     i18n.changeLanguage(lng);
   }
 
-  const unauthenticatedRoutes = [
+  const unauthenticatedNavbarRoutes = [
     {
       path: '/',
       name: t("Navbar.Home"),
@@ -107,6 +108,15 @@ const App = () => {
     // { path: '/about', name: t("Navbar.About"), Component: About }, //this is optional
   ]
 
+  const authenticatedRoutes = [
+    {
+      path: '/tournament-submission',
+      name: "Tournament Submission",
+      exact: true, 
+      Component: TournamentSubmission 
+    },
+  ]
+
   const getData = () => {
       // example data getting method
     get(child(dbRef, 'TEST')).then((snapshot) => {
@@ -132,12 +142,12 @@ const App = () => {
   return (
     <div className="App">
       <Router>
-          <NavBar routes={unauthenticatedRoutes}/>
+          <NavBar routes={unauthenticatedNavbarRoutes}/>
           {/* <div>TEST DATA FROM FIREBASE: {JSON.stringify(value)}</div>
           <div>Test translation: {t("Test")}</div> */}
           <Switch>
             <div className="body-wrapper">
-              {unauthenticatedRoutes.map(({ path, exact, Component }) => (
+              {[...unauthenticatedNavbarRoutes, ...authenticatedRoutes].map(({ path, exact, Component }) => (
                 <Route key={path} exact={exact} path={path} component={Component}>
                 </Route>
               ))}

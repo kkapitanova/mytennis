@@ -81,6 +81,7 @@ const Footer = () => {
                             {/* <Link to="/contacts">{t("Footer.GetInTouch")}</Link> */}
                             <Link to="/tournament-calendar">Tournament Calendar</Link>
                             <Link to="/players">All Players</Link>
+                            <Link to="/tournament-submission">Tournament Submission*</Link>
                         </div>
                     </div>
                 <div className="copyright-wrapper">Copyright © 2021 My Tennis Platform. All Rights Reserved.
