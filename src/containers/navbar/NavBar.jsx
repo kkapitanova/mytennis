@@ -20,6 +20,8 @@ import './topnav.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
 
+import logo from '../../assets/images/logo.png'
+
 // import Dropdown from 'react-dropdown';
 // import 'react-dropdown/style.css';
 
@@ -96,10 +98,11 @@ const NavBar = ({ routes }) => {
     return (
         <>
             <div className="navbar" id="navbar">
-                <div className="logo-wrapper">
-                    <Link to={"/"}>MYTennis</Link>
-                </div>
-                <div className="flex links-wrapper">
+                    <div className='logo-wrapper flex align-center'>
+                        <img src={logo} height={40}></img>
+                        <Link to={"/"} className="link-wrapper">MYTennis</Link>
+                    </div>                
+                    <div className="flex links-wrapper">
                     {routes && routes.map(route => (
                         <div className="flex-column">
                             <NavLink
@@ -118,8 +121,16 @@ const NavBar = ({ routes }) => {
                         </div>
                     ))}
                     <LanguageDropDownMenu mobile={true}/>
+                    <div className="login-container-mobile flex">
+                        <div onClick={() => console.log("LOGIN")} className='login-type-wrapper'>Login</div>&nbsp;|&nbsp;<div className='login-type-wrapper'>Register</div>
+                    </div>
                 </div>
-                <LanguageDropDownMenu />
+                <div className='flex align-center'>
+                    <div className="login-container flex">
+                        <div onClick={() => console.log("LOGIN")} className='login-type-wrapper'>Login</div>&nbsp;|&nbsp;<div className='login-type-wrapper'>Register</div>
+                    </div>
+                    <LanguageDropDownMenu />
+                </div>
                 <a href="javascript:void(0);" className="icon" onClick={expandMenu}>
                     <FontAwesomeIcon icon={expanded ? faTimes : faBars}/>
                 </a>

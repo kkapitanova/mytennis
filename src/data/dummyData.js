@@ -543,7 +543,7 @@ export const mockTournamentData = [
             city: 'Sofia',
             country: 'Bulgaria'
         },
-        ageGroups: ['U40', 'U60', '60+'],
+        ageGroups: ['U60'],
         genderGroups: ['Male'],
         dates: {
             startDate: 'January 13, 2022 03:24:00',
@@ -572,7 +572,7 @@ export const mockTournamentData = [
             city: 'Sofia',
             country: 'Bulgaria'
         },
-        ageGroups: ['U40', 'U60', '60+'],
+        ageGroups: ['U60'],
         genderGroups: ['Female', 'Male'],
         dates: {
             startDate: 'February 13, 2022 03:24:00',
@@ -601,8 +601,8 @@ export const mockTournamentData = [
             city: 'Sofia',
             country: 'Bulgaria'
         },
-        ageGroups: ['U40', 'U60', '60+'],
-        genderGroups: ['Female', 'Male'],
+        ageGroups: ['U40'],
+        genderGroups: ['Female'],
         dates: {
             startDate: 'January 27, 2022 03:24:00',
             endDate: 'February 2, 2022 03:24:00'
@@ -630,8 +630,8 @@ export const mockTournamentData = [
             city: 'Sofia',
             country: 'Bulgaria'
         },
-        ageGroups: ['U40', 'U60', '60+'],
-        genderGroups: ['Female', 'Male'],
+        ageGroups: ['U40'],
+        genderGroups: ['Female'],
         dates: {
             startDate: 'September 16, 2022 03:24:00',
             endDate: 'September 19, 2022 03:24:00'
@@ -659,13 +659,13 @@ export const mockTournamentData = [
             city: 'Sofia',
             country: 'Bulgaria'
         },
-        ageGroups: ['U40', 'U60', '60+'],
+        ageGroups: ['U40'],
         genderGroups: ['Female', 'Male'],
         dates: {
             startDate: 'March 2, 2022 03:24:00',
             endDate: 'March 9, 2022 03:24:00'
         },
-        status: 'Open',
+        status: 'Postponed',
         surface: 'clay',
         leadReferee : {
             "name" : "Kristina Kapitanova"
@@ -723,7 +723,7 @@ export const mockTournamentData = [
             startDate: 'November 1, 2022 03:24:00',
             endDate: 'November 8, 2022 03:24:00'
         },
-        status: 'Open',
+        status: 'Postponed',
         surface: 'clay',
         leadReferee : {
             "name" : "Kristina Kapitanova"
@@ -781,7 +781,7 @@ export const mockTournamentData = [
             startDate: 'November 10, 2022 03:24:00',
             endDate: 'November 19, 2022 03:24:00'
         },
-        status: 'Open',
+        status: 'Cancelled',
         surface: 'clay',
         leadReferee : {
             "name" : "Kristina Kapitanova"
@@ -834,12 +834,12 @@ export const mockTournamentData = [
             country: 'Bulgaria'
         },
         ageGroups: ['U60', '60+'],
-        genderGroups: ['Female', 'Male'],
+        genderGroups: ['Female'],
         dates: {
             startDate: 'November 13, 2022 03:24:00',
             endDate: 'November 19, 2022 03:24:00'
         },
-        status: 'Open',
+        status: 'Cancelled',
         surface: 'clay',
         leadReferee : {
             "name" : "Kristina Kapitanova"
@@ -892,7 +892,7 @@ export const mockTournamentData = [
             country: 'Bulgaria'
         },
         ageGroups: ['U40', 'U60', '60+'],
-        genderGroups: ['Female', 'Male'],
+        genderGroups: ['Female'],
         dates: {
             startDate: 'November 13, 2022 03:24:00',
             endDate: 'November 19, 2022 03:24:00'
@@ -921,7 +921,7 @@ export const mockTournamentData = [
             country: 'Bulgaria'
         },
         ageGroups: ['U40', 'U60', '60+'],
-        genderGroups: ['Female', 'Male'],
+        genderGroups: ['Female'],
         dates: {
             startDate: 'November 13, 2022 03:24:00',
             endDate: 'November 19, 2022 03:24:00'
@@ -978,7 +978,7 @@ export const mockTournamentData = [
             city: 'Sofia',
             country: 'Bulgaria'
         },
-        ageGroups: ['U40', 'U60', '60+'],
+        ageGroups: ['60+'],
         genderGroups: ['Female', 'Male'],
         dates: {
             startDate: 'November 13, 2022 03:24:00',
@@ -1007,7 +1007,7 @@ export const mockTournamentData = [
             city: 'Sofia',
             country: 'Bulgaria'
         },
-        ageGroups: ['U40', 'U60', '60+'],
+        ageGroups: ['U60'],
         genderGroups: ['Male'],
         dates: {
             startDate: 'November 13, 2022 03:24:00',
@@ -1036,7 +1036,7 @@ export const mockTournamentData = [
             city: 'Sofia',
             country: 'Bulgaria'
         },
-        ageGroups: ['U40', 'U60', '60+'],
+        ageGroups: ['U60'],
         genderGroups: ['Male'],
         dates: {
             startDate: 'November 13, 2022 03:24:00',
