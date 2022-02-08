@@ -55,3 +55,12 @@ export const getAge = (dateOfBirth) => {
     
     return age;
 }
+
+export const getDateString = dateMillis => {
+    const UTCString = new Date(dateMillis).toUTCString();
+    const options = { month: "long", day: "numeric", year: "numeric" };
+    const date = new Date(UTCString);
+    const formattedDate = new Intl.DateTimeFormat("en-GB", options).format(date);
+
+    return formattedDate
+}

@@ -15,6 +15,7 @@ import Fade from '@mui/material/Fade';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import ClearIcon from '@mui/icons-material/Clear';
+import { getDateString } from '../../utils/helpers';
 
 const style = {
     position: 'absolute',
@@ -31,15 +32,6 @@ const style = {
 const tableRowHeaders = [
     'Location', 'Name', 'Start Date', 'End Date', 'Gender Group', 'Age Groups', 'Draw Types', 'Status'
 ]
-
-const getDateString = dateMillis => {
-    const UTCString = new Date(dateMillis).toUTCString();
-    const options = { month: "long", day: "numeric", year: "numeric" };
-    const date = new Date(UTCString);
-    const formattedDate = new Intl.DateTimeFormat("en-GB", options).format(date);
-
-    return formattedDate
-}
 
 const TournamentCalendar = () => {
 

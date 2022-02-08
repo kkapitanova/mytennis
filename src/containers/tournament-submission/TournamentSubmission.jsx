@@ -1,16 +1,44 @@
 import React, { useEffect, useState } from 'react';
+import { getDateString } from '../../utils/helpers';
 
+// material imports
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import TextField from '@mui/material/TextField';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import Stack from '@mui/material/Stack';
 import TextareaAutosize from '@mui/base/TextareaAutosize';
-import { Button } from '@mui/material';
+import { Button, Checkbox, drawerClasses } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+
+//modal material
+import Backdrop from '@mui/material/Backdrop';
+import Box from '@mui/material/Box';
+import Modal from '@mui/material/Modal';
+import Fade from '@mui/material/Fade';
+
+import MuiPhoneNumber from "material-ui-phone-number";
+
+//modal style
+const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '90%',
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+};
 
 const initialTournamentData = {
-    name: '',
+    tournamentName: '',
     description: '',
     location: '',
     city: '',
@@ -20,23 +48,80 @@ const initialTournamentData = {
     clubName: '',
     startDate: '',
     endDate: '',
-    tournamentDirector: ''
+    tournamentDirector: '',
+    tournamentDirectorPhone: '',
+    genderGroup: '',
+    ageGroups: [],
+    drawType: '',
+    entryTax: '',
+    prizeMoney: '',
+    medicalTeamOnSite: ''
 }
 
 const TournamentSubmission = () => {
     const [initialLoad, setInitialLoad] = useState(false)
     const [tournamentData, setTournamentData] = useState(initialTournamentData)
+    const [open, setOpen] = useState(false)
 
     const handleSubmit = (event) => {
         event.preventDefault();
         console.log('form submission', tournamentData)
+        setOpen(true)
+    }
+
+    const confirmSubmission = () => {
+        console.log("submission confirmed", tournamentData)
+        setTournamentData(initialTournamentData)
+        setOpen(false)
+    }
+
+    const handleClose = () => {
+        setOpen(false)
     }
 
     const handleChange = (e) => {
         const name = e.target.name
         const value = e.target.value
-
         setTournamentData({...tournamentData, [name]: value})
+    }
+
+    const handleMedicalTeamChange = (bool) => {
+        setTournamentData({
+            ...tournamentData,
+            medicalTeamOnSite: bool
+        })
+    }
+
+    const handleDrawChange = (e) => {
+        const selectedOption = e.target.value
+
+        setTournamentData({
+            ...tournamentData,
+            drawType: selectedOption
+        })
+    }
+
+    const handleGenderGroupChange = (e) => {
+        const selectedOption = e.target.value
+        setTournamentData({
+            ...tournamentData,
+            genderGroup: selectedOption
+        })
+    }
+
+    const handleAgeGroupChange = (e) => {
+        const selectedOption = e.target.value
+        if (!e.target.checked) {
+            setTournamentData({
+                ...tournamentData,
+                ageGroups: tournamentData.ageGroups.filter(el => el !== selectedOption)
+            })
+        } else {
+            setTournamentData({
+                ...tournamentData,
+                ageGroups: [...tournamentData.ageGroups, selectedOption]
+            })
+        }
     }
 
     const handleStartDateChange = (val) => {
@@ -47,12 +132,18 @@ const TournamentSubmission = () => {
         setTournamentData({...tournamentData, endDate: val})
     }
 
-    const checkIfInfoIsFilledIn = () => {
+    const handlePhoneChange = (e) => {
+        setTournamentData({
+            ...tournamentData,
+            tournamentDirectorPhone: e
+        })
+    }
 
+    const checkIfInfoIsFilledIn = () => {
         let bool = false
 
         for (const key in tournamentData) {
-            if (tournamentData[key] !== '') {
+            if (typeof tournamentData[key] !== 'object' ? tournamentData[key] !== '' : tournamentData[key].length > 0) {
                 bool = true
             }
         }
@@ -67,7 +158,11 @@ const TournamentSubmission = () => {
     useEffect(() => {
         window.scrollTo(0,0)
         setInitialLoad(true)
-      }, [initialLoad])
+    }, [initialLoad])
+
+    useEffect(() => {
+        console.log(tournamentData)
+    }, [tournamentData])
 
     return (
         <div style={{padding: "0px 50px 50px"}}>
@@ -75,21 +170,21 @@ const TournamentSubmission = () => {
             <form onSubmit={handleSubmit}>
                 <div className='flex-column align-start'>
                     <div className='flex-column align-start' style={{marginBottom: 10}}>
-                        <div style={{marginBottom: 10}}>Main Information</div>
+                        <div style={{marginBottom: 10}}>Main Information*</div>
                         <TextField 
                             type="text" 
-                            name="name"
-                            label="Name"
+                            name="tournamentName"
+                            label="Tournament Name"
                             variant="outlined"
                             color="secondary"
-                            value={tournamentData.name}
+                            value={tournamentData.tournamentName}
                             onChange={handleChange}
                             style={{marginBottom: 10, minWidth: 300}}
                         />
                         <TextField 
                             type="text" 
                             name="description"
-                            label="Description"
+                            label="Tournament Description"
                             variant="outlined"
                             color="secondary"
                             multiline
@@ -99,9 +194,30 @@ const TournamentSubmission = () => {
                             onChange={handleChange}
                             style={{marginBottom: 10, width: "50vw", minWidth: 200}}
                         />
+                        <div className='flex wrap'>
+                            <TextField 
+                                type="text" 
+                                name="tournamentDirector"
+                                label="Tournament Director"
+                                variant="outlined"
+                                color="secondary"
+                                value={tournamentData.tournamentDirector}
+                                onChange={handleChange}
+                                style={{marginBottom: 10, marginRight: 10, minWidth: 300}}
+                            />
+                            <MuiPhoneNumber
+                                name="phone"
+                                label="Phone Number"
+                                data-cy="user-phone"
+                                defaultCountry={"us"}
+                                value={tournamentData.tournamentDirectorPhone}
+                                onChange={handlePhoneChange}
+                                style={{marginBottom: 10, minWidth: 300}}
+                            />
+                        </div>
                     </div>
                     <div className='flex-column align-start' style={{marginBottom: 10}}>
-                        <div style={{marginBottom: 10}}>Location</div>
+                        <div style={{marginBottom: 10}}>Location*</div>
                         <div className='flex-column align-start'>
                             <TextField 
                                 type="text" 
@@ -161,7 +277,7 @@ const TournamentSubmission = () => {
                     <div className='flex-column align-start' style={{marginBottom: 10}}>
                         <LocalizationProvider dateAdapter={AdapterDateFns}>
                             <Stack spacing={2}>
-                                <div style={{textAlign: "left"}}>Play Dates</div>
+                                <div style={{textAlign: "left"}}>Play Dates*</div>
                                 <div className="flex wrap">
                                     <DesktopDatePicker
                                         label="Start Date"
@@ -184,10 +300,122 @@ const TournamentSubmission = () => {
                             </Stack>
                         </LocalizationProvider>
                     </div>
+                    <div className="flex wrap">
+                        <FormControl color="secondary" sx={{margin: "0 50px 20px 0"}}>
+                            <FormLabel id="demo-radio-buttons-group-label" sx={{textAlign: "left"}}>Gender Group*</FormLabel>
+                            <RadioGroup
+                                aria-labelledby="demo-radio-buttons-group-label"
+                                defaultValue="female"
+                                name="radio-buttons-group"
+                            >
+                                <FormControlLabel value="women" control={<Radio color="secondary" checked={tournamentData.genderGroup === "women" ? true : false} onChange={handleGenderGroupChange}/>} label="Women" />
+                                <FormControlLabel value="men" control={<Radio color="secondary" checked={tournamentData.genderGroup === "men"? true : false} onChange={handleGenderGroupChange}/>} label="Men" />
+                                <FormControlLabel value="mixed" control={<Radio color="secondary" checked={tournamentData.genderGroup === "mixed" ? true : false} disabled={tournamentData.drawType === "singles" ? true : false} onChange={handleGenderGroupChange}/>} label="Mixed" />
+                            </RadioGroup>
+                        </FormControl>
+                        <FormControl color="secondary" sx={{margin: "0 50px 20px 0"}}>
+                            <FormLabel id="demo-radio-buttons-group-label" sx={{textAlign: "left"}}>Draw Types*</FormLabel>
+                            <RadioGroup
+                                aria-labelledby="demo-radio-buttons-group-label"
+                                defaultValue="female"
+                                name="radio-buttons-group"
+                            >
+                                <FormControlLabel value="singles" control={<Radio color="secondary" checked={tournamentData.drawType === "singles" ? true : false} disabled={tournamentData.genderGroup === "mixed"? true : false} onChange={handleDrawChange}/>} label="Singles Only" />
+                                <FormControlLabel value="doubles" control={<Radio color="secondary" checked={tournamentData.drawType === "doubles" ? true : false} onChange={handleDrawChange}/>} label="Doubles Only" />
+                                <FormControlLabel value="singlesAndDoubles" control={<Radio color="secondary" checked={tournamentData.drawType === "singlesAndDoubles" ? true : false} onChange={handleDrawChange}/>} label="Singles & Doubles" />
+                            </RadioGroup>
+                        </FormControl>
+                        <FormControl color="secondary" sx={{margin: "0 50px 20px 0"}}>
+                            <FormLabel id="demo-radio-buttons-group-label" sx={{textAlign: "left"}}>Age Groups*</FormLabel>
+                            <RadioGroup
+                                aria-labelledby="demo-radio-buttons-group-label"
+                                defaultValue="female"
+                                name="radio-buttons-group"
+                            >
+                                <FormControlLabel value="U40" control={<Checkbox color="secondary" checked={tournamentData.ageGroups.includes("U40") ? true : false} onChange={handleAgeGroupChange}/>} label="U40" />
+                                <FormControlLabel value="U60" control={<Checkbox color="secondary" checked={tournamentData.ageGroups.includes("U60") ? true : false} onChange={handleAgeGroupChange}/>} label="U60" />
+                                <FormControlLabel value="plus60" control={<Checkbox color="secondary" checked={tournamentData.ageGroups.includes("plus60") ? true : false} onChange={handleAgeGroupChange}/>} label="60+" />
+                            </RadioGroup>
+                        </FormControl>
+                    </div>
+                    <div className='flex-column align-start wrap'>
+                        <div style={{marginBottom: 10}}>Entry Tax*</div>
+                        <TextField 
+                            type="number" 
+                            name="entryTax"
+                            label="Amount (€)"
+                            variant="outlined" 
+                            color="secondary"
+                            value={tournamentData.entryTax}
+                            onChange={handleChange}
+                            style={{minWidth: 300, marginBottom: 10, marginRight: 10}}
+                        />
+                    </div>
+                    <div className='flex-column align-start wrap'>
+                        <div style={{marginBottom: 10}}>Prize Money*</div>
+                        <TextField 
+                            type="number" 
+                            name="prizeMoney"
+                            label="Amount (€)"
+                            variant="outlined" 
+                            color="secondary"
+                            value={tournamentData.prizeMoney}
+                            onChange={handleChange}
+                            style={{minWidth: 300, marginBottom: 10, marginRight: 10}}
+                        />
+                    </div>
+                    <div className='flex-column wrap align-start'>
+                        <div style={{marginBottom: 10}}>Medical Team on Site*</div>
+                        <FormControl color="secondary" sx={{margin: "0 50px 20px 0"}}>
+                            {/* <FormLabel id="demo-radio-buttons-group-label" sx={{textAlign: "left"}}>Draw Types*</FormLabel> */}
+                            <RadioGroup
+                                aria-labelledby="demo-radio-buttons-group-label"
+                                defaultValue="female"
+                                name="radio-buttons-group"
+                            >
+                                <FormControlLabel value="yes" control={<Radio color="secondary" checked={tournamentData.medicalTeamOnSite ? true : false} onChange={() => handleMedicalTeamChange(true)}/>} label="Yes" />
+                                <FormControlLabel value="no" control={<Radio color="secondary" checked={tournamentData.medicalTeamOnSite === false ? true : false} onChange={() => handleMedicalTeamChange(false)}/>} label="No" />
+                            </RadioGroup>
+                        </FormControl>
+                    </div>
                     <div className="flex">
                         <button className='button action-button' type="submit" style={{marginRight: 10}}>Submit</button>
                         {checkIfInfoIsFilledIn() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} color='secondary' sx={{height: 40, margin: '0px !important'}} onClick={clearFields}>Clear Fields</Button>}
                     </div>
+                    <Modal
+                        aria-labelledby="transition-modal-title"
+                        aria-describedby="transition-modal-description"
+                        open={open}
+                        onClose={handleClose}
+                        closeAfterTransition
+                        BackdropComponent={Backdrop}
+                        BackdropProps={{
+                        timeout: 500,
+                        }}
+                    >
+                        <Fade in={open}>
+                        <Box sx={style}>
+                            <div className="flex-column">
+                                <h2 style={{fontWeight: '500'}}>{tournamentData?.tournamentName}</h2>
+                                <div style={{marginBottom: 5}}>
+                                    {(tournamentData?.startDate && tournamentData?.endDate) &&<div>{getDateString(new Date (tournamentData?.startDate).getTime())} - {getDateString(new Date (tournamentData?.endDate).getTime())}</div>}
+                                </div>
+                                <div style={{marginBottom: 5}}>{tournamentData?.clubName}</div>
+                                <div style={{marginBottom: 5}}>{tournamentData?.city}, {tournamentData?.country}</div>
+                                <h3 style={{fontWeight: '600', marginTop: 40}}>Terms of Play</h3>
+                                <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
+                                <h3 style={{fontWeight: '600', marginTop: 40}}>Section Title</h3>
+                                <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
+                                <h3 style={{fontWeight: '600', marginTop: 40}}>Section Title</h3>
+                                <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
+                                <div className='flex wrap justify-center' style={{marginTop: 40}}>
+                                    <button className='button action-button' onClick={confirmSubmission} style={{marginRight: 10}}>Confirm Submission</button>
+                                    <button className='button secondary-button' onClick={handleClose} style={{marginRight: 10}}>Edit Submission</button>
+                                </div>
+                            </div>
+                        </Box>
+                        </Fade>
+                    </Modal>
                 </div>
             </form>
         </div>
