@@ -40,7 +40,6 @@ const style = {
 const initialTournamentData = {
     tournamentName: '',
     description: '',
-    location: '',
     city: '',
     country: '',
     street: '',
@@ -58,21 +57,48 @@ const initialTournamentData = {
     medicalTeamOnSite: ''
 }
 
+
+
 const TournamentSubmission = () => {
-    const [initialLoad, setInitialLoad] = useState(false)
     const [tournamentData, setTournamentData] = useState(initialTournamentData)
     const [open, setOpen] = useState(false)
+    const [openSuccessScreen, setOpenSuccessScreen] = useState(false)
+    const [displayError, setDisplayError] = useState(false)
+
+    const validateFields = () => {
+        let bool = false
+        for (const key in tournamentData) {
+            if (tournamentData[key] !== initialTournamentData[key]) {
+                bool = true
+            }
+        }
+
+        return bool
+    }
 
     const handleSubmit = (event) => {
         event.preventDefault();
         console.log('form submission', tournamentData)
-        setOpen(true)
+
+        const valid = validateFields()
+
+        if (valid) {
+            setOpen(true)
+        } else {
+            setDisplayError(true)
+        }
     }
 
     const confirmSubmission = () => {
         console.log("submission confirmed", tournamentData)
         setTournamentData(initialTournamentData)
         setOpen(false)
+        setTimeout(() => setOpenSuccessScreen(true), 300)
+        setTimeout(() => setOpenSuccessScreen(false), 3300)
+    }
+
+    const handleSuccessModalClose = () => {
+        setOpenSuccessScreen(false)
     }
 
     const handleClose = () => {
@@ -82,6 +108,7 @@ const TournamentSubmission = () => {
     const handleChange = (e) => {
         const name = e.target.name
         const value = e.target.value
+
         setTournamentData({...tournamentData, [name]: value})
     }
 
@@ -157,11 +184,10 @@ const TournamentSubmission = () => {
 
     useEffect(() => {
         window.scrollTo(0,0)
-        setInitialLoad(true)
-    }, [initialLoad])
+    }, [])
 
     useEffect(() => {
-        console.log(tournamentData)
+        console.log(JSON.stringify(tournamentData))
     }, [tournamentData])
 
     return (
@@ -225,7 +251,7 @@ const TournamentSubmission = () => {
                                 label="Club Name"
                                 variant="outlined" 
                                 color="secondary"
-                                value={tournamentData.site}
+                                value={tournamentData.clubName}
                                 onChange={handleChange}
                                 style={{minWidth: 300, marginBottom: 10}}
                             />
@@ -343,6 +369,7 @@ const TournamentSubmission = () => {
                         <TextField 
                             type="number" 
                             name="entryTax"
+                            inputProps={{min: 0}}
                             label="Amount (€)"
                             variant="outlined" 
                             color="secondary"
@@ -356,6 +383,7 @@ const TournamentSubmission = () => {
                         <TextField 
                             type="number" 
                             name="prizeMoney"
+                            inputProps={{min: 0}}
                             label="Amount (€)"
                             variant="outlined" 
                             color="secondary"
@@ -379,8 +407,11 @@ const TournamentSubmission = () => {
                         </FormControl>
                     </div>
                     <div className="flex">
-                        <button className='button action-button' type="submit" style={{marginRight: 10}}>Submit</button>
-                        {checkIfInfoIsFilledIn() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} color='secondary' sx={{height: 40, margin: '0px !important'}} onClick={clearFields}>Clear Fields</Button>}
+                        {/* <button className='button action-button' type="submit" style={{marginRight: 10}} disabled={validateFields()}>Submit</button> */}
+                        <Button variant="contained" sx={{height: 40, margin: '0px 10px 0px 0px !important'}} type="submit">Submit</Button> 
+                        {/* //TODO: disabled  */}
+                        <Button variant="contained" sx={{height: 40, margin: '0px 10px 0px 0px !important'}} onClick={() => setTournamentData({"tournamentName":"Test Tournament Name", "clubName": "Test Club Name", "description":"This is the tournament description","city":"Sofia","country":"Bulgaria","street":"ul. 671-va 3A","zipCode":"1632","startDate":"2023-02-15T12:04:46.000Z","endDate":"2023-02-18T12:04:47.000Z","tournamentDirector":"Kristina Kapitanova","tournamentDirectorPhone":"+1 (233) 23","genderGroup":"mixed","ageGroups":["U60"],"drawType":"singlesAndDoubles","entryTax":"75","prizeMoney":"20000","medicalTeamOnSite":false})}>FILL WITH TEST DATA</Button>
+                        {checkIfInfoIsFilledIn() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} color='secondary' sx={{height: 40, margin: '0px 10px 0px 0px !important'}} onClick={clearFields}>Clear Fields</Button>}
                     </div>
                     <Modal
                         aria-labelledby="transition-modal-title"
@@ -409,9 +440,29 @@ const TournamentSubmission = () => {
                                 <h3 style={{fontWeight: '600', marginTop: 40}}>Section Title</h3>
                                 <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
                                 <div className='flex wrap justify-center' style={{marginTop: 40}}>
-                                    <button className='button action-button' onClick={confirmSubmission} style={{marginRight: 10}}>Confirm Submission</button>
-                                    <button className='button secondary-button' onClick={handleClose} style={{marginRight: 10}}>Edit Submission</button>
+                                    <Button variant="contained" onClick={confirmSubmission} sx={{margin: '0 5px 0 0 !important'}}>Confirm Submission</Button>
+                                    <Button variant="outlined" onClick={handleClose} sx={{margin: '0 0 0 5px !important'}}>Edit Submission</Button>
                                 </div>
+                            </div>
+                        </Box>
+                        </Fade>
+                    </Modal>
+                    <Modal
+                        aria-labelledby="transition-modal-title"
+                        aria-describedby="transition-modal-description"
+                        open={openSuccessScreen}
+                        onClose={handleSuccessModalClose}
+                        closeAfterTransition
+                        BackdropComponent={Backdrop}
+                        BackdropProps={{
+                        timeout: 500,
+                        }}
+                    >
+                        <Fade in={openSuccessScreen}>
+                        <Box sx={{...style, width: '400px'}}>
+                            <div className="flex-column" style={{textAlign: 'center'}}>
+                               You have successfully submitted your tournament!
+                               You will be contacted when the tournament is approved.
                             </div>
                         </Box>
                         </Fade>

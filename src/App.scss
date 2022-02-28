@@ -380,6 +380,9 @@ button {
   background-size: cover !important;
 }
 
+
+// MATERIAL STYLES OVERRIDES
+
 //dropdown menu styles
 .MuiButton-text{ 
   color: black !important;
@@ -387,8 +390,29 @@ button {
   padding: 6px 15px !important; 
 }
 
+// normal button
 .MuiButton-root {
   margin-right: 50px !important;
+}
+
+// outlined button
+.MuiButton-outlinedPrimary {
+  color: $accent !important;
+  border: 1px solid $accent !important;
+  
+  &:hover {
+    background-color: rgba(0, 54, 41, 0.062) !important;
+  }
+}
+
+// contained button
+.MuiButton-containedPrimary {
+  background-color: $accent !important;
+
+
+  &:hover {
+    background-color: rgb(0, 54, 41) !important;
+  }
 }
 
 .MuiTableCell-root.MuiTableCell-head {

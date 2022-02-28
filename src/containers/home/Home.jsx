@@ -37,7 +37,6 @@ const tableRowHeaders = [
 const Home = () => {
 
     const history = useHistory();
-    const [initialLoad, setInitialLoad] = useState(false)
     const [search, setSearch] = useState({
         name: '',
         nationCompetingFor: '',
@@ -98,12 +97,8 @@ const Home = () => {
     }
 
     useEffect(() => {
-    }, [])
-
-    useEffect(() => {
       window.scrollTo(0,0)
-      setInitialLoad(true)
-    }, [initialLoad])
+    }, [])
 
     return (
         <div>
@@ -111,7 +106,7 @@ const Home = () => {
             <div style={{margin: 50}}>
                 <div className="flex justify-between align-center">
                     <h3 className="accent-color" style={{textAlign: "left"}}>Top Players Currently</h3>
-                    <div>
+                    <div className='flex wrap justify-between align-center'>
                         <TextField
                             id="outlined-select-currency"
                             name="ageGroup"
@@ -121,7 +116,7 @@ const Home = () => {
                             value={search.ageGroup}
                             onChange={(e) => handleSearchChange(e)}
                             size="small"
-                            style={{width: 150, marginRight: 10}}
+                            style={{width: 150, marginLeft: 10, marginTop: 10}}
                         >
                             {ageGroups.map((option, index) => (
                                 <MenuItem key={index} value={option}>
@@ -138,7 +133,7 @@ const Home = () => {
                             value={search.genderGroup}
                             onChange={(e) => handleSearchChange(e)}
                             size="small"
-                            style={{width: 150}}
+                            style={{width: 150, marginLeft: 10, marginTop: 10}}
                         >
                             {genderGroups.map((option, index) => (
                                 <MenuItem key={index} value={option}>
@@ -150,7 +145,9 @@ const Home = () => {
                 </div>
                 {organizedTableData && organizedTableData.length > 0 && <Table tableData={organizedTableData.slice(0, 10)} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>}
                 {organizedTableData && !organizedTableData.length && <div>NO RESULTS FOUND</div>}
-                <div className="flex justify-end" style={{marginTop: 10}}><button className="secondary-button small" onClick={() => history.push('/rankings/')}>See All</button></div>
+                <div className="flex justify-end" style={{marginTop: 10}}>
+                    <Button variant="contained" onClick={() => history.push('/rankings/')} sx={{height: 40, margin: '0px !important'}}>See All</Button>
+                </div>
                 <Modal
                     aria-labelledby="transition-modal-title"
                     aria-describedby="transition-modal-description"

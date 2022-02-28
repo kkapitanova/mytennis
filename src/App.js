@@ -12,11 +12,8 @@ import {
   Route,
   Redirect,
   NavLink,
-  // Link,
-  // Redirect,
-  // useLocation,
-  // withRouter,
-  // Redirect
+  useHistory,
+  useLocation,
 } from "react-router-dom";
 
 //component imports
@@ -55,13 +52,9 @@ const dbRef = ref(getDatabase(app));
 // });
 
 
-
-
 const App = () => {
-
   const [ value, setValue ] = useState()
   const { t, i18n } = useTranslation()
-  const [initialLoad, setInitialLoad] = useState(false)
 
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
@@ -81,8 +74,8 @@ const App = () => {
       exact: false,
       dropdown: {
         content: <div className="flex-column slide-in-left">
-          <div><NavLink to='/tournament-calendar/women'>Women's Calendar</NavLink></div>
-          <div><NavLink to='/tournament-calendar/men'>Men's Calendar</NavLink></div>
+          <div><NavLink to={{ pathname: '/tournament-calendar/women', state: { tournamentCalendar: 'women'} }}>Women's Calendar</NavLink></div>
+          <div><NavLink to={{ pathname: '/tournament-calendar/men', state: { tournamentCalendar: 'men'} }}>Men's Calendar</NavLink></div>
         </div>
       } 
     },
@@ -99,9 +92,9 @@ const App = () => {
       exact: false,
       dropdown: {
         content: <div className="flex-column slide-in-left">
-          <div><NavLink to='/rankings/women'>Women's Rankings</NavLink></div>
-          <div><NavLink to='/rankings/men'>Men's Rankings</NavLink></div>
-          <div><NavLink to='/rankings/mixed-doubles'>Mixed Doubles Rankings</NavLink></div>
+          <div><NavLink to={{ pathname: '/rankings/women', state: { rankings: 'women'} }}>Women's Rankings</NavLink></div>
+          <div><NavLink to={{ pathname: '/rankings/men', state: { rankings: 'men'} }}>Men's Rankings</NavLink></div>
+          <div><NavLink to={{ pathname: '/rankings/mixed-doubles', state: { rankings: 'mixed-doubles'} }}>Mixed Doubles Rankings</NavLink></div>
         </div>
       }
     },
@@ -132,12 +125,9 @@ const App = () => {
   }
 
   useEffect(() => {
+    window.scrollTo(0,0)
     getData()
   }, [])
-
-  useEffect(() => {
-    window.scrollTo(0,0)
-  }, [initialLoad])
 
   return (
     <div className="App">

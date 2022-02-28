@@ -36,7 +36,6 @@ const tableRowHeaders = [
 const TournamentCalendar = () => {
 
     const location = useLocation()
-    const [initialLoad, setInitialLoad] = useState(false)
     const [search, setSearch] = useState({
         name: '',
         location: '',
@@ -151,12 +150,11 @@ const TournamentCalendar = () => {
 
     useEffect(() => {
       window.scrollTo(0,0)
-      setInitialLoad(true)
-    }, [initialLoad])
+    }, [])
 
     useEffect(() => {
 
-        const searchGenderGroup = location.pathname.split('/')[2]
+        const searchGenderGroup = location?.state?.tournamentCalendar
 
         setSearch({
             ...search,
@@ -167,8 +165,8 @@ const TournamentCalendar = () => {
     return (
         <div style={{padding: '0 50px 50px 50px'}}>
             <h3 className="accent-color" style={{textAlign: 'left'}}>Search Tournaments</h3>
-            <div className='flex justify-between'>
-                <div className="flex wrap" style={{maxWidth: "800px"}}>
+            <div className='flex wrap justify-between'>
+                <div className="flex wrap" style={{minWidth: '250px', maxWidth: "60%"}}>
                     <TextField
                         name="location"
                         id="outlined-basic"
@@ -260,8 +258,8 @@ const TournamentCalendar = () => {
                         ))}
                     </TextField>
                 </div>
-                <div>
-                    {filterApplied() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} color='secondary' sx={{height: 40, minWidth: 180, margin: '0px !important'}} onClick={clearFilters}>Clear Filters</Button>}
+                <div className='flex align-start'>
+                    {filterApplied() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} color='secondary' sx={{height: 40, minWidth: 180, margin: '0px !important'}} onClick={clearFilters}>Clear Search</Button>}
                 </div>
             </div>
             {data && data.length > 0 && <Table tableData={data} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>}

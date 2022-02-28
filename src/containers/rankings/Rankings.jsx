@@ -36,7 +36,6 @@ const tableRowHeaders = [
 const Rankings = () => {
 
     const location = useLocation()
-    const [initialLoad, setInitialLoad] = useState(false)
     const [search, setSearch] = useState({
         name: '',
         nationCompetingFor: '',
@@ -141,12 +140,11 @@ const Rankings = () => {
 
     useEffect(() => {
       window.scrollTo(0,0)
-      setInitialLoad(true)
-    }, [initialLoad])
+    }, [])
 
     useEffect(() => {
 
-        const searchGenderGroup = location.pathname.split('/')[2]
+        const searchGenderGroup = location?.state?.rankings
 
         const rand = Math.floor(Math.random()*10)
         const randomGenderGroup = rand % 2 === 0 ? 'Female' : 'Male'
@@ -161,7 +159,7 @@ const Rankings = () => {
         <div style={{padding: '0 50px 50px 50px'}}>
             <h3 className="accent-color" style={{textAlign: 'left'}}>Search Players</h3>
             <div className='flex wrap justify-between'>
-                <div className="flex wrap">
+                <div className="flex wrap" style={{minWidth: '250px', maxWidth: "60%"}}>
                     <TextField
                         name="name"
                         id="outlined-basic"
@@ -193,7 +191,7 @@ const Rankings = () => {
                         value={search.genderGroup}
                         onChange={(e) => handleSearchChange(e)}
                         size="small"
-                        style={{width: 150, margin: '0 5px 10px 0'}}
+                        sx={{width: 150, margin: '0 5px 10px 0'}}
                     >
                         {genderGroups.map((option, index) => (
                             <MenuItem key={index} value={option}>
@@ -210,7 +208,7 @@ const Rankings = () => {
                         value={search.ageGroup}
                         onChange={handleSearchChange}
                         size="small"
-                        style={{width: 150, marginBottom: 10}}
+                        sx={{width: 150, marginBottom: '10px !important'}}
                     >
                         {ageGroups.map((option, index) => (
                             <MenuItem key={index} value={option}>
@@ -219,7 +217,9 @@ const Rankings = () => {
                         ))}
                     </TextField>
                 </div>
-                {filterApplied() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} color='secondary' sx={{height: 40, margin: '0px !important'}} onClick={clearFilters}>Clear Filters</Button>}
+                <div clasName="flex align-start">
+                    {filterApplied() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} color='secondary' sx={{height: 40, margin: '0px !important'}} onClick={clearFilters}>Clear Search</Button>}
+                </div>
             </div>
             {data && data.length > 0 && <Table tableData={data} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>}
             {(!data || !data.length > 0) && <div>No Results Found</div>}
