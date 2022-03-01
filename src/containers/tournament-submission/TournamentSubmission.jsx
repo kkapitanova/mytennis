@@ -191,7 +191,7 @@ const TournamentSubmission = () => {
     }, [tournamentData])
 
     return (
-        <div style={{padding: "0px 50px 50px"}}>
+        <div style={{padding: "0px 10vw 10vh"}}>
             <h3 className="accent-color left-align-text">Tournament Submission</h3>
             <form onSubmit={handleSubmit}>
                 <div className='flex-column align-start'>
@@ -205,7 +205,7 @@ const TournamentSubmission = () => {
                             color="secondary"
                             value={tournamentData.tournamentName}
                             onChange={handleChange}
-                            style={{marginBottom: 10, minWidth: 300}}
+                            style={{minWidth: 200, maxWidth: 410, marginBottom: 10, width: "80vw"}}
                         />
                         <TextField 
                             type="text" 
@@ -218,7 +218,7 @@ const TournamentSubmission = () => {
                             maxRows={4}
                             value={tournamentData.description}
                             onChange={handleChange}
-                            style={{marginBottom: 10, width: "50vw", minWidth: 200}}
+                            style={{minWidth: 200, maxWidth: 820, marginBottom: 10, width: "80vw"}}
                         />
                         <div className='flex wrap'>
                             <TextField 
@@ -229,7 +229,7 @@ const TournamentSubmission = () => {
                                 color="secondary"
                                 value={tournamentData.tournamentDirector}
                                 onChange={handleChange}
-                                style={{marginBottom: 10, marginRight: 10, minWidth: 300}}
+                                style={{minWidth: 200, maxWidth: 410, marginBottom: 10, marginRight: 10, width: "80vw"}}
                             />
                             <MuiPhoneNumber
                                 name="phone"
@@ -238,7 +238,7 @@ const TournamentSubmission = () => {
                                 defaultCountry={"us"}
                                 value={tournamentData.tournamentDirectorPhone}
                                 onChange={handlePhoneChange}
-                                style={{marginBottom: 10, minWidth: 300}}
+                                style={{minWidth: 200, maxWidth: 400, marginBottom: 10, width: "80vw"}}
                             />
                         </div>
                     </div>
@@ -253,7 +253,7 @@ const TournamentSubmission = () => {
                                 color="secondary"
                                 value={tournamentData.clubName}
                                 onChange={handleChange}
-                                style={{minWidth: 300, marginBottom: 10}}
+                                style={{minWidth: 200, maxWidth: 410, marginBottom: 10, width: "80vw"}}
                             />
                         </div>
                         <div className="flex wrap">
@@ -311,7 +311,7 @@ const TournamentSubmission = () => {
                                         minDate={new Date ()}
                                         value={tournamentData.startDate || null}
                                         onChange={handleStartDateChange}
-                                        renderInput={(params) => <TextField {...params} style={{marginRight: 10, marginBottom: 10, minWidth: 200}}
+                                        renderInput={(params) => <TextField {...params} sx={{margin: '0px 10px 10px 0px !important', width: 200}}
 />}
                                     />
                                     <DesktopDatePicker
@@ -320,7 +320,7 @@ const TournamentSubmission = () => {
                                         minDate={tournamentData.startDate || new Date ()}
                                         value={tournamentData.endDate || null}
                                         onChange={handleEndDateChange}
-                                        renderInput={(params) => <TextField {...params} style={{minWidth: 200}}/>}
+                                        renderInput={(params) => <TextField {...params} sx={{width: 200}}/>}
                                     />
                                 </div>
                             </Stack>
@@ -375,7 +375,7 @@ const TournamentSubmission = () => {
                             color="secondary"
                             value={tournamentData.entryTax}
                             onChange={handleChange}
-                            style={{minWidth: 300, marginBottom: 10, marginRight: 10}}
+                            sx={{width: 200, marginBottom: '10px', marginRight: '10px'}}
                         />
                     </div>
                     <div className='flex-column align-start wrap'>
@@ -389,7 +389,7 @@ const TournamentSubmission = () => {
                             color="secondary"
                             value={tournamentData.prizeMoney}
                             onChange={handleChange}
-                            style={{minWidth: 300, marginBottom: 10, marginRight: 10}}
+                            sx={{width: 200, marginBottom: '10px', marginRight: '10px'}}
                         />
                     </div>
                     <div className='flex-column wrap align-start'>
@@ -406,11 +406,11 @@ const TournamentSubmission = () => {
                             </RadioGroup>
                         </FormControl>
                     </div>
-                    <div className="flex">
+                    <div className="flex wrap">
                         {/* <button className='button action-button' type="submit" style={{marginRight: 10}} disabled={validateFields()}>Submit</button> */}
-                        <Button variant="contained" sx={{height: 40, margin: '0px 10px 0px 0px !important'}} type="submit">Submit</Button> 
+                        <Button variant="contained" sx={{height: 40, margin: '0px 10px 10px 0px !important'}} type="submit">Submit</Button> 
                         {/* //TODO: disabled  */}
-                        <Button variant="contained" sx={{height: 40, margin: '0px 10px 0px 0px !important'}} onClick={() => setTournamentData({"tournamentName":"Test Tournament Name", "clubName": "Test Club Name", "description":"This is the tournament description","city":"Sofia","country":"Bulgaria","street":"ul. 671-va 3A","zipCode":"1632","startDate":"2023-02-15T12:04:46.000Z","endDate":"2023-02-18T12:04:47.000Z","tournamentDirector":"Kristina Kapitanova","tournamentDirectorPhone":"+1 (233) 23","genderGroup":"mixed","ageGroups":["U60"],"drawType":"singlesAndDoubles","entryTax":"75","prizeMoney":"20000","medicalTeamOnSite":false})}>FILL WITH TEST DATA</Button>
+                        <Button variant="contained" sx={{height: 40, margin: '0px 10px 10px 0px !important'}} onClick={() => setTournamentData({"tournamentName":"Test Tournament Name", "clubName": "Test Club Name", "description":"This is the tournament description","city":"Sofia","country":"Bulgaria","street":"ul. 671-va 3A","zipCode":"1632","startDate":"2023-02-15T12:04:46.000Z","endDate":"2023-02-18T12:04:47.000Z","tournamentDirector":"Kristina Kapitanova","tournamentDirectorPhone":"+1 (233) 23","genderGroup":"mixed","ageGroups":["U60"],"drawType":"singlesAndDoubles","entryTax":"75","prizeMoney":"20000","medicalTeamOnSite":false})}>FILL WITH TEST DATA</Button>
                         {checkIfInfoIsFilledIn() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} color='secondary' sx={{height: 40, margin: '0px 10px 0px 0px !important'}} onClick={clearFields}>Clear Fields</Button>}
                     </div>
                     <Modal
