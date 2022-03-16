@@ -1,0 +1,13 @@
+@import '../../styles/variables.scss';
+
+.status-indicator {
+    font-weight: bold;
+
+    &.orange {
+        color: #f4a410;
+    }
+    
+    &.red {
+        color: red;
+    }
+}

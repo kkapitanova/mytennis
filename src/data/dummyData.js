@@ -607,7 +607,7 @@ export const mockTournamentData = [
             startDate: 'January 27, 2022 03:24:00',
             endDate: 'February 2, 2022 03:24:00'
         },
-        status: 'Open',
+        status: 'Declined',
         surface: 'clay',
         leadReferee : {
             "name" : "Kristina Kapitanova"
@@ -984,7 +984,7 @@ export const mockTournamentData = [
             startDate: 'November 13, 2022 03:24:00',
             endDate: 'November 19, 2022 03:24:00'
         },
-        status: 'Open',
+        status: 'Waiting for Approval',
         surface: 'clay',
         leadReferee : {
             "name" : "Kristina Kapitanova"
@@ -1042,7 +1042,7 @@ export const mockTournamentData = [
             startDate: 'November 13, 2022 03:24:00',
             endDate: 'November 19, 2022 03:24:00'
         },
-        status: 'Open',
+        status: 'Waiting for Approval',
         surface: 'clay',
         leadReferee : {
             "name" : "Kristina Kapitanova"

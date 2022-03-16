@@ -24,6 +24,7 @@ import {
   Rankings,
   TournamentCalendar,
   Footer,
+  MyTournaments
 } from './containers'
 
 //translation
@@ -107,6 +108,12 @@ const App = () => {
       name: "Tournament Submission",
       exact: true, 
       Component: TournamentSubmission 
+    },
+    {
+      path: '/my-tournaments',
+      name: "My Tournaments",
+      exact: true, 
+      Component: MyTournaments 
     },
   ]
 

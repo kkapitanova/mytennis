@@ -17,6 +17,9 @@ import Typography from '@mui/material/Typography';
 import ClearIcon from '@mui/icons-material/Clear';
 import { getDateString } from '../../utils/helpers';
 
+//styles
+import './MyTournaments.scss';
+
 const style = {
     position: 'absolute',
     top: '50%',
@@ -33,7 +36,7 @@ const tableRowHeaders = [
     'Location', 'Name', 'Start Date', 'End Date', 'Gender Group', 'Age Groups', 'Draw Types', 'Status'
 ]
 
-const TournamentCalendar = () => {
+const MyTournaments = () => {
 
     const location = useLocation()
     const [search, setSearch] = useState({
@@ -49,8 +52,30 @@ const TournamentCalendar = () => {
     const [dataByCategories, setDataByCategories] = useState([])
     const [currentTournament, setCurrentTournament] = useState()
     const [open, setOpen] = useState(false)
+    const [statusModalOpen, setStatusModalOpen] = useState(false)
+    const [tournamentApprovalText, setTournamentApprovalText] = useState("Approve")
+    const [tournamentCancellationText, setTournamentCancellationText] = useState("Decline")
 
-    const handleClose = () => setOpen(false);
+    const [approvalButtonVariant, setApprovalButtonVariant] = useState("outlined")
+    const [declineButtonVariant, setDeclineButtonVariant] = useState("outlined")
+    const [statusColor, setStatusColor] = useState()
+
+    //testing user roles
+    const userRole = 'admin'
+
+    const handleClose = () => {
+        setOpen(false);
+        setTimeout(() => {
+            setTournamentApprovalText("Approve")
+            setApprovalButtonVariant("outlined")
+            setTournamentCancellationText("Decline")
+            setDeclineButtonVariant("outlined")
+        }, 300)
+    }
+
+    const handleStatusModalClose = () => {
+        setStatusModalOpen(false)
+    }
 
     const getData = () => {
         let tournamentData = []
@@ -64,7 +89,7 @@ const TournamentCalendar = () => {
                 t.name.toLowerCase().includes(search.name) && 
                 (t.dates.startDate.toString() + t.dates.endDate.toString()).includes(search.month) &&
                 (t.dates.startDate.toString() + t.dates.endDate.toString()).includes(search.year) && 
-                t.status.toLowerCase() !== 'waiting for approval' && t.status.toLowerCase() !== 'declined'
+                (userRole === "admin" ? t.status.toLowerCase() === "waiting for approval" || t.status.toLowerCase() === 'declined' : null)
             ) {
 
                 tournamentData.push({
@@ -94,8 +119,9 @@ const TournamentCalendar = () => {
     const handleRowClick = (tournamentData) => {
         const tournamentIndex =  mockTournamentData.findIndex(el => el.tournamentID === tournamentData.id)
         const current = mockTournamentData[tournamentIndex]
+        const color = current?.status.toLowerCase() === 'waiting for approval' ? 'orange' : 'red'
 
-        console.log(current)
+        setStatusColor(color)
         setCurrentTournament(current)
         setOpen(true)
     }
@@ -145,6 +171,68 @@ const TournamentCalendar = () => {
         return bool
     }
 
+    const confirmApproval = () => {
+        setApprovalButtonVariant("contained")
+        setTournamentApprovalText("Confirm Approval")
+
+        if (tournamentApprovalText === "Confirm Approval") {
+            const updatedData = []
+            
+            data.forEach(item => {
+                // if (item.id === currentTournament.tournamentID) {
+                //     item.status = "Open"
+                // }
+                // return item
+
+                if (item.id !== currentTournament.tournamentID) {
+                    updatedData.push(item)
+                } else {
+                    item.status = "Open" //TODO: Replace with actual call that updates status
+                }
+            })
+
+            setData(updatedData)
+            handleClose()
+
+            setTimeout(() => {
+                setStatusModalOpen(true)
+            }, 200)
+            setTimeout(() => {
+                setStatusModalOpen(false)
+            }, 3000)
+        }
+    }
+
+    const confirmDecline = () => {
+        setDeclineButtonVariant("contained")
+        setTournamentCancellationText("Confirm Decline")
+
+        if (tournamentCancellationText === "Confirm Decline") {
+            const updatedData = []
+            
+            data.forEach(item => {
+                if (item.id === currentTournament.tournamentID) {
+                    item.status = "Declined" //TODO: Replace with actual call that updates status
+                }
+                updatedData.push(item)
+            })
+
+            setData(updatedData)
+            handleClose()
+
+            setTimeout(() => {
+                setStatusModalOpen(true)
+            }, 200)
+            setTimeout(() => {
+                setStatusModalOpen(false)
+            }, 3000)
+        }
+    }
+
+    const refreshData = () => {
+        //TODO: replace with actual call that fetches data
+    }
+
     useEffect(() => {
         setData(getData())
     }, [search.ageGroup, search.genderGroup, search.draws])
@@ -165,7 +253,7 @@ const TournamentCalendar = () => {
 
     return (
         <div style={{padding: '0 50px 50px 50px'}}>
-            <h3 className="accent-color" style={{textAlign: 'left'}}>Search Tournaments</h3>
+            <h3 className="accent-color" style={{textAlign: 'left'}}>Search My Tournaments ({userRole} View)</h3>
             <div className='flex wrap justify-between'>
                 <div className="flex wrap" style={{minWidth: '250px', maxWidth: "60%"}}>
                     <TextField
@@ -265,6 +353,7 @@ const TournamentCalendar = () => {
             </div>
             {data && data.length > 0 && <Table tableData={data} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>}
             {!data || !data.length > 0 && <div>No Results Found</div>}
+            <Button variant="contained" sx={{height: 40, margin: '30px 10px 0px 0px !important'}} onClick={refreshData}>Refresh Data</Button>
             <Modal
                 aria-labelledby="transition-modal-title"
                 aria-describedby="transition-modal-description"
@@ -278,19 +367,49 @@ const TournamentCalendar = () => {
             >
                 <Fade in={open}>
                 <Box sx={style}>
-                    <div className="flex-column">
-                        <h2 style={{fontWeight: '500'}}>{currentTournament?.name}</h2>
-                        <div style={{marginBottom: 5}}>
-                            {currentTournament?.dates && <div>{getDateString(new Date (currentTournament?.dates?.startDate).getTime())} - {getDateString(new Date (currentTournament?.dates?.endDate).getTime())}</div>}
+                    <div className="flex-column justify-center align-center">
+                        <div className="flex-column">
+                            <div className="flex justify-between align-center">
+                                <h2 style={{fontWeight: '500'}}>{currentTournament?.name}</h2>
+                                <div className={`status-indicator ${statusColor}`}>{currentTournament?.status.toUpperCase()}</div> 
+                            </div>
+                            <div style={{marginBottom: 5}}>
+                                {currentTournament?.dates && <div>{getDateString(new Date (currentTournament?.dates?.startDate).getTime())} - {getDateString(new Date (currentTournament?.dates?.endDate).getTime())}</div>}
+                            </div>
+                            <div style={{marginBottom: 5}}>{currentTournament?.site}</div>
+                            <div style={{marginBottom: 5}}>{currentTournament?.location?.city}, {currentTournament?.location?.country}</div>
+                            <h3 style={{fontWeight: '600', marginTop: 40}}>Terms of Play</h3>
+                            <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
+                            <h3 style={{fontWeight: '600', marginTop: 40}}>Section Title</h3>
+                            <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
+                            <h3 style={{fontWeight: '600', marginTop: 40}}>Section Title</h3>
+                            <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
                         </div>
-                        <div style={{marginBottom: 5}}>{currentTournament?.site}</div>
-                        <div style={{marginBottom: 5}}>{currentTournament?.location?.city}, {currentTournament?.location?.country}</div>
-                        <h3 style={{fontWeight: '600', marginTop: 40}}>Terms of Play</h3>
-                        <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
-                        <h3 style={{fontWeight: '600', marginTop: 40}}>Section Title</h3>
-                        <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
-                        <h3 style={{fontWeight: '600', marginTop: 40}}>Section Title</h3>
-                        <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
+                        {currentTournament?.status.toLowerCase() === 'waiting for approval' && (
+                            <div className="flex">
+                                <Button variant={approvalButtonVariant} sx={{height: 40, margin: '30px 10px 0px 0px !important'}} onClick={() => confirmApproval()}>{tournamentApprovalText}</Button>
+                                <Button className="red-button" variant={declineButtonVariant} sx={{height: 40, margin: '30px 0px 0px 10px !important'}} onClick={() => confirmDecline()}>{tournamentCancellationText}</Button>
+                            </div>
+                        )}
+                    </div>
+                </Box>
+                </Fade>
+            </Modal>
+            <Modal
+                aria-labelledby="transition-modal-title"
+                aria-describedby="transition-modal-description"
+                open={statusModalOpen}
+                onClose={handleStatusModalClose}
+                closeAfterTransition
+                BackdropComponent={Backdrop}
+                BackdropProps={{
+                timeout: 500,
+                }}
+            >
+                <Fade in={statusModalOpen}>
+                <Box sx={style}>
+                    <div className="flex justify-center align-center">
+                        <div>You have successfully updated the status of the tournament.</div>
                     </div>
                 </Box>
                 </Fade>
@@ -299,4 +418,4 @@ const TournamentCalendar = () => {
     )
 }
 
-export default TournamentCalendar
+export default MyTournaments
