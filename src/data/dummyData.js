@@ -520,6 +520,7 @@ export const mockTournamentData = [
             startDate: 'October 13, 2022 03:24:00',
             endDate: 'October 19, 2022 03:24:00'
         },
+        organizerID: '12345',
         status: 'Open',
         surface: 'clay',
         leadReferee : {
@@ -549,6 +550,7 @@ export const mockTournamentData = [
             startDate: 'January 13, 2022 03:24:00',
             endDate: 'January 19, 2022 03:24:00'
         },
+        organizerID: '12345',
         status: 'Open',
         surface: 'clay',
         leadReferee : {
@@ -607,6 +609,7 @@ export const mockTournamentData = [
             startDate: 'January 27, 2022 03:24:00',
             endDate: 'February 2, 2022 03:24:00'
         },
+        organizerID: '12345',
         status: 'Declined',
         surface: 'clay',
         leadReferee : {
@@ -665,6 +668,7 @@ export const mockTournamentData = [
             startDate: 'March 2, 2022 03:24:00',
             endDate: 'March 9, 2022 03:24:00'
         },
+        organizerID: '12345',
         status: 'Postponed',
         surface: 'clay',
         leadReferee : {
@@ -881,7 +885,8 @@ export const mockTournamentData = [
             "name" : "Kristina Kapitanova",
             "phoneNumber" : "+359885443822"
         },
-        draws: ['Singles', 'Doubles', 'Mixed']
+        draws: ['Singles', 'Doubles', 'Mixed'],
+        playersSignedUp: ['99999'],
     },
     {
         tournamentID: 15,
@@ -910,7 +915,8 @@ export const mockTournamentData = [
             "name" : "Kristina Kapitanova",
             "phoneNumber" : "+359885443822"
         },
-        draws: ['Singles', 'Doubles', 'Mixed']
+        draws: ['Singles', 'Doubles', 'Mixed'],
+        playersSignedUp: ['99999'],
     },
     {
         tournamentID: 16,
@@ -939,7 +945,8 @@ export const mockTournamentData = [
             "name" : "Kristina Kapitanova",
             "phoneNumber" : "+359885443822"
         },
-        draws: ['Singles', 'Doubles', 'Mixed']
+        draws: ['Singles', 'Doubles', 'Mixed'],
+        playersSignedUp: ['99999'],
     },
     {
         tournamentID: 17,
@@ -968,7 +975,8 @@ export const mockTournamentData = [
             "name" : "Kristina Kapitanova",
             "phoneNumber" : "+359885443822"
         },
-        draws: ['Singles', 'Doubles', 'Mixed']
+        draws: ['Singles', 'Doubles', 'Mixed'],
+        playersSignedUp: ['99999'],
     },
     {
         tournamentID: 18,
@@ -984,6 +992,7 @@ export const mockTournamentData = [
             startDate: 'November 13, 2022 03:24:00',
             endDate: 'November 19, 2022 03:24:00'
         },
+        organizerID: '12345',
         status: 'Waiting for Approval',
         surface: 'clay',
         leadReferee : {
@@ -1026,7 +1035,8 @@ export const mockTournamentData = [
             "name" : "Kristina Kapitanova",
             "phoneNumber" : "+359885443822"
         },
-        draws: ['Singles', 'Doubles']
+        draws: ['Singles', 'Doubles'],
+        playersSignedUp: ['99999'],
     },
     {
         tournamentID: 20,
@@ -1042,6 +1052,7 @@ export const mockTournamentData = [
             startDate: 'November 13, 2022 03:24:00',
             endDate: 'November 19, 2022 03:24:00'
         },
+        organizerID: '12345',
         status: 'Waiting for Approval',
         surface: 'clay',
         leadReferee : {

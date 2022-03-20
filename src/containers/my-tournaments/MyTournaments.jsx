@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Table } from '../../components';
 import { sortData, getAge } from '../../utils/helpers'
-import TextField from '@mui/material/TextField';
-import MenuItem from '@mui/material/MenuItem';
 import { useHistory, useLocation } from 'react-router';
 import { ageGroups, genderGroups, months, years } from '../../data/constants';
 import { mockTournamentData } from '../../data/dummyData';
+import { getDateString } from '../../utils/helpers';
 
 // material
 import Backdrop from '@mui/material/Backdrop';
@@ -15,7 +14,8 @@ import Fade from '@mui/material/Fade';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import ClearIcon from '@mui/icons-material/Clear';
-import { getDateString } from '../../utils/helpers';
+import TextField from '@mui/material/TextField';
+import MenuItem from '@mui/material/MenuItem';
 
 //styles
 import './MyTournaments.scss';
@@ -48,21 +48,25 @@ const MyTournaments = () => {
         month: '',
         year: ''
     }) 
-    const [data, setData] = useState([])
-    const [dataByCategories, setDataByCategories] = useState([])
-    const [currentTournament, setCurrentTournament] = useState()
-    const [open, setOpen] = useState(false)
-    const [statusModalOpen, setStatusModalOpen] = useState(false)
+
+    const [data, setData] = useState([]) // data displayed in the table
+    const [dataByCategories, setDataByCategories] = useState([]) // all data filtered by categories (gender group, age group, dates)
+    const [currentTournament, setCurrentTournament] = useState() // current tournament clicked on for which the modal is opened
+    const [open, setOpen] = useState(false) // tournament info modal open state
+    const [statusModalOpen, setStatusModalOpen] = useState(false) // tournament status update modal
+
     const [tournamentApprovalText, setTournamentApprovalText] = useState("Approve")
     const [tournamentCancellationText, setTournamentCancellationText] = useState("Decline")
-
     const [approvalButtonVariant, setApprovalButtonVariant] = useState("outlined")
     const [declineButtonVariant, setDeclineButtonVariant] = useState("outlined")
     const [statusColor, setStatusColor] = useState()
 
     //testing user roles
-    const userRole = 'admin'
+    const [userRole, setUserRole] = useState("admin")
+    const clubRepTestID = '12345'
+    const playerTestID = '99999'
 
+    // tournament info modal close
     const handleClose = () => {
         setOpen(false);
         setTimeout(() => {
@@ -73,6 +77,7 @@ const MyTournaments = () => {
         }, 300)
     }
 
+    // status modal close
     const handleStatusModalClose = () => {
         setStatusModalOpen(false)
     }
@@ -81,15 +86,24 @@ const MyTournaments = () => {
         let tournamentData = []
 
         mockTournamentData.forEach(t => {
-            
+
+            // display only the tournaments that match the following conditions:
             if (
                 (search.ageGroup ? t.ageGroups.includes(search.ageGroup) : true) && 
                 (search.genderGroup ? t.genderGroups.includes(search.genderGroup) : true) &&
                 (t.location.city + t.location.country).toLowerCase().includes(search.location) &&
                 t.name.toLowerCase().includes(search.name) && 
                 (t.dates.startDate.toString() + t.dates.endDate.toString()).includes(search.month) &&
-                (t.dates.startDate.toString() + t.dates.endDate.toString()).includes(search.year) && 
-                (userRole === "admin" ? t.status.toLowerCase() === "waiting for approval" || t.status.toLowerCase() === 'declined' : null)
+                (t.dates.startDate.toString() + t.dates.endDate.toString()).includes(search.year) &&
+
+                // ADMIN VIEW
+                ((userRole.toLowerCase() === 'admin') ? (t.status.toLowerCase() === "waiting for approval" || t.status.toLowerCase() === 'declined') : false) ||
+
+                // CLUB REP VIEW
+                (userRole.toLowerCase() === 'clubrep' && t.organizerID === clubRepTestID) ||
+
+                // PLAYER VIEW 
+                (userRole.toLowerCase() === 'player' && t.playersSignedUp && t.playersSignedUp.length && t.playersSignedUp.includes(playerTestID))
             ) {
 
                 tournamentData.push({
@@ -106,7 +120,10 @@ const MyTournaments = () => {
             }
         })
 
-        const sortedTableData = sortData(tournamentData, "startDate", 'asc')
+        // sort data by start data in ascending order (sooner tournaments will appear first)
+        const sortedTableData = userRole.toLowerCase() !== 'clubrep' ? sortData(tournamentData, "startDate", 'asc') : sortData(tournamentData, "startDate", 'desc')
+
+        // format the tournaments' start and end dates
         const organizedTableData = sortedTableData.map(t => {
             return {...t, startDate: getDateString(t.startDate), endDate: getDateString(t.endDate)}
         })
@@ -116,16 +133,18 @@ const MyTournaments = () => {
         return organizedTableData
     }
 
+
     const handleRowClick = (tournamentData) => {
-        const tournamentIndex =  mockTournamentData.findIndex(el => el.tournamentID === tournamentData.id)
+        const tournamentIndex = mockTournamentData.findIndex(el => el.tournamentID === tournamentData.id)
         const current = mockTournamentData[tournamentIndex]
-        const color = current?.status.toLowerCase() === 'waiting for approval' ? 'orange' : 'red'
+        const color = current?.status.toLowerCase() === 'waiting for approval' || current?.status.toLowerCase() === 'postponed' ? 'orange' : current?.status.toLowerCase() === 'declined' ? 'red' : 'green'
 
         setStatusColor(color)
         setCurrentTournament(current)
         setOpen(true)
     }
 
+    // handle search changes (filters applied, etc.)
     const handleSearchChange = (e) => {
 
         const name = e.target.name
@@ -138,7 +157,7 @@ const MyTournaments = () => {
 
         let sortedAndFilteredData = []
 
-        if (name === 'month' || name === 'year') {
+        if (name === 'month' || name === 'year') { // if a filter for the dates is applied, then the filter should consider both the start date and the end date
             sortedAndFilteredData = dataByCategories.filter(tournament => name === 'month' ? (tournament["startDate"].includes(value) || tournament["endDate"].includes(value)) && (tournament["startDate"].includes(search.year) || tournament["endDate"].includes(search.year)) : (tournament["startDate"].includes(value) || tournament["endDate"].includes(value)) && (tournament["startDate"].includes(search.month) || tournament["endDate"].includes(search.month)));
         } else {
             sortedAndFilteredData = dataByCategories.filter(tournament => tournament[name]?.toLowerCase().includes(value.toLowerCase()));
@@ -233,16 +252,17 @@ const MyTournaments = () => {
         //TODO: replace with actual call that fetches data
     }
 
+    // scroll to top when opening the page for the first time
     useEffect(() => {
-        setData(getData())
-    }, [search.ageGroup, search.genderGroup, search.draws])
-
-    useEffect(() => {
-      window.scrollTo(0,0)
+        window.scrollTo(0,0)
     }, [])
 
     useEffect(() => {
+        setData(getData())
+    }, [search.ageGroup, search.genderGroup, search.draws, userRole])
 
+    // update data accordingly if the search query changes in the location 
+    useEffect(() => {
         const searchGenderGroup = location?.state?.tournamentCalendar
 
         setSearch({
@@ -254,6 +274,30 @@ const MyTournaments = () => {
     return (
         <div style={{padding: '0 50px 50px 50px'}}>
             <h3 className="accent-color" style={{textAlign: 'left'}}>Search My Tournaments ({userRole} View)</h3>
+            {userRole.toLowerCase() === 'admin' && 
+                <div className="helper-text">
+                    Here you can preview the tournaments submitted for approval and update their status by either rejecting or approving them. 
+                    Approved tournaments will be moved to the tournament calendar.
+                </div>
+            }
+            {userRole.toLowerCase() === 'clubrep' && 
+                <div className="helper-text">
+                    Here you can preview all of the tournaments you have submitted and their status. 
+                    'Waiting for Approval' means that the tournament is waiting to be approved by an admin. 'Declined' means that the request for a tournament has been rejected.
+                </div>
+            }
+            {userRole.toLowerCase() === 'player' && 
+                <div className="helper-text">
+                    Here you can preview the tournaments you have signed up for. 
+                    You can withdraw from any tournament, but withdrawing meeans you will not be able to sign up for the tournament again.
+                </div>
+            }
+            <div className="flex align-center">
+                <Button sx={{height: 40, margin: '0px 10px 10px 0px !important'}} onClick={() => setUserRole("admin")} disabled={userRole.toLowerCase() === "admin"}>Switch to Admin</Button>
+                <Button sx={{height: 40, margin: '0px 10px 10px 0px !important'}} onClick={() => setUserRole("clubRep")} disabled={userRole.toLowerCase() === "clubrep"}>Switch to Club Rep</Button>
+                <Button sx={{height: 40, margin: '0px 10px 10px 0px !important'}} onClick={() => setUserRole("player")} disabled={userRole.toLowerCase() === "player"}>Switch to Player</Button>
+                <div style={{color: "rgba(0, 0, 0, 0.5)"}}>Testing purposes</div>
+            </div>
             <div className='flex wrap justify-between'>
                 <div className="flex wrap" style={{minWidth: '250px', maxWidth: "60%"}}>
                     <TextField
@@ -385,7 +429,7 @@ const MyTournaments = () => {
                             <h3 style={{fontWeight: '600', marginTop: 40}}>Section Title</h3>
                             <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
                         </div>
-                        {currentTournament?.status.toLowerCase() === 'waiting for approval' && (
+                        {userRole?.toLowerCase() === "admin" && currentTournament?.status.toLowerCase() === 'waiting for approval' && (
                             <div className="flex">
                                 <Button variant={approvalButtonVariant} sx={{height: 40, margin: '30px 10px 0px 0px !important'}} onClick={() => confirmApproval()}>{tournamentApprovalText}</Button>
                                 <Button className="red-button" variant={declineButtonVariant} sx={{height: 40, margin: '30px 0px 0px 10px !important'}} onClick={() => confirmDecline()}>{tournamentCancellationText}</Button>
