@@ -63,7 +63,8 @@ const TournamentCalendar = () => {
                 (t.location.city + t.location.country).toLowerCase().includes(search.location) &&
                 t.name.toLowerCase().includes(search.name) && 
                 (t.dates.startDate.toString() + t.dates.endDate.toString()).includes(search.month) &&
-                (t.dates.startDate.toString() + t.dates.endDate.toString()).includes(search.year)
+                (t.dates.startDate.toString() + t.dates.endDate.toString()).includes(search.year) && 
+                t.status.toLowerCase() !== 'waiting for approval' && t.status.toLowerCase() !== 'declined'
             ) {
 
                 tournamentData.push({

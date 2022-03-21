@@ -1,0 +1,23 @@
+@import '../../styles/variables.scss';
+
+.status-indicator {
+    font-weight: bold;
+
+    &.orange {
+        color: #f4a410;
+    }
+    
+    &.red {
+        color: red;
+    }
+
+    &.green {
+        color: rgb(11, 175, 11);
+    }
+}
+
+.helper-text {
+    color: rgba(0, 0, 0, 0.5);
+    text-align: left;
+    margin-bottom: 20px;
+}

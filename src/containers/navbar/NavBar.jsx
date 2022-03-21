@@ -103,8 +103,8 @@ const NavBar = ({ routes }) => {
                         <Link to={"/"} className="link-wrapper">MYTennis</Link>
                     </div>                
                     <div className="flex links-wrapper">
-                    {routes && routes.map(route => (
-                        <div className="flex-column">
+                    {routes && routes.map((route, index) => (
+                        <div className="flex-column" key={index}>
                             <NavLink
                                 key={route.path}
                                 exact 

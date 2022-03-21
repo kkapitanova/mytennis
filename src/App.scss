@@ -401,7 +401,18 @@ button {
   border: 1px solid $accent !important;
   
   &:hover {
-    background-color: rgba(0, 54, 41, 0.062) !important;
+    background-color: $accent !important;
+    color: white !important;
+  }
+
+  &.red-button {
+    border-color: red !important;
+    color: red !important;
+
+    &:hover {
+      background-color: red !important;
+      color: white !important;
+    }
   }
 }
 
@@ -409,9 +420,18 @@ button {
 .MuiButton-containedPrimary {
   background-color: $accent !important;
 
-
   &:hover {
     background-color: rgb(0, 54, 41) !important;
+  }
+
+  &.red-button {
+    border-color: red !important;
+    background-color: red !important;
+    color: white !important;
+
+    &:hover {
+      background-color: rgb(104, 0, 0) !important;
+    }
   }
 }
 

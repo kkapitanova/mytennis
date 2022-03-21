@@ -82,6 +82,7 @@ const Footer = () => {
                             <Link to="/tournament-calendar">Tournament Calendar</Link>
                             <Link to="/players">All Players</Link>
                             <Link to="/tournament-submission">Tournament Submission*</Link>
+                            <Link to="/my-tournaments">My Tournaments*</Link>
                         </div>
                     </div>
                 <div className="copyright-wrapper">Copyright © 2021 My Tennis Platform. All Rights Reserved.

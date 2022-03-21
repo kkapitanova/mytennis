@@ -16,7 +16,7 @@ const BasicTable = ({ tableData, rowHeaders, onRowClick }) => {
             <TableHead>
                 <TableRow>
                     {rowHeaders.map((header, index) => (
-                        <TableCell align={`${index === rowHeaders.length - 1 ? "right" : 'left'}`}>{header}</TableCell>
+                        <TableCell key={index} align={`${index === rowHeaders.length - 1 ? "right" : 'left'}`}>{header}</TableCell>
                     ))}
                     {/* <TableCell>Ranking</TableCell>
                     <TableCell>Name</TableCell>
@@ -26,7 +26,7 @@ const BasicTable = ({ tableData, rowHeaders, onRowClick }) => {
                 </TableRow>
             </TableHead>
             <TableBody>
-                {tableData.map((dataItem, index) => (
+                {tableData && tableData.map((dataItem, index) => (
                     <TableRow
                         key={index}
                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -47,7 +47,7 @@ const BasicTable = ({ tableData, rowHeaders, onRowClick }) => {
 
                             if (index < rowHeaders.length) {
                                 return (
-                                    <TableCell align={`${index === rowHeaders.length - 1 ? "right" : 'left'}`} onClick={() => onRowClick(dataItem)}>{value}</TableCell>
+                                    <TableCell key={index + new Date().getTime()} align={`${index === rowHeaders.length - 1 ? "right" : 'left'}`} onClick={() => onRowClick(dataItem)}>{value}</TableCell>
                                 )
                             }
                         })}
