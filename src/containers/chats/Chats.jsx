@@ -242,6 +242,10 @@ const Chats = () => {
         scrollToBottom("chat-messages")
     }, [])
 
+    useEffect(() => {
+        setMessage() //clear input when switching between chats
+    }, [current])
+
     return (
         <div className="container">
             <h3 className="accent-color" style={{textAlign: 'left'}}>Chats</h3>
