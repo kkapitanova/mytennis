@@ -292,7 +292,7 @@ const MyTournaments = () => {
                     You can withdraw from any tournament, but withdrawing meeans you will not be able to sign up for the tournament again.
                 </div>
             }
-            <div className="flex align-center">
+            <div className="flex wrap align-center">
                 <Button sx={{margin: '0px 10px 10px 0px !important'}} onClick={() => setUserRole("admin")} disabled={userRole.toLowerCase() === "admin"}>Switch to Admin</Button>
                 <Button sx={{margin: '0px 10px 10px 0px !important'}} onClick={() => setUserRole("clubRep")} disabled={userRole.toLowerCase() === "clubrep"}>Switch to Club Rep</Button>
                 <Button sx={{margin: '0px 10px 10px 0px !important'}} onClick={() => setUserRole("player")} disabled={userRole.toLowerCase() === "player"}>Switch to Player</Button>
