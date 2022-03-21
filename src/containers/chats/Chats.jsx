@@ -255,6 +255,11 @@ const Chats = () => {
 
     useEffect(() => {
         scrollToBottom("chat-messages")
+    }, [current])
+
+    // scroll to top when opening the page for the first time
+    useEffect(() => {
+        window.scrollTo(0,0)
     }, [])
 
     useEffect(() => {

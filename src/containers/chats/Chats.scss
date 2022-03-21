@@ -164,7 +164,8 @@
     .left-container {
         width: 100% !important;
         transition: width 1s;
-        border: 0.5px solid rgba(0, 0, 0, 0.5);
+        // animation: fadeInWithoutScale 1s;
+        border-right: 0.5px solid rgba(0, 0, 0, 0.5);
 
         &.right-open {
             width: 0px !important;
@@ -177,6 +178,7 @@
     .right-container {
         width: 100% !important;
         transition: width 1s;
+        // animation: fadeInWithoutScale 1s;
 
         &.left-open {
             width: 0px !important;

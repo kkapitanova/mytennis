@@ -55,24 +55,6 @@ const Footer = () => {
                                 <a rel="noreferrer" target="_blank" href="https://www.instagram.com/mypt.bg"><InstagramIcon />&nbsp;mytennisplatform</a>          
                             </div>
                         </div>
-                        {/* <div className="section-wrapper">
-                            <div className="classes-wrapper">
-                                <div className="classes-wrapper-schedule">
-                                    <h4>{t("HIIT")}</h4>
-                                    <p>{t("WeekDays.Mon")} 8:30 & 19:00</p>
-                                    <p>{t("WeekDays.Wed")} 19:00</p>
-                                    <p>{t("WeekDays.Thu")} 8:30</p>
-                                    <p>{t("WeekDays.Fri")} 19:00</p>
-                                </div>
-                                <div className="classes-wrapper-schedule">
-                                    <h4>{t("CircuitTraining")}</h4>
-                                    <p>{t("WeekDays.Mon")} 18:00</p>
-                                    <p>{t("WeekDays.Sat")} 10:00</p>
-                                    <p>{t("WeekDays.Sun")} 11:00</p>
-                                </div>
-                                
-                            </div> */}
-                        {/* </div> */}
                         <div className="section-wrapper">
                             <h3>Site Map
                                 {/* {t("Footer.SiteMap")} */}
@@ -81,13 +63,19 @@ const Footer = () => {
                             {/* <Link to="/contacts">{t("Footer.GetInTouch")}</Link> */}
                             <Link to="/tournament-calendar">Tournament Calendar</Link>
                             <Link to="/players">All Players</Link>
+                        </div>
+                        <div className="section-wrapper">
+                            <h3>Routes Testing</h3>
+                            {/* <Link to="/contacts">{t("Footer.GetInTouch")}</Link> */}
                             <Link to="/tournament-submission">Tournament Submission*</Link>
                             <Link to="/my-tournaments">My Tournaments*</Link>
+                            <Link to="/chats">Chats*</Link>
                         </div>
                     </div>
                 <div className="copyright-wrapper">Copyright © 2022 My Tennis Platform. All Rights Reserved.
                  {/* {t("Rights.1")} */}
                  </div>
+                 *The star indicates pages that are WIP (work in progress).
             </footer>
         </>
     )
