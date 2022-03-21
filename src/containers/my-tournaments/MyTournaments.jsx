@@ -407,7 +407,7 @@ const MyTournaments = () => {
                 <Box sx={style}>
                     <div className="flex-column justify-center align-center">
                         <div className="flex-column">
-                            <div className="flex justify-between align-center">
+                            <div className="flex justify-between align-center tournament-header">
                                 <h2 style={{fontWeight: '500'}}>{currentTournament?.name}</h2>
                                 <div className={`status-indicator ${statusColor}`}>{currentTournament?.status.toUpperCase()}</div> 
                             </div>

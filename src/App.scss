@@ -533,10 +533,14 @@ button {
   }
 }
 
+.MuiBox-root {
+  overflow: scroll;
+}
+
 @media only screen and (max-width: 425px) {
   h2 {
     font-size: $smallh2FontSize;
-    padding: 20px;
+    // padding: 20px;
   }
 
   .calendly-button {
@@ -550,8 +554,18 @@ button {
   }
 }
 
-@media only screen and (max-width: 1440px) {
+@media only screen and (max-width: 500px) {
+  .MuiBox-root {
+    width: 60vw !important;
+    height: 60vh !important;
+  }
+}
 
+@media only screen and (min-width: 500px) and (max-width: 1024px) {
+  .MuiBox-root {
+    width: 70vw !important;
+    height: 70vh !important;
+  }
 }
 
 @media only screen and (min-width: 1440px) {
