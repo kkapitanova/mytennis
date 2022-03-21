@@ -7,7 +7,6 @@
 }
 
 .search-container {
-    width: 350px;
     background-color: white;
     z-index: 1;
 }
@@ -86,6 +85,10 @@
     &:hover {
         background-color: rgba(235, 255, 235, 1.5);
         cursor: pointer;
+
+        > svg {
+            color: $accent !important;
+        }
     }
 
     .summary {
@@ -111,6 +114,10 @@
 }
 
 .messages-search, .message-input {
+    .MuiSvgIcon-root {
+        margin-left: 10px !important;
+    }
+
    .MuiInput-input {
        font-size: 18px !important;
        height: 40px !important;
@@ -124,12 +131,52 @@
 }
 
 .send-button, .info-button {
-    &:hover {
-        cursor: pointer;
+
+    &.active {
         color: $accent !important;
+
+        &:hover {
+            cursor: pointer;
+            color: $accent !important;
+        }
     }
 }
 
 .custom-input {
     width: calc(100% - 40px);
+}
+
+@media screen and (max-width: 900px) {
+
+    .messages-search, .message-input {
+        .MuiSvgIcon-root {
+            margin-left: 5px !important;
+        }
+    
+       .MuiInput-input {
+           font-size: 16px !important;
+           height: 40px !important;
+       }
+    }
+
+    .left-container {
+        width: 80px !important;
+
+        .chat-summary {
+            justify-content: center;
+
+            .author {
+                display: none;
+            }
+    
+            .last-message {
+                display: none;
+            }
+        }
+    }
+
+    .right-container {
+        width: calc(100% - 80px) !important;
+    }
+
 }

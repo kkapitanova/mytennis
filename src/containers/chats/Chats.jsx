@@ -256,7 +256,7 @@ const Chats = () => {
                                   </InputAdornment>
                                 )
                             }}
-                            sx={{width: '320px', fontSize: '18px !important'}}
+                            sx={{width: '100%', fontSize: '18px !important'}}
                         />
                     </div>
                     <div className="chats-container">
@@ -308,7 +308,7 @@ const Chats = () => {
                             InputProps={{
                                 endAdornment: (
                                   <InputAdornment position="start">
-                                    <SendIcon className="send-button" fontSize="large" onClick={handleMessageSubmit} />
+                                    <SendIcon className={`send-button ${message ? "active" : ''}`} fontSize="medium" onClick={handleMessageSubmit} />
                                   </InputAdornment>
                                 )
                             }}
