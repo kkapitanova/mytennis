@@ -101,14 +101,14 @@ const testMessages = [
         id: 14,
     },
     {
-        sent: new Date('12/11/2021 16:55:01').getTime(), //1
+        sent: new Date('12/11/2021 16:55:01').getTime(), //2
         senderID: "99999",
         receiverID: "12345",
         message: "Hi there!",
         id: 1
     },
     {
-        sent: new Date('12/11/2021 16:54:32').getTime(), //2
+        sent: new Date('12/11/2021 16:54:32').getTime(), //1
         senderID: "12345",
         receiverID: "99999",
         message: "Hi",
@@ -137,29 +137,6 @@ const testMessages = [
     },
 ]
 
-const getTimeStamp = (dateString) => {
-    const date = new Date(dateString)
-    const year = date.getFullYear()
-    const month = date.getMonth()
-    const hours = date.getHours()
-    const minutes = date.getMinutes()
-    const currentDate = new Date().getDate()
-
-    let timestamp = ''
-
-    if (year === new Date().getFullYear()) {
-        if (currentDate == date.getDate()) { //timestamp for today in format of hours:minutes (12:34)
-            timestamp = `${hours}:${minutes}`
-        } else {
-            timestamp = `${date.getDate()}/${month + 1}, ${hours}:${minutes}` //timestamp for current year in format of date/month, hours:minutes (12/3, 12:34)
-        }
-    } else { //timestamp for past years in format of date/month/year, hours:minutes (12/3, 12:34)
-        timestamp = `${date.getDate()}/${month + 1}/${year}, ${hours === 0 ? "00" : hours}:${minutes === 0 ? "00" : minutes}`
-    }
-
-    return timestamp
-}
-
 const sort = (data) => {
     const sortedData = sortData(data, "sent", 'asc')
 
@@ -175,8 +152,46 @@ const Chats = () => {
     const [search, setSearch] = useState()
     const [message, setMessage] = useState()
     const [current, setCurrent] = useState()
-
     const [chatMessages, setChatMessages] = useState(testMessages)
+
+    const getTimeStamp = (dateString, allMessages, currentMessageIndex) => {
+        const date = new Date(dateString)
+        const year = date.getFullYear()
+        const month = date.getMonth()
+        const hours = date.getHours()
+        const minutes = date.getMinutes()
+        const currentDate = new Date().getDate()
+    
+        let previousDate;
+
+        if (currentMessageIndex !== 0) {
+            previousDate = new Date(allMessages[currentMessageIndex - 1].sent)
+        }
+    
+        let timestamp = ''
+    
+        if (previousDate &&
+            previousDate.getFullYear() === year && 
+            previousDate.getMonth() === month && 
+            previousDate.getDate() === date.getDate() &&
+            previousDate.getHours() === hours &&
+            previousDate.getMinutes() === minutes) {
+                return timestamp
+
+        } else if (year === new Date().getFullYear()) {
+
+            if (currentDate == date.getDate()) { //timestamp for today in format of hours:minutes (12:34)
+                timestamp = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
+            } else {
+                timestamp = `${date.getDate()}/${month + 1}, ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}` //timestamp for current year in format of date/month, hours:minutes (12/3, 12:34)
+            }
+
+        } else { //timestamp for past years in format of date/month/year, hours:minutes (12/3, 12:34)
+            timestamp = `${date.getDate()}/${month + 1}/${year}, ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
+        }
+    
+        return timestamp
+    }
 
     const handleSearchChange = (e) => {
         setSearch(e.target.value)
@@ -278,14 +293,14 @@ const Chats = () => {
                                     <AccountCircleIcon fontSize="medium"/>
                                     <div className="flex-column summary">
                                         <div className="author">John Doe</div>
-                                        <div className="last-message">{index % 2 === 0 ? "Test" : "This is a super long message that will overflow and show an ellipsis"}</div>
+                                        <div className="last-message">{index % 2 === 0 ? "Test" : "This is a super long message that when overflowing will show an ellipsis"}</div>
                                     </div>
                                 </div>
                             )
                         })}
                     </div>
                 </div>
-                <div className="flex-column right-container justify-between relative">
+                <div className={`flex-column right-container justify-between relative ${!current ? 'left-open' : ''}`}>
                     {current && <>
                         <div>
                             <div className="flex align-center justify-between chat-header">
@@ -299,12 +314,12 @@ const Chats = () => {
                                 </div>
                             </div>
                             <div className="flex-column chat-messages" id="chat-messages">
-                                {chatMessages && chatMessages.length && sort(chatMessages).map((m, index) => {
+                                {chatMessages && chatMessages.length && sort(chatMessages).map((m, index) => {                                    
                                     return (
                                         <div key={m.id} className={`flex-column message-container align-${m.senderID === userID ? 'end' : 'start'}`}>
                                             <div className="flex align-center">
                                                 <div className="message">{m.message}</div>
-                                                <div className="timestamp">{getTimeStamp(m.sent)}</div>
+                                                <div className="timestamp">{getTimeStamp(m.sent, chatMessages, index)}</div>
                                             </div>
                                         </div>
                                     )

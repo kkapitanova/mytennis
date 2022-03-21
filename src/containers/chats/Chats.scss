@@ -4,6 +4,7 @@
     border: 0.5px solid rgba(0, 0, 0, 0.5);
     border-right: none;
     width: 350px;
+    transition: width 1s;
 }
 
 .search-container {
@@ -161,23 +162,28 @@
     }
 
     .left-container {
-        width: 80px !important;
+        width: 100% !important;
+        transition: width 1s;
+        border: 0.5px solid rgba(0, 0, 0, 0.5);
 
-        .chat-summary {
-            justify-content: center;
-
-            .author {
-                display: none;
-            }
-    
-            .last-message {
-                display: none;
-            }
+        &.right-open {
+            width: 0px !important;
+            overflow: hidden;
+            animation: fadeOut 1s;
+            border: none !important;
         }
     }
 
     .right-container {
-        width: calc(100% - 80px) !important;
+        width: 100% !important;
+        transition: width 1s;
+
+        &.left-open {
+            width: 0px !important;
+            overflow: hidden;
+            animation: fadeOut 1s;
+            border: none !important;
+        }
     }
 
 }

@@ -293,9 +293,9 @@ const MyTournaments = () => {
                 </div>
             }
             <div className="flex align-center">
-                <Button sx={{height: 40, margin: '0px 10px 10px 0px !important'}} onClick={() => setUserRole("admin")} disabled={userRole.toLowerCase() === "admin"}>Switch to Admin</Button>
-                <Button sx={{height: 40, margin: '0px 10px 10px 0px !important'}} onClick={() => setUserRole("clubRep")} disabled={userRole.toLowerCase() === "clubrep"}>Switch to Club Rep</Button>
-                <Button sx={{height: 40, margin: '0px 10px 10px 0px !important'}} onClick={() => setUserRole("player")} disabled={userRole.toLowerCase() === "player"}>Switch to Player</Button>
+                <Button sx={{margin: '0px 10px 10px 0px !important'}} onClick={() => setUserRole("admin")} disabled={userRole.toLowerCase() === "admin"}>Switch to Admin</Button>
+                <Button sx={{margin: '0px 10px 10px 0px !important'}} onClick={() => setUserRole("clubRep")} disabled={userRole.toLowerCase() === "clubrep"}>Switch to Club Rep</Button>
+                <Button sx={{margin: '0px 10px 10px 0px !important'}} onClick={() => setUserRole("player")} disabled={userRole.toLowerCase() === "player"}>Switch to Player</Button>
                 <div style={{color: "rgba(0, 0, 0, 0.5)"}}>Testing purposes</div>
             </div>
             <div className='flex wrap justify-between'>
