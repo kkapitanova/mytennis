@@ -130,16 +130,17 @@
     }
 }
 
-.send-button, .info-button {
-
-    &.active {
-        color: $accent !important;
+.send-button.active, .info-button, .clear-button {
+    margin-left: 10px;
 
         &:hover {
             cursor: pointer;
             color: $accent !important;
         }
-    }
+}
+
+.send-button.active {
+    color: $accent;
 }
 
 .custom-input {

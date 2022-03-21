@@ -7,8 +7,32 @@ import TextField from '@mui/material/TextField';
 import Search from '@mui/icons-material/Search';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import InfoIcon from '@mui/icons-material/Info';
+import ClearIcon from '@mui/icons-material/Clear';
 import InputAdornment from '@mui/material/InputAdornment';
 import SendIcon from '@mui/icons-material/Send';
+
+const testCurrent = {
+    playerId: 1,
+    firstName: 'Jane',
+    familyName: 'Doe',
+    gender: 'Female',
+    nationCompetingFor: 'Bulgaria',
+    dateOfBirth: 'November 13, 2000 03:24:00',
+    chatMessages: [
+        {
+            sent: new Date(),
+            senderID: "12345",
+            receiverID: "99999",
+            message: "Hi"
+        },
+        {
+            sent: new Date(),
+            senderID: "12345",
+            receiverID: "99999",
+            message: "Hi there!"
+        }
+    ]
+}
 
 const userID = '12345'
 const test = [1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8]
@@ -150,28 +174,7 @@ const Chats = () => {
 
     const [search, setSearch] = useState()
     const [message, setMessage] = useState()
-    const [current, setCurrent] = useState({
-        playerId: 1,
-        firstName: 'Jane',
-        familyName: 'Doe',
-        gender: 'Female',
-        nationCompetingFor: 'Bulgaria',
-        dateOfBirth: 'November 13, 2000 03:24:00',
-        chatMessages: [
-            {
-                sent: new Date(),
-                senderID: "12345",
-                receiverID: "99999",
-                message: "Hi"
-            },
-            {
-                sent: new Date(),
-                senderID: "12345",
-                receiverID: "99999",
-                message: "Hi there!"
-            }
-        ]
-    })
+    const [current, setCurrent] = useState()
 
     const [chatMessages, setChatMessages] = useState(testMessages)
 
@@ -184,7 +187,7 @@ const Chats = () => {
     }
 
     const handleClick = () => {
-        alert("clicked")
+        setCurrent(testCurrent)
     }
 
     const onKeyDown = (e) => {
@@ -226,8 +229,13 @@ const Chats = () => {
     const scrollToBottom = (id) => {
         const element = document.getElementById(id);
 
-        console.log(element.scrollHeight)
-        element.scroll({ top: element.scrollHeight, behavior: 'smooth' });
+        if (element) {
+            element.scroll({ top: element.scrollHeight, behavior: 'smooth' });
+        }
+    }
+
+    const handleClearChat = () => {
+        setCurrent()
     }
 
     useEffect(() => {
@@ -238,7 +246,7 @@ const Chats = () => {
         <div className="container">
             <h3 className="accent-color" style={{textAlign: 'left'}}>Chats</h3>
             <div className="flex" style={{height: '80vh'}}>
-                <div className="flex-column left-container">
+                <div className={`flex-column left-container ${current ? 'right-open' : ''}`}>
                     <div className="search-container">
                         <TextField
                             id="search-input"
@@ -274,47 +282,55 @@ const Chats = () => {
                     </div>
                 </div>
                 <div className="flex-column right-container justify-between relative">
-                    {current && <div>
-                        <div className="flex align-center justify-between chat-header">
-                            <div className="flex align-center recipient-container" onClick={handleDisplayInfo}>
-                                <AccountCircleIcon fontSize="large" />
-                                <div className='recipient-details'>{current.firstName + " " + current.familyName}</div>
+                    {current && <>
+                        <div>
+                            <div className="flex align-center justify-between chat-header">
+                                <div className="flex align-center recipient-container" onClick={handleDisplayInfo}>
+                                    <AccountCircleIcon fontSize="large" />
+                                    <div className='recipient-details'>{current.firstName + " " + current.familyName}</div>
+                                </div>
+                                <div>
+                                    <InfoIcon className="info-button" onClick={handleDisplayInfo}/>
+                                    <ClearIcon className="clear-button" onClick={handleClearChat}/>
+                                </div>
                             </div>
-                            <InfoIcon className="info-button" onClick={handleDisplayInfo}/>
-                        </div>
-                        <div className="flex-column chat-messages" id="chat-messages">
-                            {chatMessages && chatMessages.length && sort(chatMessages).map((m, index) => {
-                                return (
-                                    <div key={m.id} className={`flex-column message-container align-${m.senderID === userID ? 'end' : 'start'}`}>
-                                        <div className="flex align-center">
-                                            <div className="message">{m.message}</div>
-                                            <div className="timestamp">{getTimeStamp(m.sent)}</div>
+                            <div className="flex-column chat-messages" id="chat-messages">
+                                {chatMessages && chatMessages.length && sort(chatMessages).map((m, index) => {
+                                    return (
+                                        <div key={m.id} className={`flex-column message-container align-${m.senderID === userID ? 'end' : 'start'}`}>
+                                            <div className="flex align-center">
+                                                <div className="message">{m.message}</div>
+                                                <div className="timestamp">{getTimeStamp(m.sent)}</div>
+                                            </div>
                                         </div>
-                                    </div>
-                                )
-                            })}
+                                    )
+                                })}
+                            </div>
                         </div>
+                        <div className="flex align-center">
+                            <TextField
+                                id="message-input"
+                                placeholder="Type in message"
+                                variant="standard"
+                                size="medium"
+                                value={message}
+                                onChange={handleMessageChange}
+                                onKeyDown={onKeyDown}
+                                className="message-input"
+                                InputProps={{
+                                    endAdornment: (
+                                    <InputAdornment position="start">
+                                        <SendIcon className={`send-button ${message ? "active" : ''}`} fontSize="medium" onClick={handleMessageSubmit} />
+                                    </InputAdornment>
+                                    )
+                                }}
+                                sx={{width: '100%', fontSize: '18px !important'}}
+                            />
+                        </div>
+                    </>}
+                    {!current && <div className="flex justify-center align-center full-height">
+                        <div>Open up a chat to see your messages or start a new converstation by searching for a player in the search bar.</div>
                     </div>}
-                    <div className="flex align-center">
-                        <TextField
-                            id="message-input"
-                            placeholder="Type in message"
-                            variant="standard"
-                            size="medium"
-                            value={message}
-                            onChange={handleMessageChange}
-                            onKeyDown={onKeyDown}
-                            className="message-input"
-                            InputProps={{
-                                endAdornment: (
-                                  <InputAdornment position="start">
-                                    <SendIcon className={`send-button ${message ? "active" : ''}`} fontSize="medium" onClick={handleMessageSubmit} />
-                                  </InputAdornment>
-                                )
-                            }}
-                            sx={{width: '100%', fontSize: '18px !important'}}
-                        />
-                    </div>
                 </div>
             </div>
         </div>
