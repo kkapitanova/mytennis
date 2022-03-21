@@ -84,6 +84,7 @@ const TournamentSubmission = () => {
 
         if (valid) {
             setOpen(true)
+            setDisplayError(false)
         } else {
             setDisplayError(true)
         }
@@ -191,7 +192,7 @@ const TournamentSubmission = () => {
     }, [tournamentData])
 
     return (
-        <div style={{padding: "0px 10vw 10vh"}}>
+        <div className='container'>
             <h3 className="accent-color left-align-text">Tournament Submission</h3>
             <form onSubmit={handleSubmit}>
                 <div className='flex-column align-start'>
@@ -202,7 +203,6 @@ const TournamentSubmission = () => {
                             name="tournamentName"
                             label="Tournament Name"
                             variant="outlined"
-                            color="secondary"
                             value={tournamentData.tournamentName}
                             onChange={handleChange}
                             style={{minWidth: 200, maxWidth: 410, marginBottom: 10, width: "80vw"}}
@@ -212,7 +212,6 @@ const TournamentSubmission = () => {
                             name="description"
                             label="Tournament Description"
                             variant="outlined"
-                            color="secondary"
                             multiline
                             minRows={3}
                             maxRows={4}
@@ -226,7 +225,6 @@ const TournamentSubmission = () => {
                                 name="tournamentDirector"
                                 label="Tournament Director"
                                 variant="outlined"
-                                color="secondary"
                                 value={tournamentData.tournamentDirector}
                                 onChange={handleChange}
                                 style={{minWidth: 200, maxWidth: 410, marginBottom: 10, marginRight: 10, width: "80vw"}}
@@ -250,7 +248,6 @@ const TournamentSubmission = () => {
                                 name="clubName"
                                 label="Club Name"
                                 variant="outlined" 
-                                color="secondary"
                                 value={tournamentData.clubName}
                                 onChange={handleChange}
                                 style={{minWidth: 200, maxWidth: 410, marginBottom: 10, width: "80vw"}}
@@ -262,7 +259,6 @@ const TournamentSubmission = () => {
                                 label="City" 
                                 variant="outlined"
                                 name="city"
-                                color="secondary"
                                 value={tournamentData.city}
                                 onChange={handleChange}
                                 style={{marginRight: 10, marginBottom: 10, minWidth: 200}}
@@ -273,7 +269,6 @@ const TournamentSubmission = () => {
                                 label="Country"
                                 variant="outlined" 
                                 name="country"
-                                color="secondary"
                                 value={tournamentData.country}
                                 onChange={handleChange}
                                 style={{marginRight: 10, marginBottom: 10, minWidth: 200}}
@@ -283,7 +278,6 @@ const TournamentSubmission = () => {
                                 label="Street"
                                 variant="outlined" 
                                 name="street"
-                                color="secondary"
                                 value={tournamentData.street}
                                 onChange={handleChange}
                                 style={{marginRight: 10, marginBottom: 10, minWidth: 200}}
@@ -293,7 +287,6 @@ const TournamentSubmission = () => {
                                 label="Zip Code"
                                 variant="outlined" 
                                 name="zipCode"
-                                color="secondary"
                                 value={tournamentData.zipCode}
                                 onChange={handleChange}
                                 style={{marginRight: 10, marginBottom: 10, minWidth: 200}}
@@ -307,7 +300,6 @@ const TournamentSubmission = () => {
                                 <div className="flex wrap">
                                     <DesktopDatePicker
                                         label="Start Date"
-                                        color="secondary"
                                         minDate={new Date ()}
                                         value={tournamentData.startDate || null}
                                         onChange={handleStartDateChange}
@@ -316,7 +308,6 @@ const TournamentSubmission = () => {
                                     />
                                     <DesktopDatePicker
                                         label="End Date"
-                                        color="secondary"
                                         minDate={tournamentData.startDate || new Date ()}
                                         value={tournamentData.endDate || null}
                                         onChange={handleEndDateChange}
@@ -327,40 +318,40 @@ const TournamentSubmission = () => {
                         </LocalizationProvider>
                     </div>
                     <div className="flex wrap">
-                        <FormControl color="secondary" sx={{margin: "0 50px 20px 0"}}>
+                        <FormControl   sx={{margin: "0 50px 20px 0"}}>
                             <FormLabel id="demo-radio-buttons-group-label" sx={{textAlign: "left"}}>Gender Group*</FormLabel>
                             <RadioGroup
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 defaultValue="female"
                                 name="radio-buttons-group"
                             >
-                                <FormControlLabel value="women" control={<Radio color="secondary" checked={tournamentData.genderGroup === "women" ? true : false} onChange={handleGenderGroupChange}/>} label="Women" />
-                                <FormControlLabel value="men" control={<Radio color="secondary" checked={tournamentData.genderGroup === "men"? true : false} onChange={handleGenderGroupChange}/>} label="Men" />
-                                <FormControlLabel value="mixed" control={<Radio color="secondary" checked={tournamentData.genderGroup === "mixed" ? true : false} disabled={tournamentData.drawType === "singles" ? true : false} onChange={handleGenderGroupChange}/>} label="Mixed" />
+                                <FormControlLabel value="women" control={<Radio   checked={tournamentData.genderGroup === "women" ? true : false} onChange={handleGenderGroupChange}/>} label="Women" />
+                                <FormControlLabel value="men" control={<Radio   checked={tournamentData.genderGroup === "men"? true : false} onChange={handleGenderGroupChange}/>} label="Men" />
+                                <FormControlLabel value="mixed" control={<Radio   checked={tournamentData.genderGroup === "mixed" ? true : false} disabled={tournamentData.drawType === "singles" ? true : false} onChange={handleGenderGroupChange}/>} label="Mixed" />
                             </RadioGroup>
                         </FormControl>
-                        <FormControl color="secondary" sx={{margin: "0 50px 20px 0"}}>
+                        <FormControl   sx={{margin: "0 50px 20px 0"}}>
                             <FormLabel id="demo-radio-buttons-group-label" sx={{textAlign: "left"}}>Draw Types*</FormLabel>
                             <RadioGroup
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 defaultValue="female"
                                 name="radio-buttons-group"
                             >
-                                <FormControlLabel value="singles" control={<Radio color="secondary" checked={tournamentData.drawType === "singles" ? true : false} disabled={tournamentData.genderGroup === "mixed"? true : false} onChange={handleDrawChange}/>} label="Singles Only" />
-                                <FormControlLabel value="doubles" control={<Radio color="secondary" checked={tournamentData.drawType === "doubles" ? true : false} onChange={handleDrawChange}/>} label="Doubles Only" />
-                                <FormControlLabel value="singlesAndDoubles" control={<Radio color="secondary" checked={tournamentData.drawType === "singlesAndDoubles" ? true : false} onChange={handleDrawChange}/>} label="Singles & Doubles" />
+                                <FormControlLabel value="singles" control={<Radio   checked={tournamentData.drawType === "singles" ? true : false} disabled={tournamentData.genderGroup === "mixed"? true : false} onChange={handleDrawChange}/>} label="Singles Only" />
+                                <FormControlLabel value="doubles" control={<Radio   checked={tournamentData.drawType === "doubles" ? true : false} onChange={handleDrawChange}/>} label="Doubles Only" />
+                                <FormControlLabel value="singlesAndDoubles" control={<Radio   checked={tournamentData.drawType === "singlesAndDoubles" ? true : false} onChange={handleDrawChange}/>} label="Singles & Doubles" />
                             </RadioGroup>
                         </FormControl>
-                        <FormControl color="secondary" sx={{margin: "0 50px 20px 0"}}>
+                        <FormControl   sx={{margin: "0 50px 20px 0"}}>
                             <FormLabel id="demo-radio-buttons-group-label" sx={{textAlign: "left"}}>Age Groups*</FormLabel>
                             <RadioGroup
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 defaultValue="female"
                                 name="radio-buttons-group"
                             >
-                                <FormControlLabel value="U40" control={<Checkbox color="secondary" checked={tournamentData.ageGroups.includes("U40") ? true : false} onChange={handleAgeGroupChange}/>} label="U40" />
-                                <FormControlLabel value="U60" control={<Checkbox color="secondary" checked={tournamentData.ageGroups.includes("U60") ? true : false} onChange={handleAgeGroupChange}/>} label="U60" />
-                                <FormControlLabel value="plus60" control={<Checkbox color="secondary" checked={tournamentData.ageGroups.includes("plus60") ? true : false} onChange={handleAgeGroupChange}/>} label="60+" />
+                                <FormControlLabel value="U40" control={<Checkbox   checked={tournamentData.ageGroups.includes("U40") ? true : false} onChange={handleAgeGroupChange}/>} label="U40" />
+                                <FormControlLabel value="U60" control={<Checkbox   checked={tournamentData.ageGroups.includes("U60") ? true : false} onChange={handleAgeGroupChange}/>} label="U60" />
+                                <FormControlLabel value="plus60" control={<Checkbox   checked={tournamentData.ageGroups.includes("plus60") ? true : false} onChange={handleAgeGroupChange}/>} label="60+" />
                             </RadioGroup>
                         </FormControl>
                     </div>
@@ -372,7 +363,6 @@ const TournamentSubmission = () => {
                             inputProps={{min: 0}}
                             label="Amount (€)"
                             variant="outlined" 
-                            color="secondary"
                             value={tournamentData.entryTax}
                             onChange={handleChange}
                             sx={{width: 200, marginBottom: '10px', marginRight: '10px'}}
@@ -386,7 +376,6 @@ const TournamentSubmission = () => {
                             inputProps={{min: 0}}
                             label="Amount (€)"
                             variant="outlined" 
-                            color="secondary"
                             value={tournamentData.prizeMoney}
                             onChange={handleChange}
                             sx={{width: 200, marginBottom: '10px', marginRight: '10px'}}
@@ -394,15 +383,15 @@ const TournamentSubmission = () => {
                     </div>
                     <div className='flex-column wrap align-start'>
                         <div style={{marginBottom: 10}}>Medical Team on Site*</div>
-                        <FormControl color="secondary" sx={{margin: "0 50px 20px 0"}}>
+                        <FormControl   sx={{margin: "0 50px 20px 0"}}>
                             {/* <FormLabel id="demo-radio-buttons-group-label" sx={{textAlign: "left"}}>Draw Types*</FormLabel> */}
                             <RadioGroup
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 defaultValue="female"
                                 name="radio-buttons-group"
                             >
-                                <FormControlLabel value="yes" control={<Radio color="secondary" checked={tournamentData.medicalTeamOnSite ? true : false} onChange={() => handleMedicalTeamChange(true)}/>} label="Yes" />
-                                <FormControlLabel value="no" control={<Radio color="secondary" checked={tournamentData.medicalTeamOnSite === false ? true : false} onChange={() => handleMedicalTeamChange(false)}/>} label="No" />
+                                <FormControlLabel value="yes" control={<Radio   checked={tournamentData.medicalTeamOnSite ? true : false} onChange={() => handleMedicalTeamChange(true)}/>} label="Yes" />
+                                <FormControlLabel value="no" control={<Radio   checked={tournamentData.medicalTeamOnSite === false ? true : false} onChange={() => handleMedicalTeamChange(false)}/>} label="No" />
                             </RadioGroup>
                         </FormControl>
                     </div>
@@ -411,8 +400,9 @@ const TournamentSubmission = () => {
                         <Button variant="contained" sx={{height: 40, margin: '0px 10px 10px 0px !important'}} type="submit">Submit</Button> 
                         {/* //TODO: disabled  */}
                         <Button variant="contained" sx={{height: 40, margin: '0px 10px 10px 0px !important'}} onClick={() => setTournamentData({"tournamentName":"Test Tournament Name", "clubName": "Test Club Name", "description":"This is the tournament description","city":"Sofia","country":"Bulgaria","street":"ul. 671-va 3A","zipCode":"1632","startDate":"2023-02-15T12:04:46.000Z","endDate":"2023-02-18T12:04:47.000Z","tournamentDirector":"Kristina Kapitanova","tournamentDirectorPhone":"+1 (233) 23","genderGroup":"mixed","ageGroups":["U60"],"drawType":"singlesAndDoubles","entryTax":"75","prizeMoney":"20000","medicalTeamOnSite":false})}>FILL WITH TEST DATA</Button>
-                        {checkIfInfoIsFilledIn() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} color='secondary' sx={{height: 40, margin: '0px 10px 0px 0px !important'}} onClick={clearFields}>Clear Fields</Button>}
+                        {checkIfInfoIsFilledIn() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} sx={{height: 40, margin: '0px 10px 0px 0px !important'}} onClick={clearFields}>Clear Fields</Button>}
                     </div>
+                    {displayError && <div>This is the error.</div>}
                     <Modal
                         aria-labelledby="transition-modal-title"
                         aria-describedby="transition-modal-description"

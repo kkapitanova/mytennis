@@ -1,0 +1,134 @@
+@import '../../styles/variables.scss';
+
+.left-container {
+    border: 0.5px solid rgba(0, 0, 0, 0.5);
+    border-right: none;
+    width: 350px;
+}
+
+.search-container {
+    width: 350px;
+    background-color: white;
+    z-index: 1;
+}
+
+.chats-container {
+    overflow: scroll;
+}
+
+.right-container {
+    border: 0.5px solid rgba(0, 0, 0, 0.5);
+    width: calc(100% - 350px);
+    z-index: 2;
+
+    .chat-header {
+        border-bottom: 0.5px solid rgba(0, 0, 0, 0.5);
+        padding: 20px;
+    }
+
+    .chat-messages {
+        padding: 20px;
+        overflow: scroll;
+    }
+
+    .recipient-container {
+        &:hover {
+            color: $accent;
+            cursor: pointer;
+        }
+
+        .recipient-details {
+            padding-left: 10px;
+        }
+    }
+
+    .message-container {
+        width: 100%;
+        border-radius: 20px;
+        margin-bottom: 10px;
+
+        &.align-end {
+            >div {
+                flex-direction: row-reverse;
+
+                .message {
+                    background-color: rgba(235, 255, 235, 1.5);
+                }
+            }
+        }
+
+        &.align-start {
+            .message {
+                background-color: rgba(116, 116, 116, 0.116);
+            }
+        }
+
+        .message {
+            width: fit-content;
+            padding: 5px 20px;
+            border-radius: 20px;
+        }
+
+            
+        .timestamp {
+            color: rgba(0, 0, 0, 0.363);
+            margin: 0px 10px;
+        }
+
+    }
+}
+
+.chat-summary {
+    padding: 20px 2.5%;
+    text-align: left;
+
+    &:hover {
+        background-color: rgba(235, 255, 235, 1.5);
+        cursor: pointer;
+    }
+
+    .summary {
+        overflow: hidden;
+        margin-left: 10px;
+
+        .author {
+            font-size: 18px;
+        }
+    
+        .last-message {
+            color: rgba(0, 0, 0, 0.5);
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+}
+
+.MuiInput-root:after {
+    border-bottom-color: $accent !important;
+}
+
+.messages-search, .message-input {
+   .MuiInput-input {
+       font-size: 18px !important;
+       height: 40px !important;
+   }
+}
+
+.message-input {
+    .MuiInput-input {
+        padding-left: 10px;
+    }
+}
+
+.send-button, .info-button {
+    &:hover {
+        cursor: pointer;
+        color: $accent !important;
+    }
+}
+
+.custom-input {
+    width: calc(100% - 40px);
+}

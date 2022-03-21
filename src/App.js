@@ -24,7 +24,9 @@ import {
   Rankings,
   TournamentCalendar,
   Footer,
-  MyTournaments
+  MyTournaments,
+  About,
+  Chats
 } from './containers'
 
 //translation
@@ -64,13 +66,13 @@ const App = () => {
   const unauthenticatedNavbarRoutes = [
     {
       path: '/',
-      name: t("Navbar.Home"),
+      name: "Home",
       exact: true,
       Component: Home 
     },
     {
       path: '/tournament-calendar',
-      name: t("Navbar.TournamentCalendar"),
+      name: "Tournament Calendar",
       Component: TournamentCalendar,
       exact: false,
       dropdown: {
@@ -82,13 +84,13 @@ const App = () => {
     },
     {
       path: '/players',
-      name: t("Navbar.Players"),
+      name: "Players",
       exact: true, 
       Component: Players 
     },
     {
       path: '/rankings', 
-      name: t("Navbar.Rankings"),
+      name: "Rankings",
       Component: Rankings,
       exact: false,
       dropdown: {
@@ -99,7 +101,11 @@ const App = () => {
         </div>
       }
     },
-    // { path: '/about', name: t("Navbar.About"), Component: About }, //this is optional
+    { 
+      path: '/about', 
+      name: "About", 
+      Component: About 
+    }, //this is optional
   ]
 
   const authenticatedRoutes = [
@@ -114,6 +120,12 @@ const App = () => {
       name: "My Tournaments",
       exact: true, 
       Component: MyTournaments 
+    },
+    {
+      path: '/chats',
+      name: "Chats",
+      exact: true, 
+      Component: Chats 
     },
   ]
 
@@ -139,7 +151,7 @@ const App = () => {
   return (
     <div className="App">
       <Router>
-          <NavBar routes={unauthenticatedNavbarRoutes}/>
+          <NavBar unauthRoutes={unauthenticatedNavbarRoutes} authRoutes={authenticatedRoutes}/>
           {/* <div>TEST DATA FROM FIREBASE: {JSON.stringify(value)}</div>
           <div>Test translation: {t("Test")}</div> */}
           <Switch>

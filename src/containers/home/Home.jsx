@@ -50,7 +50,6 @@ const Home = () => {
         const playerIndex =  mockPlayerData.findIndex(el => el.playerId === playerData.id)
         const current = mockPlayerData[playerIndex]
 
-        console.log("current", current)
         setCurrentPlayer(current)
         setOpen(true)
     }
@@ -103,7 +102,7 @@ const Home = () => {
     return (
         <div>
             <img alt="" src={sampleBackground} width="100%" height="400px"/>
-            <div style={{margin: 50}}>
+            <div className="container">
                 <div className="flex justify-between align-center">
                     <h3 className="accent-color" style={{textAlign: "left"}}>Top Players Currently</h3>
                     <div className='flex wrap justify-between align-center'>
@@ -112,7 +111,6 @@ const Home = () => {
                             name="ageGroup"
                             select
                             label="Age Group"
-                            color="secondary"
                             value={search.ageGroup}
                             onChange={(e) => handleSearchChange(e)}
                             size="small"
@@ -129,7 +127,6 @@ const Home = () => {
                             name="genderGroup"
                             select
                             label="Gender Group"
-                            color="secondary"
                             value={search.genderGroup}
                             onChange={(e) => handleSearchChange(e)}
                             size="small"
