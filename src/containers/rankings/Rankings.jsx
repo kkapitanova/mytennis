@@ -156,8 +156,8 @@ const Rankings = () => {
     }, [location])
 
     return (
-        <div style={{padding: '0 50px 50px 50px'}}>
-            <h3 className="accent-color" style={{textAlign: 'left'}}>Search Players</h3>
+        <div className='container'>
+            <h3 className="accent-color" style={{textAlign: 'left'}}>Search through Rankings</h3>
             <div className='flex wrap justify-between'>
                 <div className="flex wrap" style={{minWidth: '250px', maxWidth: "60%"}}>
                     <TextField
@@ -165,7 +165,6 @@ const Rankings = () => {
                         id="outlined-basic"
                         label="Search by name"
                         variant="outlined"
-                        color="secondary"
                         size="small"
                         value={search.name}
                         onChange={handleSearchChange}
@@ -176,7 +175,6 @@ const Rankings = () => {
                         id="outlined-basic"
                         label="Search by nation"
                         variant="outlined"
-                        color="secondary"
                         size="small"
                         value={search.nationCompetingFor}
                         onChange={handleSearchChange}
@@ -187,7 +185,6 @@ const Rankings = () => {
                         name="genderGroup"
                         select
                         label="Gender Group"
-                        color="secondary"
                         value={search.genderGroup}
                         onChange={(e) => handleSearchChange(e)}
                         size="small"
@@ -204,7 +201,6 @@ const Rankings = () => {
                         name="ageGroup"
                         select
                         label="Age Group"
-                        color="secondary"
                         value={search.ageGroup}
                         onChange={handleSearchChange}
                         size="small"
@@ -218,7 +214,7 @@ const Rankings = () => {
                     </TextField>
                 </div>
                 <div clasName="flex align-start">
-                    {filterApplied() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} color='secondary' sx={{height: 40, margin: '0px !important'}} onClick={clearFilters}>Clear Search</Button>}
+                    {filterApplied() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} sx={{height: 40, margin: '0px !important'}} onClick={clearFilters}>Clear Search</Button>}
                 </div>
             </div>
             {data && data.length > 0 && <Table tableData={data} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>}

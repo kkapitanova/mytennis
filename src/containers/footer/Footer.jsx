@@ -85,7 +85,7 @@ const Footer = () => {
                             <Link to="/my-tournaments">My Tournaments*</Link>
                         </div>
                     </div>
-                <div className="copyright-wrapper">Copyright © 2021 My Tennis Platform. All Rights Reserved.
+                <div className="copyright-wrapper">Copyright © 2022 My Tennis Platform. All Rights Reserved.
                  {/* {t("Rights.1")} */}
                  </div>
             </footer>

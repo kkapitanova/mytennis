@@ -272,7 +272,7 @@ const MyTournaments = () => {
     }, [location])
 
     return (
-        <div style={{padding: '0 50px 50px 50px'}}>
+        <div className="container">
             <h3 className="accent-color" style={{textAlign: 'left'}}>Search My Tournaments ({userRole} View)</h3>
             {userRole.toLowerCase() === 'admin' && 
                 <div className="helper-text">
@@ -305,7 +305,6 @@ const MyTournaments = () => {
                         id="outlined-basic"
                         label="Search by location"
                         variant="outlined"
-                        color="secondary"
                         size="small"
                         value={search.location}
                         onChange={handleSearchChange}
@@ -316,7 +315,6 @@ const MyTournaments = () => {
                         id="outlined-basic"
                         label="Search by name"
                         variant="outlined"
-                        color="secondary"
                         size="small"
                         value={search.name}
                         onChange={handleSearchChange}
@@ -327,7 +325,6 @@ const MyTournaments = () => {
                         name="month"
                         select
                         label="Month"
-                        color="secondary"
                         value={search.month}
                         onChange={(e) => handleSearchChange(e)}
                         size="small"
@@ -344,7 +341,6 @@ const MyTournaments = () => {
                         name="year"
                         select
                         label="Year"
-                        color="secondary"
                         value={search.year}
                         onChange={(e) => handleSearchChange(e)}
                         size="small"
@@ -361,7 +357,6 @@ const MyTournaments = () => {
                         name="genderGroup"
                         select
                         label="Gender Group"
-                        color="secondary"
                         value={search.genderGroup}
                         onChange={(e) => handleSearchChange(e)}
                         size="small"
@@ -378,7 +373,6 @@ const MyTournaments = () => {
                         name="ageGroup"
                         select
                         label="Age Group"
-                        color="secondary"
                         value={search.ageGroup}
                         onChange={handleSearchChange}
                         size="small"
@@ -392,7 +386,7 @@ const MyTournaments = () => {
                     </TextField>
                 </div>
                 <div className='flex align-start'>
-                    {filterApplied() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} color='secondary' sx={{height: 40, minWidth: 180, margin: '0px !important'}} onClick={clearFilters}>Clear Search</Button>}
+                    {filterApplied() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} sx={{height: 40, minWidth: 180, margin: '0px !important'}} onClick={clearFilters}>Clear Search</Button>}
                 </div>
             </div>
             {data && data.length > 0 && <Table tableData={data} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>}

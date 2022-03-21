@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Table } from '../../components';
 import { sortData, getAge } from '../../utils/helpers'
-import TextField from '@mui/material/TextField';
-import MenuItem from '@mui/material/MenuItem';
 import { useHistory, useLocation } from 'react-router';
 import { ageGroups, genderGroups, months, years } from '../../data/constants';
 import { mockTournamentData } from '../../data/dummyData';
 
 // material
+import TextField from '@mui/material/TextField';
+import MenuItem from '@mui/material/MenuItem';
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
@@ -49,8 +49,17 @@ const TournamentCalendar = () => {
     const [dataByCategories, setDataByCategories] = useState([])
     const [currentTournament, setCurrentTournament] = useState()
     const [open, setOpen] = useState(false)
+    const [withdrawalButtonText, setWithdrawalButtonText] = useState("Withdraw")
+    const [entryButtonText, setEntryButtonText] = useState("Enter")
+    const [statusColor, setStatusColor] = useState()
 
-    const handleClose = () => setOpen(false);
+    const handleClose = () => {
+        setOpen(false)
+        setTimeout(() => {
+            setWithdrawalButtonText("Withdraw")
+            setEntryButtonText("Enter")
+        }, 300)
+    }
 
     const getData = () => {
         let tournamentData = []
@@ -94,8 +103,9 @@ const TournamentCalendar = () => {
     const handleRowClick = (tournamentData) => {
         const tournamentIndex =  mockTournamentData.findIndex(el => el.tournamentID === tournamentData.id)
         const current = mockTournamentData[tournamentIndex]
+        const color = current?.status.toLowerCase() === 'waiting for approval' || current?.status.toLowerCase() === 'postponed' ? 'orange' : current?.status.toLowerCase() === 'declined' ? 'red' : 'green'
 
-        console.log(current)
+        setStatusColor(color)
         setCurrentTournament(current)
         setOpen(true)
     }
@@ -145,6 +155,22 @@ const TournamentCalendar = () => {
         return bool
     }
 
+    const confirmWithdrawal = () => {
+        if (withdrawalButtonText === 'Withdraw') {
+            setWithdrawalButtonText("Confirm Withdrawal")
+        } else {
+            console.log("You have withdrawn from the tournament.")
+        }
+    }
+
+    const confirmSignUp = () => {
+        if (entryButtonText === 'Enter') {
+            setEntryButtonText("Confirm Entry")
+        } else {
+            console.log("You have entered the tournament.")
+        }
+    }
+
     useEffect(() => {
         setData(getData())
     }, [search.ageGroup, search.genderGroup, search.draws])
@@ -164,7 +190,7 @@ const TournamentCalendar = () => {
     }, [location])
 
     return (
-        <div style={{padding: '0 50px 50px 50px'}}>
+        <div className='container'>
             <h3 className="accent-color" style={{textAlign: 'left'}}>Search Tournaments</h3>
             <div className='flex wrap justify-between'>
                 <div className="flex wrap" style={{minWidth: '250px', maxWidth: "60%"}}>
@@ -173,7 +199,6 @@ const TournamentCalendar = () => {
                         id="outlined-basic"
                         label="Search by location"
                         variant="outlined"
-                        color="secondary"
                         size="small"
                         value={search.location}
                         onChange={handleSearchChange}
@@ -184,7 +209,6 @@ const TournamentCalendar = () => {
                         id="outlined-basic"
                         label="Search by name"
                         variant="outlined"
-                        color="secondary"
                         size="small"
                         value={search.name}
                         onChange={handleSearchChange}
@@ -195,7 +219,6 @@ const TournamentCalendar = () => {
                         name="month"
                         select
                         label="Month"
-                        color="secondary"
                         value={search.month}
                         onChange={(e) => handleSearchChange(e)}
                         size="small"
@@ -212,7 +235,6 @@ const TournamentCalendar = () => {
                         name="year"
                         select
                         label="Year"
-                        color="secondary"
                         value={search.year}
                         onChange={(e) => handleSearchChange(e)}
                         size="small"
@@ -229,7 +251,6 @@ const TournamentCalendar = () => {
                         name="genderGroup"
                         select
                         label="Gender Group"
-                        color="secondary"
                         value={search.genderGroup}
                         onChange={(e) => handleSearchChange(e)}
                         size="small"
@@ -246,7 +267,6 @@ const TournamentCalendar = () => {
                         name="ageGroup"
                         select
                         label="Age Group"
-                        color="secondary"
                         value={search.ageGroup}
                         onChange={handleSearchChange}
                         size="small"
@@ -260,7 +280,7 @@ const TournamentCalendar = () => {
                     </TextField>
                 </div>
                 <div className='flex align-start'>
-                    {filterApplied() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} color='secondary' sx={{height: 40, minWidth: 180, margin: '0px !important'}} onClick={clearFilters}>Clear Search</Button>}
+                    {filterApplied() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} sx={{height: 40, minWidth: 180, margin: '0px !important'}} onClick={clearFilters}>Clear Search</Button>}
                 </div>
             </div>
             {data && data.length > 0 && <Table tableData={data} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>}
@@ -278,19 +298,43 @@ const TournamentCalendar = () => {
             >
                 <Fade in={open}>
                 <Box sx={style}>
-                    <div className="flex-column">
-                        <h2 style={{fontWeight: '500'}}>{currentTournament?.name}</h2>
-                        <div style={{marginBottom: 5}}>
-                            {currentTournament?.dates && <div>{getDateString(new Date (currentTournament?.dates?.startDate).getTime())} - {getDateString(new Date (currentTournament?.dates?.endDate).getTime())}</div>}
+                    <div className="flex-column justify-center align-center">
+                        <div className='flex-column' style={{marginBottom: 30}}>
+                            <div className="flex justify-between align-center">
+                                <h2 style={{fontWeight: '500'}}>{currentTournament?.name}</h2>
+                                <div className={`status-indicator ${statusColor}`}>{currentTournament?.status.toUpperCase()}</div> 
+                            </div>
+                            <div style={{marginBottom: 5}}>
+                                {currentTournament?.dates && <div>{getDateString(new Date (currentTournament?.dates?.startDate).getTime())} - {getDateString(new Date (currentTournament?.dates?.endDate).getTime())}</div>}
+                            </div>
+                            <div style={{marginBottom: 5}}>{currentTournament?.site}</div>
+                            <div style={{marginBottom: 5}}>{currentTournament?.location?.city}, {currentTournament?.location?.country}</div>
+                            <h3 style={{marginTop: 40}}>Terms of Play</h3>
+                            <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
+                            <h3 style={{marginTop: 40}}>Section Title</h3>
+                            <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
+                            <h3 style={{marginTop: 40}}>Section Title</h3>
+                            <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
                         </div>
-                        <div style={{marginBottom: 5}}>{currentTournament?.site}</div>
-                        <div style={{marginBottom: 5}}>{currentTournament?.location?.city}, {currentTournament?.location?.country}</div>
-                        <h3 style={{fontWeight: '600', marginTop: 40}}>Terms of Play</h3>
-                        <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
-                        <h3 style={{fontWeight: '600', marginTop: 40}}>Section Title</h3>
-                        <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
-                        <h3 style={{fontWeight: '600', marginTop: 40}}>Section Title</h3>
-                        <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
+                        <div className="flex">
+                            <Button 
+                                variant={entryButtonText === 'Enter' ? 'outlined' : 'contained'} 
+                                sx={{height: 40, margin: '0px 5px 0px 0px !important'}} 
+                                onClick={confirmSignUp}
+                            >
+                                {entryButtonText}
+                            </Button>
+                            <Button 
+                                className="red-button" 
+                                variant={withdrawalButtonText === 'Withdraw' ? 'outlined' : 'contained'} 
+                                sx={{height: 40, margin: '0px 0px 5px 0px !important'}} 
+                                onClick={confirmWithdrawal}
+                            >
+                                {withdrawalButtonText}
+                            </Button>
+                        </div>
+                        {entryButtonText === "Confirm Entry" && <div>Please keep in mind that you can enter a tournament only once. If you decide to withdraw, you will not be able to enter this tournament again.</div>}
+                        {withdrawalButtonText === "Confirm Withdrawal" && <div>Please keep in mind that after withdrawing, you will not be able to sign up for the tournament again.</div>}
                     </div>
                 </Box>
                 </Fade>

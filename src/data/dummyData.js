@@ -785,7 +785,7 @@ export const mockTournamentData = [
             startDate: 'November 10, 2022 03:24:00',
             endDate: 'November 19, 2022 03:24:00'
         },
-        status: 'Cancelled',
+        status: 'Declined',
         surface: 'clay',
         leadReferee : {
             "name" : "Kristina Kapitanova"
@@ -843,7 +843,7 @@ export const mockTournamentData = [
             startDate: 'November 13, 2022 03:24:00',
             endDate: 'November 19, 2022 03:24:00'
         },
-        status: 'Cancelled',
+        status: 'Declined',
         surface: 'clay',
         leadReferee : {
             "name" : "Kristina Kapitanova"

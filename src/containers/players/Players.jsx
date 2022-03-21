@@ -169,7 +169,7 @@ const Players = () => {
     }, [location])
 
     return (
-        <div style={{padding: '0 50px 50px 50px'}}>
+        <div className="container">
             <h3 className="accent-color" style={{textAlign: 'left'}}>Search Players</h3>
             <div className='flex wrap justify-between'>
                 <div className="flex wrap">
@@ -178,7 +178,6 @@ const Players = () => {
                         id="outlined-basic"
                         label="Search by name"
                         variant="outlined"
-                        color="secondary"
                         size="small"
                         value={search.name}
                         onChange={handleSearchChange}
@@ -189,7 +188,6 @@ const Players = () => {
                         id="outlined-basic"
                         label="Search by nation"
                         variant="outlined"
-                        color="secondary"
                         size="small"
                         value={search.nationCompetingFor}
                         onChange={handleSearchChange}
@@ -200,7 +198,6 @@ const Players = () => {
                         name="genderGroup"
                         select
                         label="Gender Group"
-                        color="secondary"
                         value={search.genderGroup}
                         onChange={(e) => handleSearchChange(e)}
                         size="small"
@@ -217,7 +214,6 @@ const Players = () => {
                         name="ageGroup"
                         select
                         label="Age Group"
-                        color="secondary"
                         value={search.ageGroup}
                         onChange={handleSearchChange}
                         size="small"
@@ -231,7 +227,7 @@ const Players = () => {
                     </TextField>
                 </div>
                 <Button variant="contained" height={70} startIcon={<SearchIcon />} sx={{height: 40, margin: '0px !important'}} onClick={findPlayer}>Search for Player</Button>
-                {filterApplied() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} color='secondary' sx={{height: 40, margin: '0px !important'}} onClick={clearFilters}>Clear Filters</Button>}
+                {filterApplied() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} sx={{height: 40, margin: '0px !important'}} onClick={clearFilters}>Clear Filters</Button>}
             </div>
             {data && data.length > 0 && <Table tableData={data} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>}
             {(!data || !data.length > 0) && <div>No Results Found</div>}

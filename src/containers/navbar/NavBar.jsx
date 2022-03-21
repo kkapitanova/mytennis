@@ -15,8 +15,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { useTranslation } from 'react-i18next';
 
 //styles
-// import './NavBar.scss'
-import './topnav.scss'
+import './NavBar.scss'
+// import './topnav.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
 
@@ -70,7 +70,7 @@ const LanguageDropDownMenu = ({ mobile }) => {
     )
 }
     
-const NavBar = ({ routes }) => {
+const NavBar = ({ unauthRoutes, authRoutes }) => {
 
     const [ t, i18n ] = useTranslation();
 
@@ -98,12 +98,12 @@ const NavBar = ({ routes }) => {
     return (
         <>
             <div className="navbar" id="navbar">
-                    <div className='logo-wrapper flex align-center'>
-                        <img src={logo} height={40}></img>
-                        <Link to={"/"} className="link-wrapper">MYTennis</Link>
-                    </div>                
-                    <div className="flex links-wrapper">
-                    {routes && routes.map((route, index) => (
+                <div className='logo-wrapper flex align-center'>
+                    <img src={logo} height={40}></img>
+                    <Link to={"/"} className="link-wrapper">MYTennis</Link>
+                </div>                
+                <div className="flex links-wrapper">
+                    {unauthRoutes && unauthRoutes.map((route, index) => (
                         <div className="flex-column" key={index}>
                             <NavLink
                                 key={route.path}
@@ -120,7 +120,7 @@ const NavBar = ({ routes }) => {
                             </NavLink>
                         </div>
                     ))}
-                    <LanguageDropDownMenu mobile={true}/>
+                    {/* <LanguageDropDownMenu mobile={true}/> */}
                     <div className="login-container-mobile flex">
                         <div onClick={() => console.log("LOGIN")} className='login-type-wrapper'>Login</div>&nbsp;|&nbsp;<div className='login-type-wrapper'>Register</div>
                     </div>
@@ -129,11 +129,11 @@ const NavBar = ({ routes }) => {
                     <div className="login-container flex">
                         <div onClick={() => console.log("LOGIN")} className='login-type-wrapper'>Login</div>&nbsp;|&nbsp;<div className='login-type-wrapper'>Register</div>
                     </div>
-                    <LanguageDropDownMenu />
+                    {/* <LanguageDropDownMenu /> */}
                 </div>
-                <a href="javascript:void(0);" className="icon" onClick={expandMenu}>
+                <div className="menu icon" onClick={expandMenu}>
                     <FontAwesomeIcon icon={expanded ? faTimes : faBars}/>
-                </a>
+                </div>
             </div>
         </>
     )

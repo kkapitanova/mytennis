@@ -177,11 +177,13 @@ h1 {
 h2 {
   font-size: $h2FontSize;
   text-transform: uppercase;
+  font-weight: 500;
 }
 
 h3 {
   font-size: 18px;
   text-transform: uppercase;
+  font-weight: 600;
 }
 
 .is-active {
@@ -201,6 +203,15 @@ h3 {
   }
 }
 
+.text {
+  &-left {
+    text-align: left;
+  }
+  &-right {
+    text-align: right;
+  }
+}
+
 .wrap {
   flex-wrap: wrap;
 }
@@ -209,8 +220,13 @@ h3 {
   &-center {
     align-items: center;
   }
+  
   &-start {
     align-items: flex-start;
+  }
+
+  &-end {
+    align-items: flex-end;
   }
 }
 
@@ -232,6 +248,10 @@ textarea {
 
 .justify {
 
+  &-start {
+    justify-content: flex-start;
+  }
+
   &-between {
     justify-content: space-between;
   }
@@ -243,6 +263,10 @@ textarea {
   &-center {
     justify-content: center;
   }
+}
+
+.container {
+  margin: 20px 50px;
 }
 
 //language dropdown styles
@@ -401,8 +425,8 @@ button {
   border: 1px solid $accent !important;
   
   &:hover {
-    background-color: $accent !important;
-    color: white !important;
+    background-color: rgba(0, 128, 96, 0.09) !important;
+    // color: white !important;
   }
 
   &.red-button {
@@ -410,10 +434,24 @@ button {
     color: red !important;
 
     &:hover {
-      background-color: red !important;
-      color: white !important;
+      background-color: rgba(255, 0, 0, 0.082) !important;
     }
   }
+}
+
+.MuiInputLabel-root.Mui-focused {
+  color: $accent !important;
+  border-color: $accent !important;
+}
+
+.Mui-focused {
+  .MuiOutlinedInput-notchedOutline {
+    border-color: $accent !important;
+  }
+}
+
+.Mui-checked, label.MuiFormLabel-root.Mui-focused { 
+  color: $accent !important;
 }
 
 // contained button
@@ -443,7 +481,7 @@ button {
 .MuiTableBody-root .MuiTableRow-root {
 
   &:hover {
-    background-color: rgba(235, 255, 235, 0.521);
+    background-color: rgba(235, 255, 235, 1.5);
     cursor: pointer;
 
     & > td {
@@ -451,19 +489,6 @@ button {
     }
   }
 }
-
-// .Mui-focused {
-//   border: red !important;
-//   color: green !important;
-//   outline: purple !important;
-// }
-
-// .MuiMenu-list {
-//   //TODO: CHANGE BACKGROUND COLOR
-//   background: black;
-//   color: white;
-// }
-
 
 @media only screen and (max-width: 425px) {
   h2 {
