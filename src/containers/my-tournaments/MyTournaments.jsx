@@ -404,7 +404,7 @@ const MyTournaments = () => {
                 }}
             >
                 <Fade in={open}>
-                <Box sx={style}>
+                <Box sx={style} className="large-modal">
                     <div className="flex-column justify-center align-center">
                         <div className="flex-column">
                             <div className="flex justify-between align-center tournament-header">
