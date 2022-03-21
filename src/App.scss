@@ -216,6 +216,14 @@ h3 {
   flex-wrap: wrap;
 }
 
+.relative {
+  position: relative;
+}
+
+.fixed {
+  position: fixed;
+}
+
 .align {
   &-center {
     align-items: center;

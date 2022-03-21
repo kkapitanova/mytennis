@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Chats.scss';
 import { sortData } from '../../utils/helpers';
 
@@ -14,40 +14,102 @@ const userID = '12345'
 const test = [1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8]
 const testMessages = [
     {
-        sent: new Date().getTime(), //6
+        sent: new Date("03/20/2022 16:55:01").getTime(), //6
         senderID: "12345",
         receiverID: "99999",
-        message: "Tuesday at 8pm?"
+        message: "Tuesday at 8pm?",
+        id: 6,
+    },
+    {
+        sent: new Date("03/20/2022 16:56:01").getTime(), //7
+        senderID: "12345",
+        receiverID: "99999",
+        message: "Is that convenient for you?",
+        id: 7,
+    },
+    {
+        sent: new Date("03/20/2022 16:57:01").getTime(), //8
+        senderID: "12345",
+        receiverID: "99999",
+        message: "Tuesday at 8pm?",
+        id: 8,
+    },
+    {
+        sent: new Date("03/20/2022 16:57:01").getTime(), //9
+        senderID: "12345",
+        receiverID: "99999",
+        message: "Tuesday at 8pm?",
+        id: 9,
+    },
+    {
+        sent: new Date("03/20/2022 16:57:01").getTime(), //10
+        senderID: "12345",
+        receiverID: "99999",
+        message: "Tuesday at 8pm?",
+        id: 10,
+    },
+    {
+        sent: new Date("03/20/2022 16:57:01").getTime(), //10
+        senderID: "12345",
+        receiverID: "99999",
+        message: "Tuesday at 8pm?",
+        id: 11
+    },
+    {
+        sent: new Date("03/20/2022 16:57:02").getTime(), //10
+        senderID: "12345",
+        receiverID: "99999",
+        message: "Tuesday at 8pm?",
+        id: 12
+    },
+    {
+        sent: new Date("03/20/2022 16:57:03").getTime(), //10
+        senderID: "12345",
+        receiverID: "99999",
+        message: "Tuesday at 8pm?",
+        id: 13
+    },
+    {
+        sent: new Date("03/20/2022 16:57:04").getTime(), //10
+        senderID: "12345",
+        receiverID: "99999",
+        message: "Tuesday at 8pm?",
+        id: 14,
     },
     {
         sent: new Date('12/11/2021 16:55:01').getTime(), //1
         senderID: "99999",
         receiverID: "12345",
-        message: "Hi there!"
+        message: "Hi there!",
+        id: 1
     },
     {
         sent: new Date('12/11/2021 16:54:32').getTime(), //2
         senderID: "12345",
         receiverID: "99999",
-        message: "Hi"
+        message: "Hi",
+        id: 2
     },
     {
         sent: new Date('12/11/2021 16:59:01').getTime(), //4
         senderID: "99999",
         receiverID: "12345",
-        message: "Yeah sure!"
+        message: "Yeah sure!",
+        id: 4
     },
     {
         sent: new Date('12/11/2021 16:55:58').getTime(), //3
         senderID: "12345",
         receiverID: "99999",
-        message: "Do you want to play?"
+        message: "Do you want to play?",
+        id: 3
     },
     {
         sent: new Date('12/11/2021 16:59:13').getTime(), //5
         senderID: "99999",
         receiverID: "12345",
-        message: "When"
+        message: "When",
+        id: 5
     },
 ]
 
@@ -137,6 +199,7 @@ const Chats = () => {
                 }
             ])
             setMessage('')
+            scrollToBottom("chat-messages")
         }
     }
 
@@ -152,12 +215,24 @@ const Chats = () => {
                 }
             ])
             setMessage('')
+            scrollToBottom("chat-messages")
         }
     }
 
     const handleDisplayInfo = () => {
         console.log("displaying info")
     }
+
+    const scrollToBottom = (id) => {
+        const element = document.getElementById(id);
+
+        console.log(element.scrollHeight)
+        element.scroll({ top: element.scrollHeight, behavior: 'smooth' });
+    }
+
+    useEffect(() => {
+        scrollToBottom("chat-messages")
+    }, [])
 
     return (
         <div className="container">
@@ -198,7 +273,7 @@ const Chats = () => {
                         })}
                     </div>
                 </div>
-                <div className="flex-column right-container justify-between">
+                <div className="flex-column right-container justify-between relative">
                     {current && <div>
                         <div className="flex align-center justify-between chat-header">
                             <div className="flex align-center recipient-container" onClick={handleDisplayInfo}>
@@ -207,10 +282,10 @@ const Chats = () => {
                             </div>
                             <InfoIcon className="info-button" onClick={handleDisplayInfo}/>
                         </div>
-                        <div className="flex-column chat-messages">
+                        <div className="flex-column chat-messages" id="chat-messages">
                             {chatMessages && chatMessages.length && sort(chatMessages).map((m, index) => {
                                 return (
-                                    <div key={index} className={`flex-column message-container align-${m.senderID === userID ? 'end' : 'start'}`}>
+                                    <div key={m.id} className={`flex-column message-container align-${m.senderID === userID ? 'end' : 'start'}`}>
                                         <div className="flex align-center">
                                             <div className="message">{m.message}</div>
                                             <div className="timestamp">{getTimeStamp(m.sent)}</div>
@@ -221,7 +296,7 @@ const Chats = () => {
                         </div>
                     </div>}
                     <div className="flex align-center">
-                    <TextField
+                        <TextField
                             id="message-input"
                             placeholder="Type in message"
                             variant="standard"
