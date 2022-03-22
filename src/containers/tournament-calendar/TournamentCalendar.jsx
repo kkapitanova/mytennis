@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table } from '../../components';
-import { sortData, getAge } from '../../utils/helpers'
+import { sortData, getDateString } from '../../utils/helpers'
 import { useHistory, useLocation } from 'react-router';
 import { ageGroups, genderGroups, months, years } from '../../data/constants';
 import { mockTournamentData } from '../../data/dummyData';
@@ -15,7 +15,8 @@ import Fade from '@mui/material/Fade';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import ClearIcon from '@mui/icons-material/Clear';
-import { getDateString } from '../../utils/helpers';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 const style = {
     position: 'absolute',
@@ -52,6 +53,7 @@ const TournamentCalendar = () => {
     const [withdrawalButtonText, setWithdrawalButtonText] = useState("Withdraw")
     const [entryButtonText, setEntryButtonText] = useState("Enter")
     const [statusColor, setStatusColor] = useState()
+    const [tournamentsDisplay, setTournamentsDisplay] = useState("upcoming") // toggle between archive and upcoming tournaments
 
     const handleClose = () => {
         setOpen(false)
@@ -71,9 +73,12 @@ const TournamentCalendar = () => {
                 (search.genderGroup ? t.genderGroups.includes(search.genderGroup) : true) &&
                 (t.location.city + t.location.country).toLowerCase().includes(search.location) &&
                 t.name.toLowerCase().includes(search.name) && 
-                (t.dates.startDate.toString() + t.dates.endDate.toString()).includes(search.month) &&
-                (t.dates.startDate.toString() + t.dates.endDate.toString()).includes(search.year) && 
-                t.status.toLowerCase() !== 'waiting for approval' && t.status.toLowerCase() !== 'declined'
+                (t.dates.startDate + t.dates.endDate).includes(search.month) &&
+                (t.dates.startDate + t.dates.endDate).includes(search.year) && 
+                t.status.toLowerCase() !== 'waiting for approval' && t.status.toLowerCase() !== 'declined' &&
+                
+                // UPCOMING TOURNAMENTS VS ARCHIVED TOURNAMENTS VS ALL TOURNAMENTS
+                (tournamentsDisplay === 'upcoming' ? new Date (t.dates.endDate).getTime() > new Date ().getTime() : tournamentsDisplay === 'archive' ? new Date (t.dates.endDate).getTime() < new Date ().getTime() : true)
             ) {
 
                 tournamentData.push({
@@ -173,7 +178,7 @@ const TournamentCalendar = () => {
 
     useEffect(() => {
         setData(getData())
-    }, [search.ageGroup, search.genderGroup, search.draws])
+    }, [search.ageGroup, search.genderGroup, search.draws, tournamentsDisplay])
 
     useEffect(() => {
       window.scrollTo(0,0)
@@ -192,6 +197,22 @@ const TournamentCalendar = () => {
     return (
         <div className='container'>
             <h3 className="accent-color" style={{textAlign: 'left'}}>Search Tournaments</h3>
+            <div className="flex wrap align-center">
+                    <ToggleButtonGroup
+                        color="primary"
+                        value={tournamentsDisplay}
+                        sx={{height: 40, margin: '5px 5px 10px 0px'}}
+                        exclusive
+                        onChange={(e) => {
+                            setTournamentsDisplay(e.target.value)
+                        }}
+                        >
+                        <ToggleButton value={"archive"}>Archive</ToggleButton>
+                        <ToggleButton value={"all"}>All</ToggleButton>
+                        <ToggleButton value={"upcoming"}>Upcoming</ToggleButton>
+                    </ToggleButtonGroup>
+                    {/* <div style={{color: "rgba(0, 0, 0, 0.5)"}}>{tournamentsDisplay === "archive" ? 'Only past tournaments will be shown.' : tournamentsDisplay === "upcoming" ? 'Only upcoming tournaments will be shown.' : "All tournaments will be shown."}</div> */}
+                </div>
             <div className='flex wrap justify-between'>
                 <div className="flex wrap" style={{minWidth: '250px', maxWidth: "60%"}}>
                     <TextField

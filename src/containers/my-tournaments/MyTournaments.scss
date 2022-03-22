@@ -22,6 +22,22 @@
     margin-bottom: 20px;
 }
 
+// material toggle button group
+.Mui-selected {
+    color: $accent !important;
+    background-color: rgba(235, 255, 235, 1.5) !important;
+}
+
+.MuiToggleButton-root {
+    color: silver !important;
+    // border: none !important;
+    border-color: rgba(192, 192, 192, 0.623) !important;
+}
+
+.Mui-selected {
+    color: $accent !important;
+}
+
 @media only screen and (max-width: 500px) {
     .tournament-header {
         flex-direction: column !important;
