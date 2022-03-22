@@ -137,12 +137,24 @@ const NavBar = ({ unauthRoutes, authRoutes }) => {
                     ))}
                     {/* <LanguageDropDownMenu mobile={true}/> */}
                     <div className="login-container-mobile flex">
-                        <div onClick={() => history.push('/login')} className={`login-type-wrapper ${location.pathname === '/login' ? 'active-link' : ''}`}>Login</div>&nbsp;|&nbsp;<div className={`login-type-wrapper ${location.pathname === '/register' ? 'active-link' : ''}`} onClick={() => history.push('/register')}>Register</div>
+                        <div onClick={() => {
+                            history.push('/login')
+                            expandMenu()
+                        }} className={`login-type-wrapper ${location.pathname === '/login' ? 'active-link' : ''}`}>Login</div>&nbsp;|&nbsp;<div className={`login-type-wrapper ${location.pathname === '/register' ? 'active-link' : ''}`} onClick={() => {
+                            history.push('/register')
+                            expandMenu()
+                        }}>Register</div>
                     </div>
                 </div>
                 <div className='flex align-center'>
                     <div className="login-container flex">
-                        <div onClick={() => history.push('/login')} className={`login-type-wrapper ${location.pathname === '/login' ? 'active-link' : ''}`}>Login</div>&nbsp;|&nbsp;<div className={`login-type-wrapper ${location.pathname === '/register' ? 'active-link' : ''}`} onClick={() => history.push('/register')}>Register</div>
+                        <div onClick={() => {
+                            history.push('/login')
+                            expandMenu()
+                        }} className={`login-type-wrapper ${location.pathname === '/login' ? 'active-link' : ''}`}>Login</div>&nbsp;|&nbsp;<div className={`login-type-wrapper ${location.pathname === '/register' ? 'active-link' : ''}`} onClick={() => {
+                            history.push('/register')
+                            expandMenu()
+                        }}>Register</div>
                     </div>
                     {/* <LanguageDropDownMenu /> */}
                 </div>
