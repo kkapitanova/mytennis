@@ -21,3 +21,36 @@
     text-align: left;
     margin-bottom: 20px;
 }
+
+// material toggle button group
+.Mui-selected {
+    color: $accent !important;
+    background-color: rgba(235, 255, 235, 1.5) !important;
+}
+
+.MuiToggleButton-root {
+    color: silver !important;
+    // border: none !important;
+    border-color: rgba(192, 192, 192, 0.623) !important;
+}
+
+.Mui-selected {
+    color: $accent !important;
+}
+
+@media only screen and (max-width: 500px) {
+    .tournament-header {
+        flex-direction: column !important;
+        align-items: flex-start;
+        margin-bottom: 30px;
+
+        h2 {
+            margin: 20px 0px 0px 0px !important;
+            padding: 0px;
+        }
+
+        .status-indicator {
+            font-size: 14px;
+        }
+    }
+  }

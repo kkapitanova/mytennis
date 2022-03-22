@@ -30,6 +30,33 @@
   }
 }
 
+@keyframes fadeInWithoutScale { 
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut { 
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
 .loading-screen {
   position: fixed;
   top: 0;
@@ -214,6 +241,22 @@ h3 {
 
 .wrap {
   flex-wrap: wrap;
+}
+
+.error {
+  color: red;
+}
+
+.full-height {
+  height: 100%;
+}
+
+.relative {
+  position: relative;
+}
+
+.fixed {
+  position: fixed;
 }
 
 .align {
@@ -490,14 +533,28 @@ button {
   }
 }
 
+.MuiBox-root {
+  overflow: scroll;
+}
+
 @media only screen and (max-width: 425px) {
   h2 {
     font-size: $smallh2FontSize;
-    padding: 20px;
+    // padding: 20px;
   }
 
   .calendly-button {
     visibility: hidden !important;
+  }
+
+  .container {
+    margin: 20px;
+  }
+}
+
+@media only screen and (min-width: 425px) and (max-width: 500px) {
+  .container {
+    margin: 30px;
   }
 }
 
@@ -507,8 +564,18 @@ button {
   }
 }
 
-@media only screen and (max-width: 1440px) {
+@media only screen and (max-width: 500px) {
+  .MuiBox-root.large-modal{
+    max-width: 60vw !important;
+    max-height: 60vh !important;
+  }
+}
 
+@media only screen and (min-width: 500px) and (max-width: 1024px) {
+  .MuiBox-root.large-modal{
+    max-width: 70vw !important;
+    max-height: 70vh !important;
+  }
 }
 
 @media only screen and (min-width: 1440px) {

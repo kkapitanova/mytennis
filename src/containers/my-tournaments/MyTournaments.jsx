@@ -16,6 +16,8 @@ import Typography from '@mui/material/Typography';
 import ClearIcon from '@mui/icons-material/Clear';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 //styles
 import './MyTournaments.scss';
@@ -54,6 +56,7 @@ const MyTournaments = () => {
     const [currentTournament, setCurrentTournament] = useState() // current tournament clicked on for which the modal is opened
     const [open, setOpen] = useState(false) // tournament info modal open state
     const [statusModalOpen, setStatusModalOpen] = useState(false) // tournament status update modal
+    const [tournamentsDisplay, setTournamentsDisplay] = useState("upcoming") // toggle between archive and upcoming tournaments
 
     const [tournamentApprovalText, setTournamentApprovalText] = useState("Approve")
     const [tournamentCancellationText, setTournamentCancellationText] = useState("Decline")
@@ -87,23 +90,29 @@ const MyTournaments = () => {
 
         mockTournamentData.forEach(t => {
 
+            console.log(t.name, t.dates.endDate)
+            console.log("upcoming", new Date (t.dates.endDate).getTime() > new Date ().getTime())
+
             // display only the tournaments that match the following conditions:
             if (
                 (search.ageGroup ? t.ageGroups.includes(search.ageGroup) : true) && 
                 (search.genderGroup ? t.genderGroups.includes(search.genderGroup) : true) &&
                 (t.location.city + t.location.country).toLowerCase().includes(search.location) &&
                 t.name.toLowerCase().includes(search.name) && 
-                (t.dates.startDate.toString() + t.dates.endDate.toString()).includes(search.month) &&
-                (t.dates.startDate.toString() + t.dates.endDate.toString()).includes(search.year) &&
+                (t.dates.startDate + t.dates.endDate).includes(search.month) &&
+                (t.dates.startDate + t.dates.endDate).includes(search.year) &&
+
+                // UPCOMING TOURNAMENTS VS ARCHIVED TOURNAMENTS VS ALL TOURNAMENTS
+                (tournamentsDisplay === 'upcoming' ? new Date (t.dates.endDate).getTime() > new Date ().getTime() : tournamentsDisplay === 'archive' ? new Date (t.dates.endDate).getTime() < new Date ().getTime() : true) &&
 
                 // ADMIN VIEW
-                ((userRole.toLowerCase() === 'admin') ? (t.status.toLowerCase() === "waiting for approval" || t.status.toLowerCase() === 'declined') : false) ||
+                (((userRole.toLowerCase() === 'admin') ? (t.status.toLowerCase() === "waiting for approval" || t.status.toLowerCase() === 'declined') : false) ||
 
                 // CLUB REP VIEW
                 (userRole.toLowerCase() === 'clubrep' && t.organizerID === clubRepTestID) ||
 
                 // PLAYER VIEW 
-                (userRole.toLowerCase() === 'player' && t.playersSignedUp && t.playersSignedUp.length && t.playersSignedUp.includes(playerTestID))
+                (userRole.toLowerCase() === 'player' && t.playersSignedUp && t.playersSignedUp.length && t.playersSignedUp.includes(playerTestID)))
             ) {
 
                 tournamentData.push({
@@ -259,7 +268,7 @@ const MyTournaments = () => {
 
     useEffect(() => {
         setData(getData())
-    }, [search.ageGroup, search.genderGroup, search.draws, userRole])
+    }, [search.ageGroup, search.genderGroup, search.draws, userRole, tournamentsDisplay])
 
     // update data accordingly if the search query changes in the location 
     useEffect(() => {
@@ -292,11 +301,37 @@ const MyTournaments = () => {
                     You can withdraw from any tournament, but withdrawing meeans you will not be able to sign up for the tournament again.
                 </div>
             }
-            <div className="flex align-center">
-                <Button sx={{height: 40, margin: '0px 10px 10px 0px !important'}} onClick={() => setUserRole("admin")} disabled={userRole.toLowerCase() === "admin"}>Switch to Admin</Button>
-                <Button sx={{height: 40, margin: '0px 10px 10px 0px !important'}} onClick={() => setUserRole("clubRep")} disabled={userRole.toLowerCase() === "clubrep"}>Switch to Club Rep</Button>
-                <Button sx={{height: 40, margin: '0px 10px 10px 0px !important'}} onClick={() => setUserRole("player")} disabled={userRole.toLowerCase() === "player"}>Switch to Player</Button>
-                <div style={{color: "rgba(0, 0, 0, 0.5)"}}>Testing purposes</div>
+            <div className="flex wrap align-center">
+                <ToggleButtonGroup
+                    color="primary"
+                    value={userRole}
+                    sx={{height: 40, margin: '10px 5px 5px 0px'}}
+                    exclusive
+                    onChange={(e) => {
+                        setUserRole(e.target.value)
+                    }}
+                    >
+                    <ToggleButton value="admin">Admin</ToggleButton>
+                    <ToggleButton value="clubRep">Club Rep</ToggleButton>
+                    <ToggleButton value="player">Player</ToggleButton>
+                </ToggleButtonGroup>
+                <div style={{color: "rgba(0, 0, 0, 0.5)"}}>Testing accounts</div>
+            </div>
+            <div className="flex wrap align-center">
+                <ToggleButtonGroup
+                    color="primary"
+                    value={tournamentsDisplay}
+                    sx={{height: 40, margin: '5px 5px 10px 0px'}}
+                    exclusive
+                    onChange={(e) => {
+                        setTournamentsDisplay(e.target.value)
+                    }}
+                    >
+                    <ToggleButton value={"archive"}>Archive</ToggleButton>
+                    <ToggleButton value={"all"}>All</ToggleButton>
+                    <ToggleButton value={"upcoming"}>Upcoming</ToggleButton>
+                </ToggleButtonGroup>
+                {/* <div style={{color: "rgba(0, 0, 0, 0.5)"}}>{tournamentsDisplay === "archive" ? 'Only past tournaments will be shown.' : tournamentsDisplay === "upcoming" ? 'Only upcoming tournaments will be shown.' : "All tournaments will be shown."}</div> */}
             </div>
             <div className='flex wrap justify-between'>
                 <div className="flex wrap" style={{minWidth: '250px', maxWidth: "60%"}}>
@@ -404,10 +439,10 @@ const MyTournaments = () => {
                 }}
             >
                 <Fade in={open}>
-                <Box sx={style}>
+                <Box sx={style} className="large-modal">
                     <div className="flex-column justify-center align-center">
                         <div className="flex-column">
-                            <div className="flex justify-between align-center">
+                            <div className="flex justify-between align-center tournament-header">
                                 <h2 style={{fontWeight: '500'}}>{currentTournament?.name}</h2>
                                 <div className={`status-indicator ${statusColor}`}>{currentTournament?.status.toUpperCase()}</div> 
                             </div>

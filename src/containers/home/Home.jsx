@@ -157,7 +157,7 @@ const Home = () => {
                     }}
                 >
                     <Fade in={open}>
-                    <Box sx={style}>
+                    <Box sx={style} className="large-modal">
                         <div className="flex-column">
                             <h2 style={{fontWeight: '500'}}>{currentPlayer?.firstName}&nbsp;{currentPlayer?.familyName}</h2>
                             <div style={{marginBottom: 5}}>Gender: {currentPlayer?.gender}</div>
