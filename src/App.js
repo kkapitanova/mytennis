@@ -98,7 +98,10 @@ const App = () => {
       path: '/about', 
       name: "About", 
       Component: About 
-    },
+    }
+  ]
+
+  const unauthenticatedRoutes = [
     { 
       path: '/login', 
       name: "Login", 
@@ -109,19 +112,6 @@ const App = () => {
       name: "Register", 
       Component: Register 
     },
-  ]
-
-  const unauthenticatedRoutes = [
-    // { 
-    //   path: '/login', 
-    //   name: "Login", 
-    //   Component: Login 
-    // },
-    // { 
-    //   path: '/register', 
-    //   name: "Register", 
-    //   Component: Register 
-    // },
   ]
 
   const authenticatedRoutes = [
