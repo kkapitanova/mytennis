@@ -88,7 +88,6 @@ const Rankings = () => {
         const playerIndex =  mockPlayerData.findIndex(el => el.playerId === playerData.id)
         const current = mockPlayerData[playerIndex]
 
-        console.log("current", current)
         setCurrentPlayer(current)
         setOpen(true)
     }

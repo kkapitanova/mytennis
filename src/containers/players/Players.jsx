@@ -94,7 +94,6 @@ const Players = () => {
         const playerIndex =  mockPlayerData.findIndex(el => el.playerId === playerData.id)
         const current = mockPlayerData[playerIndex]
 
-        console.log("current", current)
         setCurrentPlayer(current)
         setOpen(true)
     }
@@ -118,8 +117,6 @@ const Players = () => {
         if (name === "nationCompetingFor") {
             sortedAndFilteredData = categorizedData.filter(player => player.name.toLowerCase().includes(search.name.toLowerCase())).filter(player => player.nationCompetingFor.toLowerCase().includes(value.toLowerCase()));
         }
-
-        console.log("sortedAndFilteredData", sortedAndFilteredData)
 
         setData(sortedAndFilteredData)
     }

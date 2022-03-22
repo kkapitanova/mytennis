@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 //router
 import {
     NavLink,
     Link,
+    useHistory,
   } from "react-router-dom";
 
 //material component imports
@@ -73,8 +74,8 @@ const LanguageDropDownMenu = ({ mobile }) => {
 const NavBar = ({ unauthRoutes, authRoutes }) => {
 
     const [ t, i18n ] = useTranslation();
-
     const [expanded, setExpanded] = useState(false);
+    const history = useHistory()
         
     // const onDropDownChange = props => {
     //     const lang = props.value.toLowerCase()
@@ -94,6 +95,18 @@ const NavBar = ({ unauthRoutes, authRoutes }) => {
 
         setExpanded(!expanded)
     }
+
+    useEffect(() => {
+        let authToken = sessionStorage.getItem('Auth Token')
+
+        if (authToken) {
+            // navigate('/home')
+        }
+
+        if (!authToken) {
+            // navigate('/login')
+        }
+    }, [])
 
     return (
         <>
@@ -122,12 +135,12 @@ const NavBar = ({ unauthRoutes, authRoutes }) => {
                     ))}
                     {/* <LanguageDropDownMenu mobile={true}/> */}
                     <div className="login-container-mobile flex">
-                        <div onClick={() => console.log("LOGIN")} className='login-type-wrapper'>Login</div>&nbsp;|&nbsp;<div className='login-type-wrapper'>Register</div>
+                        <div onClick={() => history.push('/login')} className='login-type-wrapper'>Login</div>&nbsp;|&nbsp;<div className='login-type-wrapper' onClick={() => history.push('/register')}>Register</div>
                     </div>
                 </div>
                 <div className='flex align-center'>
                     <div className="login-container flex">
-                        <div onClick={() => console.log("LOGIN")} className='login-type-wrapper'>Login</div>&nbsp;|&nbsp;<div className='login-type-wrapper'>Register</div>
+                        <div onClick={() => history.push('/login')} className='login-type-wrapper'>Login</div>&nbsp;|&nbsp;<div className='login-type-wrapper' onClick={() => history.push('/register')}>Register</div>
                     </div>
                     {/* <LanguageDropDownMenu /> */}
                 </div>

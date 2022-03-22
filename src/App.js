@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import logo from './logo.svg';
 import './App.scss';
-import firebase from 'firebase/compat/app';
-import { getDatabase, ref, set, child, get } from "firebase/database";
-import i18n from './i18n';
 
-//router
+// router
 import {
   BrowserRouter as Router,
   Switch,
@@ -16,9 +12,11 @@ import {
   useLocation,
 } from "react-router-dom";
 
-//component imports
+// component imports
 import { 
   NavBar, 
+  Login, 
+  Register,
   Home,
   Players,
   Rankings,
@@ -29,20 +27,15 @@ import {
   Chats
 } from './containers'
 
-//translation
+// translation
 import { useTranslation } from 'react-i18next';
 import TournamentSubmission from './containers/tournament-submission/TournamentSubmission';
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCZ70cdaIdr7-Od3fnhztu9aFLC4EOtSfQ", //process.env.FIREBASE_PUBLIC_PROJECT_WEB_API,
-  databaseURL:  'https://my-tennis-platform-default-rtdb.europe-west1.firebasedatabase.app/' , //`${process.env.FIREBASE_PUBLIC_PROJECT_ID}.firebaseapp.com`,
-  authDomain: 'https://my-tennis-platform-default-rtdb.firebaseio.com', //`https://${process.env.FIREBASE_PUBLIC_PROJECT_ID}-default-rtdb.firebaseio.com`,
-  projectID: 'my-tennis-platform'
-}
+// firebase
+import './firebase-config';
 
 
-const app = firebase.initializeApp(firebaseConfig)
-const dbRef = ref(getDatabase(app));
+// const dbRef = ref(getDatabase(app));
 
 // const firebaseui = require('firebaseui');
 // const ui = new firebaseui.auth.AuthUI(firebase.auth());
@@ -105,7 +98,30 @@ const App = () => {
       path: '/about', 
       name: "About", 
       Component: About 
-    }, //this is optional
+    },
+    { 
+      path: '/login', 
+      name: "Login", 
+      Component: Login 
+    },
+    { 
+      path: '/register', 
+      name: "Register", 
+      Component: Register 
+    },
+  ]
+
+  const unauthenticatedRoutes = [
+    // { 
+    //   path: '/login', 
+    //   name: "Login", 
+    //   Component: Login 
+    // },
+    // { 
+    //   path: '/register', 
+    //   name: "Register", 
+    //   Component: Register 
+    // },
   ]
 
   const authenticatedRoutes = [
@@ -131,15 +147,15 @@ const App = () => {
 
   const getData = () => {
       // example data getting method
-    get(child(dbRef, 'TEST')).then((snapshot) => {
-      if (snapshot.exists()) {
-        setValue(snapshot.val())
-      } else {
-        console.log("No data available");
-      }
-    }).catch((error) => {
-      console.error("error", error);
-    });
+    // get(child(dbRef, 'TEST')).then((snapshot) => {
+    //   if (snapshot.exists()) {
+    //     setValue(snapshot.val())
+    //   } else {
+    //     console.log("No data available");
+    //   }
+    // }).catch((error) => {
+    //   console.error("error", error);
+    // });
 
   }
 
@@ -156,7 +172,7 @@ const App = () => {
           <div>Test translation: {t("Test")}</div> */}
           <Switch>
             <div className="body-wrapper">
-              {[...unauthenticatedNavbarRoutes, ...authenticatedRoutes].map(({ path, exact, Component }) => (
+              {[...unauthenticatedNavbarRoutes, ...authenticatedRoutes, ...unauthenticatedRoutes].map(({ path, exact, Component }) => (
                 <Route key={path} exact={exact} path={path} component={Component}>
                 </Route>
               ))}
