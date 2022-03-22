@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Table } from '../../components';
 import { sortData, getDateString } from '../../utils/helpers'
 import { useHistory, useLocation } from 'react-router';
-import { ageGroups, genderGroups, months, years } from '../../data/constants';
+import { ageGroups, genderGroups, months, upcomingYears, previousYears, allYears } from '../../data/constants';
 import { mockTournamentData } from '../../data/dummyData';
 
 // material
@@ -261,11 +261,28 @@ const TournamentCalendar = () => {
                         size="small"
                         style={{width: 150, margin: '0 5px 10px 0'}}
                     >
-                        {years.map((option, index) => (
-                            <MenuItem key={index} value={option}>
-                                {option}
-                            </MenuItem>
-                        ))}
+                        {tournamentsDisplay === 'upcoming' &&
+                            upcomingYears.map((option, index) => (
+                                <MenuItem key={index} value={option}>
+                                    {option}
+                                </MenuItem>
+                            ))
+                        }
+                        {tournamentsDisplay === 'archive' &&
+                            previousYears.map((option, index) => (
+                                <MenuItem key={index} value={option}>
+                                    {option}
+                                </MenuItem>
+                            ))
+                        }
+                        {/* all years limited to recent 5 */}
+                        {tournamentsDisplay === 'all' &&
+                            allYears.map((option, index) => (
+                                <MenuItem key={index} value={option}>
+                                    {option}
+                                </MenuItem>
+                            ))
+                        }
                     </TextField>
                     <TextField
                         id="outlined-select-currency"
