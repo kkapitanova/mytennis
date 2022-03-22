@@ -5,6 +5,7 @@ import {
     NavLink,
     Link,
     useHistory,
+    useLocation,
   } from "react-router-dom";
 
 //material component imports
@@ -75,7 +76,8 @@ const NavBar = ({ unauthRoutes, authRoutes }) => {
 
     const [ t, i18n ] = useTranslation();
     const [expanded, setExpanded] = useState(false);
-    const history = useHistory()
+    const history = useHistory();
+    const location = useLocation();
         
     // const onDropDownChange = props => {
     //     const lang = props.value.toLowerCase()
@@ -135,12 +137,12 @@ const NavBar = ({ unauthRoutes, authRoutes }) => {
                     ))}
                     {/* <LanguageDropDownMenu mobile={true}/> */}
                     <div className="login-container-mobile flex">
-                        <div onClick={() => history.push('/login')} className='login-type-wrapper'>Login</div>&nbsp;|&nbsp;<div className='login-type-wrapper' onClick={() => history.push('/register')}>Register</div>
+                        <div onClick={() => history.push('/login')} className={`login-type-wrapper ${location.pathname === '/login' ? 'active-link' : ''}`}>Login</div>&nbsp;|&nbsp;<div className={`login-type-wrapper ${location.pathname === '/register' ? 'active-link' : ''}`} onClick={() => history.push('/register')}>Register</div>
                     </div>
                 </div>
                 <div className='flex align-center'>
                     <div className="login-container flex">
-                        <div onClick={() => history.push('/login')} className='login-type-wrapper'>Login</div>&nbsp;|&nbsp;<div className='login-type-wrapper' onClick={() => history.push('/register')}>Register</div>
+                        <div onClick={() => history.push('/login')} className={`login-type-wrapper ${location.pathname === '/login' ? 'active-link' : ''}`}>Login</div>&nbsp;|&nbsp;<div className={`login-type-wrapper ${location.pathname === '/register' ? 'active-link' : ''}`} onClick={() => history.push('/register')}>Register</div>
                     </div>
                     {/* <LanguageDropDownMenu /> */}
                 </div>
