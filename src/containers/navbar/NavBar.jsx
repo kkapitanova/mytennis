@@ -83,6 +83,7 @@ const NavBar = ({ unauthRoutes, authRoutes, unauthRouteLast }) => {
     const history = useHistory();
     const location = useLocation();
     const [loggedIn, setLoggedIn] = useState(false)
+    const userData = JSON.parse(localStorage.getItem('userData')) // TODO: replace with function that fetches data from firebase
         
     // const onDropDownChange = props => {
     //     const lang = props.value.toLowerCase()
@@ -114,6 +115,12 @@ const NavBar = ({ unauthRoutes, authRoutes, unauthRouteLast }) => {
 
         if (authToken) {
             setLoggedIn(true)
+
+            console.log(123, userData)
+            if (!userData.firstName) {
+                console.log("here")
+                history.push('/profile')
+            }
             // navigate('/home')
         }
 
@@ -183,7 +190,7 @@ const NavBar = ({ unauthRoutes, authRoutes, unauthRouteLast }) => {
                         </div>
                     ))}
                     {/* <LanguageDropDownMenu mobile={true}/> */}
-                    <div className="login-container-mobile flex">
+                    {!loggedIn && <div className="login-container-mobile flex">
                         <div onClick={() => {
                             history.push('/login')
                             expandMenu()
@@ -191,7 +198,17 @@ const NavBar = ({ unauthRoutes, authRoutes, unauthRouteLast }) => {
                             history.push('/register')
                             expandMenu()
                         }}>Register</div>
-                    </div>
+                    </div>}
+                    {loggedIn && <div className="profile-container-mobile flex">
+                        <div onClick={() => {
+                            history.push('/profile')
+                            expandMenu()
+                        }} className={`profile-option-wrapper ${location.pathname === '/profile' ? 'active-link' : ''}`}>Profile</div>&nbsp;|&nbsp;<div className={`profile-option-wrapper ${location.pathname === '/logout' ? 'active-link' : ''}`} onClick={() => {
+                            history.push('/logout')
+                            handleLogout()
+                            expandMenu()
+                        }}>Logout</div>
+                    </div>}
                 </div>
                 <div className='flex align-center'>
                     {!loggedIn && <div className="login-container flex">

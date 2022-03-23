@@ -318,7 +318,7 @@ const TournamentSubmission = () => {
                         </LocalizationProvider>
                     </div>
                     <div className="flex wrap">
-                        <FormControl   sx={{margin: "0 50px 20px 0"}}>
+                        <FormControl sx={{margin: "0 50px 20px 0"}}>
                             <FormLabel id="demo-radio-buttons-group-label" sx={{textAlign: "left"}}>Gender Group*</FormLabel>
                             <RadioGroup
                                 aria-labelledby="demo-radio-buttons-group-label"

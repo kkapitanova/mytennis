@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 // material
-import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button';
 import ToggleButton from '@mui/material/ToggleButton';
@@ -21,29 +20,44 @@ const authentication = getAuth()
 const database = getDatabase()
 
 const Register = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('')
-    const [confirmPassword, setConfirmPassword] = useState('')
+    const [userData, setUserData] = useState({
+        firstName: '',
+        familyName: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
+    })
     const [userRole, setUserRole] = useState('player')
     const history = useHistory();
 
+    const handleChange = e => {
+        const value = e.target.value
+        const name = e.target.name
+
+        setUserData({...userData, [name]: value})
+    }
+
     const handleRegister = () => {
 
-        if (!password || !email || !confirmPassword) {
+        if (!userData.password || !userData.email || !userData.confirmPassword) {
             toast.error('Please fill out all of the fields.')
-        } else if (password !== confirmPassword) {
+        } else if (userData.password !== userData.confirmPassword) {
             toast.error('Passwords do not match.')
         } else {
-            createUserWithEmailAndPassword(authentication, email, password)
+            createUserWithEmailAndPassword(authentication, userData.email, userData.password)
             .then((response) => {
                 console.log(response)
-                const userData = response?.user
+                const user = response?.user
                 sessionStorage.setItem('Auth Token', response._tokenResponse.refreshToken)
                 
-                set(ref(database, 'users/' + userData.uid), {
-                    email: userData.email,
+                set(ref(database, 'users/' + user.uid), {
+                    email: user.email,
                     role: userRole
                 });
+
+                localStorage.setItem('userData', JSON.stringify({
+                    email: user.email
+                }))
 
                 history.push('/profile')
                 toast.success("You have registerd and logged in successfully.")
@@ -82,37 +96,60 @@ const Register = () => {
                 <ToggleButton value="player">Player</ToggleButton>
             </ToggleButtonGroup>
             <div className="flex-column">
-                <TextField 
-                    id="email" 
-                    label="Email*" 
+                {/* <TextField 
+                    id="firstName" 
+                    name="firstName" 
+                    label="First Name*" 
                     variant="outlined" 
-                    value={email}
+                    value={userData.firstName}
                     size="small"
                     sx={{marginTop: '15px'}}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={handleChange}
+                />
+                <TextField 
+                    id="familyName" 
+                    name="familyName" 
+                    label="Family Name*" 
+                    variant="outlined" 
+                    value={userData.familyName}
+                    size="small"
+                    sx={{marginTop: '15px'}}
+                    onChange={handleChange}
+                /> */}
+                <TextField 
+                    id="email" 
+                    name="email"
+                    label="Email*" 
+                    variant="outlined" 
+                    value={userData.email}
+                    size="small"
+                    sx={{marginTop: '15px'}}
+                    onChange={handleChange}
                 />
                 <TextField 
                     id="password" 
+                    name="password"
                     type="password"
                     label="Password*" 
                     variant="outlined" 
-                    value={password}
+                    value={userData.password}
                     size="small"
                     sx={{marginTop: '15px'}}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={handleChange}
                 />
                 <TextField 
-                    id="confirmPassword" 
+                    id="confirmPassword"
+                    name="confirmPassword" 
                     type="password"
                     label="Confirm password*" 
                     variant="outlined" 
-                    value={confirmPassword}
+                    value={userData.confirmPassword}
                     size="small"
                     sx={{marginTop: '15px'}}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    onChange={handleChange}
                 />
             </div>
-            <Button variant="contained" sx={{margin: '10px !important'}} type="submit" onClick={handleRegister} disabled={!email || !password || !confirmPassword}>Register</Button>
+            <Button variant="contained" sx={{margin: '10px !important'}} type="submit" onClick={handleRegister} disabled={!userData.email || !userData.password || !userData.confirmPassword}>Register</Button>
             <ToastContainer autoClose={3000}/>
         </div>
     )
