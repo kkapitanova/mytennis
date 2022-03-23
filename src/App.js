@@ -12,7 +12,7 @@ import {
   useLocation,
 } from "react-router-dom";
 
-// component imports
+// container imports
 import { 
   NavBar, 
   Login, 
@@ -24,7 +24,9 @@ import {
   Footer,
   MyTournaments,
   About,
-  Chats
+  Chats,
+  LogoutSuccess,
+  Profile
 } from './containers'
 
 // translation
@@ -94,6 +96,9 @@ const App = () => {
         </div>
       }
     },
+  ]
+
+  const unauthenticatedNavbarRouteLast = [
     { 
       path: '/about', 
       name: "About", 
@@ -112,9 +117,14 @@ const App = () => {
       name: "Register", 
       Component: Register 
     },
+    { 
+      path: '/logout-success', 
+      name: "Logout Success", 
+      Component: LogoutSuccess 
+    },
   ]
 
-  const authenticatedRoutes = [
+  const authenticatedNavbarRoutes = [
     {
       path: '/tournament-submission',
       name: "Tournament Submission",
@@ -126,6 +136,33 @@ const App = () => {
       name: "My Tournaments",
       exact: true, 
       Component: MyTournaments 
+    },
+    // {
+    //   path: '/chats',
+    //   name: "Chats",
+    //   exact: true, 
+    //   Component: Chats 
+    // },
+  ]
+
+  const authenticatedRoutes = [
+    // {
+    //   path: '/tournament-submission',
+    //   name: "Tournament Submission",
+    //   exact: true, 
+    //   Component: TournamentSubmission 
+    // },
+    // {
+    //   path: '/my-tournaments',
+    //   name: "My Tournaments",
+    //   exact: true, 
+    //   Component: MyTournaments 
+    // },
+    {
+      path: '/profile',
+      name: "Profile",
+      exact: true, 
+      Component: Profile 
     },
     {
       path: '/chats',
@@ -157,12 +194,12 @@ const App = () => {
   return (
     <div className="App">
       <Router>
-          <NavBar unauthRoutes={unauthenticatedNavbarRoutes} authRoutes={authenticatedRoutes}/>
+          <NavBar unauthRoutes={unauthenticatedNavbarRoutes} unauthRouteLast={unauthenticatedNavbarRouteLast} authRoutes={authenticatedNavbarRoutes}/>
           {/* <div>TEST DATA FROM FIREBASE: {JSON.stringify(value)}</div>
           <div>Test translation: {t("Test")}</div> */}
           <Switch>
             <div className="body-wrapper">
-              {[...unauthenticatedNavbarRoutes, ...authenticatedRoutes, ...unauthenticatedRoutes].map(({ path, exact, Component }) => (
+              {[...unauthenticatedNavbarRoutes, ...authenticatedNavbarRoutes, ...authenticatedRoutes, ...unauthenticatedRoutes, ...unauthenticatedNavbarRouteLast].map(({ path, exact, Component }) => (
                 <Route key={path} exact={exact} path={path} component={Component}>
                 </Route>
               ))}

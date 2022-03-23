@@ -77,7 +77,7 @@
     color: black;
 }
 
-.login-container {
+.login-container, .profile-container {
   margin-right: 20px;
 }
 
@@ -170,7 +170,7 @@
   }
 }
 
-.login-type-wrapper {
+.login-type-wrapper, .profile-option-wrapper {
   cursor: pointer;
 
   &:hover {

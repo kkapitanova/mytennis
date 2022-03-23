@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+
+// material
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button';
 
+// firebase
 import '../../firebase-config';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { useHistory } from 'react-router-dom';
 
+// toast
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -20,8 +24,13 @@ const Login = () => {
     const handleLogin = () => {
         signInWithEmailAndPassword(authentication, email, password)
             .then((response) => {
-                history.push('/')
+                console.log(response)
+                const userData = response?.user
                 sessionStorage.setItem('Auth Token', response._tokenResponse.refreshToken)
+
+                history.push('/profile')
+                toast.success("You have logged in successfully.")
+
             })
             .catch((error) => {
                 console.log(error.code)

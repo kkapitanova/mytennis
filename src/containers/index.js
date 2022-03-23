@@ -1,6 +1,8 @@
 export { default as NavBar } from './navbar/NavBar';
 export { default as Login } from './login/Login';
 export { default as Register } from './register/Register';
+export { default as LogoutSuccess } from './logout-success/LogoutSuccess';
+export { default as Profile } from './profile/Profile';
 export { default as Home } from './home/Home'
 export { default as Players } from './players/Players';
 export { default as Rankings } from './rankings/Rankings';

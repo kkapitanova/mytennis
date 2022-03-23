@@ -537,6 +537,11 @@ button {
   overflow: scroll;
 }
 
+.MuiButton-root.Mui-disabled {
+  background-color: silver !important;
+  border: none !important;
+}
+
 @media only screen and (max-width: 425px) {
   h2 {
     font-size: $smallh2FontSize;

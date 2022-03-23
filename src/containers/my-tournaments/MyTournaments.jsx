@@ -89,10 +89,6 @@ const MyTournaments = () => {
         let tournamentData = []
 
         mockTournamentData.forEach(t => {
-
-            console.log(t.name, t.dates.endDate)
-            console.log("upcoming", new Date (t.dates.endDate).getTime() > new Date ().getTime())
-
             // display only the tournaments that match the following conditions:
             if (
                 (search.ageGroup ? t.ageGroups.includes(search.ageGroup) : true) && 
