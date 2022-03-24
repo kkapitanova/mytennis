@@ -191,7 +191,7 @@ const TournamentCalendar = () => {
             ...search,
             genderGroup: searchGenderGroup === "women" ? 'Female' : searchGenderGroup === "men" ? 'Male' : searchGenderGroup === "mixed-doubles" ? 'Mixed' : ''
         })
-    }, [location, search])
+    }, [location])
 
     return (
         <div className='container'>
