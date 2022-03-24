@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table } from '../../components';
-import { sortData, getAge } from '../../utils/helpers'
-import { useHistory, useLocation } from 'react-router';
+import { sortData } from '../../utils/helpers'
+import { useLocation } from 'react-router';
 import { ageGroups, genderGroups, months, upcomingYears, previousYears, allYears } from '../../data/constants';
 import { mockTournamentData } from '../../data/dummyData';
 import { getDateString } from '../../utils/helpers';
@@ -12,7 +12,6 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import ClearIcon from '@mui/icons-material/Clear';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
@@ -91,7 +90,7 @@ const MyTournaments = () => {
         mockTournamentData.forEach(t => {
             // display only the tournaments that match the following conditions:
             if (
-                (search.ageGroup ? t.ageGroups.includes(search.ageGroup) : true) && 
+                ((search.ageGroup ? t.ageGroups.includes(search.ageGroup) : true) && 
                 (search.genderGroup ? t.genderGroups.includes(search.genderGroup) : true) &&
                 (t.location.city + t.location.country).toLowerCase().includes(search.location) &&
                 t.name.toLowerCase().includes(search.name) && 
@@ -99,7 +98,7 @@ const MyTournaments = () => {
                 (t.dates.startDate + t.dates.endDate).includes(search.year) &&
 
                 // UPCOMING TOURNAMENTS VS ARCHIVED TOURNAMENTS VS ALL TOURNAMENTS
-                (tournamentsDisplay === 'upcoming' ? new Date (t.dates.endDate).getTime() > new Date ().getTime() : tournamentsDisplay === 'archive' ? new Date (t.dates.endDate).getTime() < new Date ().getTime() : true) &&
+                (tournamentsDisplay === 'upcoming' ? new Date (t.dates.endDate).getTime() > new Date ().getTime() : tournamentsDisplay === 'archive' ? new Date (t.dates.endDate).getTime() < new Date ().getTime() : true)) &&
 
                 // ADMIN VIEW
                 (((userRole.toLowerCase() === 'admin') ? (t.status.toLowerCase() === "waiting for approval" || t.status.toLowerCase() === 'declined') : false) ||
@@ -437,7 +436,7 @@ const MyTournaments = () => {
                 </div>
             </div>
             {data && data.length > 0 && <Table tableData={data} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>}
-            {!data || !data.length > 0 && <div>No Results Found</div>}
+            {(!data || !data.length > 0) && <div>No Results Found</div>}
             <Button variant="contained" sx={{height: 40, margin: '30px 10px 0px 0px !important'}} onClick={refreshData}>Refresh Data</Button>
             <Modal
                 aria-labelledby="transition-modal-title"

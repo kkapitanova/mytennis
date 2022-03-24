@@ -1,6 +1,3 @@
-// translation
-import { useTranslation } from 'react-i18next';
-
 // fontawesome icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEnvelope, faMapPin, faPhoneAlt } from '@fortawesome/free-solid-svg-icons'
@@ -17,9 +14,6 @@ import './Footer.scss'
 
 
 const Footer = () => {
-
-    const [ t, i18n ] = useTranslation();
-
     return (
         <>
             <footer className="footer-wrapper">

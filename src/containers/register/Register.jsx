@@ -52,18 +52,26 @@ const Register = () => {
                 
                 set(ref(database, 'users/' + user.uid), {
                     email: user.email,
-                    role: userRole
-                });
-
-                localStorage.setItem('userData', JSON.stringify({
-                    email: user.email
-                }))
-
-                history.push('/profile')
-                toast.success("You have registerd and logged in successfully.")
+                    role: userRole,
+                    userID: user.uid
+                })
+                .then(() => {
+                    localStorage.setItem('userData', JSON.stringify({
+                        email: user.email,
+                        role: userRole,
+                        userID: user.uid
+                    }))
+    
+                    history.push('/profile')
+                    toast.success("You have registerd and logged in successfully.")
+                })
+                .catch((error) => {
+                    console.log("Error: ", error)
+                    toast.error('An error has occured. Please try again.')
+                })
             })
             .catch((error) => {
-                console.log(error.code)
+                console.log("Error: ", error)
                 if (error.code === 'auth/invalid-email') {
                     toast.error('Invalid email. Please try again.')
                 } else if (error.code === 'auth/email-already-in-use') {

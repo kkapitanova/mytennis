@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table } from '../../components';
 import { sortData, getDateString } from '../../utils/helpers'
-import { useHistory, useLocation } from 'react-router';
+import { useLocation } from 'react-router';
 import { ageGroups, genderGroups, months, upcomingYears, previousYears, allYears } from '../../data/constants';
 import { mockTournamentData } from '../../data/dummyData';
 
@@ -13,7 +13,6 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import ClearIcon from '@mui/icons-material/Clear';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
@@ -192,7 +191,7 @@ const TournamentCalendar = () => {
             ...search,
             genderGroup: searchGenderGroup === "women" ? 'Female' : searchGenderGroup === "men" ? 'Male' : searchGenderGroup === "mixed-doubles" ? 'Mixed' : ''
         })
-    }, [location])
+    }, [location, search])
 
     return (
         <div className='container'>
@@ -322,7 +321,7 @@ const TournamentCalendar = () => {
                 </div>
             </div>
             {data && data.length > 0 && <Table tableData={data} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>}
-            {!data || !data.length > 0 && <div>No Results Found</div>}
+            {(!data || !data.length > 0) && <div>No Results Found</div>}
             <Modal
                 aria-labelledby="transition-modal-title"
                 aria-describedby="transition-modal-description"

@@ -24,8 +24,10 @@ const Login = () => {
     const handleLogin = () => {
         signInWithEmailAndPassword(authentication, email, password)
             .then((response) => {
-                console.log(response)
+                console.log("response", response)
                 const userData = response?.user
+                console.log("login data", userData)
+
                 sessionStorage.setItem('Auth Token', response._tokenResponse.refreshToken)
 
                 history.push('/profile')
@@ -46,7 +48,7 @@ const Login = () => {
 
     useEffect(() => {
         window.scrollTo(0,0)
-      }, [])
+    }, [])
 
     return (
         <div className="flex-column justify-center align-center container">

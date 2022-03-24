@@ -5,8 +5,6 @@ import './Profile.scss';
 // material
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -28,6 +26,11 @@ import countryList from 'react-select-country-list'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+// firebase
+import { getDatabase, ref, set } from "firebase/database";
+
+const database = getDatabase();
+
 // trim trailing and leading spaces
 // replace(/^\s+|\s+$/gm,'')
 
@@ -48,7 +51,8 @@ const Profile = () => {
             plays: userData.gameInfo?.plays
         },
         about: userData.about,
-        role: userData.role
+        role: userData.role,
+        userID: userData.userID
     })
     const countryOptions = useMemo(() => countryList().getData(), [])    
     const history = useHistory()
@@ -62,7 +66,7 @@ const Profile = () => {
             !countryOfBirth || !dateOfBirth ||
             !firstName.replace(/^\s+|\s+$/gm,'') || !middleName.replace(/^\s+|\s+$/gm,'') ||
             !familyName.replace(/^\s+|\s+$/gm,'') || !gender.replace(/^\s+|\s+$/gm,'') || 
-            !countryOfBirth.replace(/^\s+|\s+$/gm,'') || !dateOfBirth.replace(/^\s+|\s+$/gm,'')) ||
+            !countryOfBirth.replace(/^\s+|\s+$/gm,'')) ||
             !(firstName !== userData.firstName ||
             middleName !== userData.middleName ||
             familyName !== userData.familyName)
@@ -74,8 +78,46 @@ const Profile = () => {
     }
 
     const handleDataUpdate = () => {
-        localStorage.setItem('userData', JSON.stringify(data))
-        toast.success("You have updated your profile successfully.")
+        const {
+            firstName, 
+            middleName, 
+            familyName, 
+            gender, 
+            countryOfBirth, 
+            dateOfBirth, 
+            email, 
+            phoneNumber,
+            gameInfo, 
+            about, 
+            role,
+            userID
+        } = data
+            set(ref(database, 'users/' + "EkoT8ey757TssILatOqjQc9lh7y1"), {
+                firstName: firstName || userData.firstName,
+                middleName: middleName || userData.middleName,
+                familyName: familyName || userData.familyName,
+                email: email || userData.email,
+                gender: gender || userData.gender,
+                dateOfBirth: dateOfBirth || userData.dateOfBirth,
+                countryOfBirth: countryOfBirth || userData.countryOfBirth || '',
+                phoneNumber: phoneNumber || userData.phoneNumber || '',
+                gameInfo: {
+                    backhand: gameInfo?.backhand || userData.gameInfo?.backhand || '',
+                    plays: gameInfo?.plays || userData.gameInfo?.plays || ''
+                },
+                about: about || userData.about || '',
+                role: role || userData.role || '',
+                userID: userID || userData.userID || ''
+            })
+            .then(() => {
+                localStorage.setItem('userData', JSON.stringify(data))
+                toast.success("You have updated your profile successfully.")
+            })
+            .catch((error) => {
+                console.log("error: ", error)
+                toast.error("An error has occured. Please try again.")
+            })
+
         setShowForm(false)
         // history.push('/')
     }

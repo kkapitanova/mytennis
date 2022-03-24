@@ -180,7 +180,7 @@ const Chats = () => {
 
         } else if (year === new Date().getFullYear()) {
 
-            if (currentDate == date.getDate()) { //timestamp for today in format of hours:minutes (12:34)
+            if (currentDate === date.getDate()) { //timestamp for today in format of hours:minutes (12:34)
                 timestamp = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
             } else {
                 timestamp = `${date.getDate()}/${month + 1}, ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}` //timestamp for current year in format of date/month, hours:minutes (12/3, 12:34)
@@ -206,7 +206,7 @@ const Chats = () => {
     }
 
     const onKeyDown = (e) => {
-        if (e.keyCode == 13 && e.target.value) { // check if message is not empty & enter has been clicked
+        if (e.keyCode === 13 && e.target.value) { // check if message is not empty & enter has been clicked
             setChatMessages([
                 ...chatMessages,
                 {

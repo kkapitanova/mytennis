@@ -7,8 +7,7 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import TextField from '@mui/material/TextField';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import Stack from '@mui/material/Stack';
-import TextareaAutosize from '@mui/base/TextareaAutosize';
-import { Button, Checkbox, drawerClasses } from '@mui/material';
+import { Button, Checkbox } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -187,9 +186,9 @@ const TournamentSubmission = () => {
         window.scrollTo(0,0)
     }, [])
 
-    useEffect(() => {
-        console.log(JSON.stringify(tournamentData))
-    }, [tournamentData])
+    // useEffect(() => {
+    //     console.log(JSON.stringify(tournamentData))
+    // }, [tournamentData])
 
     return (
         <div className='container'>
