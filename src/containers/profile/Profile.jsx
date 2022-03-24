@@ -274,8 +274,7 @@ const Profile = () => {
                             label="Date of Birth"
                             name="dateOfBirth"
                             className="dob-picker"
-                            minDate={new Date().setFullYear(new Date().getFullYear() - 18)} // only 18+ allowed
-                            maxDate={new Date ()}
+                            maxDate={new Date().setFullYear(new Date().getFullYear() - 18)}// only 18+ allowed
                             value={data.dateOfBirth || null}
                             onChange={handleDOBChange}
                             disabled={userData.dateOfBirth ? true : false}
