@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { handleLogout } from '../../utils/helpers';
 
 //router
 import {
@@ -11,6 +12,8 @@ import {
 // styles
 import './NavBar.scss'
 // import './topnav.scss'
+
+// material imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
 
@@ -25,7 +28,7 @@ const NavBar = ({ unauthRoutes, authRoutes, unauthRouteLast }) => {
     const history = useHistory();
     const location = useLocation();
     const [loggedIn, setLoggedIn] = useState(false)
-    const userData = JSON.parse(localStorage.getItem('userData')) // TODO: replace with function that fetches data from firebase
+    const userData = JSON.parse(localStorage.getItem('userData')) || {} // TODO: replace with function that fetches data from firebase
 
     const expandMenu = () => {
 
@@ -41,10 +44,9 @@ const NavBar = ({ unauthRoutes, authRoutes, unauthRouteLast }) => {
         setExpanded(!expanded)
     }
 
-    const handleLogout = () => {
-        sessionStorage.removeItem('Auth Token');
-        toast.success("You have been logged out successfully.")
-        history.push('/logout-success')
+    const onLogout = () => {
+        handleLogout()
+        history.push('/login')
     }
 
     useEffect(() => {
@@ -92,23 +94,29 @@ const NavBar = ({ unauthRoutes, authRoutes, unauthRouteLast }) => {
                             </NavLink>
                         </div>
                     ))}
-                    {loggedIn && authRoutes && authRoutes.map((route, index) => (
-                        <div className="flex-column" key={index}>
-                            <NavLink
-                                key={route.path}
-                                exact 
-                                to={route.path}
-                                activeClassName="is-active"
-                                className="route-link"
-                                onClick={expandMenu}
-                            >
-                                <>
-                                    <span>{route.name}</span>
-                                    {route.dropdown && <div className="route-link-dropdown-content">{route.dropdown.content}</div>}
-                                </>
-                            </NavLink>
-                        </div>
-                    ))}
+                    {loggedIn && authRoutes && authRoutes.map((route, index) => {
+
+                        if (route.path === '/tournament-submission' && userData.role !== 'clubRep') {
+                        } else {
+                            return (
+                                <div className="flex-column" key={index}>
+                                    <NavLink
+                                        key={route.path}
+                                        exact 
+                                        to={route.path}
+                                        activeClassName="is-active"
+                                        className="route-link"
+                                        onClick={expandMenu}
+                                    >
+                                        <>
+                                            <span>{route.name}</span>
+                                            {route.dropdown && <div className="route-link-dropdown-content">{route.dropdown.content}</div>}
+                                        </>
+                                    </NavLink>
+                                </div>
+                            )
+                        }
+                    })}
                     {unauthRouteLast && unauthRouteLast.map((route, index) => (
                         <div className="flex-column" key={index}>
                             <NavLink
@@ -127,7 +135,7 @@ const NavBar = ({ unauthRoutes, authRoutes, unauthRouteLast }) => {
                         </div>
                     ))}
                     {/* <LanguageDropDownMenu mobile={true}/> */}
-                    {!loggedIn && <div className="login-container-mobile flex">
+                    {!loggedIn ? (<div className="login-container-mobile flex">
                         <div onClick={() => {
                             history.push('/login')
                             expandMenu()
@@ -135,20 +143,20 @@ const NavBar = ({ unauthRoutes, authRoutes, unauthRouteLast }) => {
                             history.push('/register')
                             expandMenu()
                         }}>Register</div>
-                    </div>}
-                    {loggedIn && <div className="profile-container-mobile flex">
+                    </div>) : 
+                    (<div className="profile-container-mobile flex">
                         <div onClick={() => {
                             history.push('/profile')
                             expandMenu()
                         }} className={`profile-option-wrapper ${location.pathname === '/profile' ? 'active-link' : ''}`}>Profile</div>&nbsp;|&nbsp;<div className={`profile-option-wrapper ${location.pathname === '/logout' ? 'active-link' : ''}`} onClick={() => {
                             history.push('/logout')
-                            handleLogout()
+                            onLogout()
                             expandMenu()
                         }}>Logout</div>
-                    </div>}
+                    </div>)}
                 </div>
                 <div className='flex align-center'>
-                    {!loggedIn && <div className="login-container flex">
+                    {!loggedIn ? (<div className="login-container flex">
                         <div onClick={() => {
                             history.push('/login')
                             expandMenu()
@@ -156,17 +164,17 @@ const NavBar = ({ unauthRoutes, authRoutes, unauthRouteLast }) => {
                             history.push('/register')
                             expandMenu()
                         }}>Register</div>
-                    </div>}
-                    {loggedIn && <div className="profile-container flex">
+                    </div>) :
+                    (<div className="profile-container flex">
                         <div onClick={() => {
                             history.push('/profile')
                             expandMenu()
-                        }} className={`profile-option-wrapper ${location.pathname === '/profile' ? 'active-link' : ''}`}>Profile</div>&nbsp;|&nbsp;<div className={`profile-option-wrapper ${location.pathname === '/logout' ? 'active-link' : ''}`} onClick={() => {
-                            history.push('/logout')
-                            handleLogout()
+                        }} className={`profile-option-wrapper ${location.pathname === '/profile' ? 'active-link' : ''}`}>Profile</div>&nbsp;|&nbsp;<div className={`profile-option-wrapper`} onClick={() => {
+                            onLogout()
                             expandMenu()
+                            history.push('/login')
                         }}>Logout</div>
-                    </div>}
+                    </div>)}
                     {/* <LanguageDropDownMenu /> */}
                 </div>
                 <div className="menu icon" onClick={expandMenu}>

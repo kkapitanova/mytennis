@@ -38,7 +38,7 @@ const tableRowHeaders = [
 ]
 
 const MyTournaments = () => {
-
+    const userData = JSON.parse(localStorage.getItem('userData')) || {} // TODO: replace with function that fetches data from firebase
     const location = useLocation()
     const [search, setSearch] = useState({
         name: '',
@@ -64,7 +64,7 @@ const MyTournaments = () => {
     const [statusColor, setStatusColor] = useState()
 
     //testing user roles
-    const [userRole, setUserRole] = useState("admin")
+    const [userRole, setUserRole] = useState(userData.role)
     const clubRepTestID = '12345'
     const playerTestID = '99999'
 
@@ -277,7 +277,7 @@ const MyTournaments = () => {
 
     return (
         <div className="container">
-            <h3 className="accent-color" style={{textAlign: 'left'}}>Search My Tournaments ({userRole} View)</h3>
+            <h3 className="accent-color" style={{textAlign: 'left'}}>Search My Tournaments {userRole} View</h3>
             {userRole.toLowerCase() === 'admin' && 
                 <div className="helper-text">
                     Here you can preview the tournaments submitted for approval and update their status by either rejecting or approving them. 
