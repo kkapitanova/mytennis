@@ -151,7 +151,7 @@ const Rankings = () => {
             ...search,
             genderGroup: searchGenderGroup === "women" ? 'Female' : searchGenderGroup === "men" ? 'Male' : searchGenderGroup === "mixed-doubles" ? 'Mixed' : randomGenderGroup
         })
-    }, [location, search])
+    }, [location])
 
     return (
         <div className='container'>
