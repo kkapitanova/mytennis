@@ -203,7 +203,7 @@ const Profile = () => {
                     sx={{marginTop: '15px', width: 300}}
                     onChange={handleChange}
                     required
-                    disabled={duserDataata.familyName ? true : false}
+                    disabled={userData.familyName ? true : false}
                 />
                 <TextField 
                     id="email" 
