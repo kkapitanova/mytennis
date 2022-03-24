@@ -77,11 +77,11 @@
     color: black;
 }
 
-.login-container {
+.login-container, .profile-container {
   margin-right: 20px;
 }
 
-.login-container-mobile {
+.login-container-mobile, .profile-container-mobile {
   display: none;
 }
 
@@ -110,7 +110,8 @@
 
     .links-wrapper,
     .language-dropdown,
-    .login-container {
+    .login-container,
+    .profile-container {
       display: none;
     }
   
@@ -146,7 +147,7 @@
       }
     }
 
-    .login-container-mobile {
+    .login-container-mobile, .profile-container-mobile {
       display: flex;
       margin-top: 20px;
 
@@ -170,10 +171,14 @@
   }
 }
 
-.login-type-wrapper {
+.login-type-wrapper, .profile-option-wrapper {
   cursor: pointer;
 
   &:hover {
     color: $accent;
   }
+}
+
+.active-link {
+  color: $accent;
 }

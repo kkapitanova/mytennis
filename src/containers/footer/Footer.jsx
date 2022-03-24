@@ -1,6 +1,3 @@
-// translation
-import { useTranslation } from 'react-i18next';
-
 // fontawesome icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEnvelope, faMapPin, faPhoneAlt } from '@fortawesome/free-solid-svg-icons'
@@ -17,8 +14,7 @@ import './Footer.scss'
 
 
 const Footer = () => {
-
-    const [ t, i18n ] = useTranslation();
+    const userData = JSON.parse(localStorage.getItem('userData')) || {} // TODO: replace with function that fetches data from firebase
 
     return (
         <>
@@ -49,10 +45,10 @@ const Footer = () => {
                                 {/* {t("Footer.SocialMedia")} */}
                             </h3>
                             <div className="section-wrapper-item">
-                                <a rel="noreferrer" target="_blank" href="https://www.facebook.com/mypt.bg"><FacebookIcon />&nbsp;My Tennis Platform</a>
+                                <a rel="noreferrer" target="_blank" href="https://www.facebook.com/mytennisplatform"><FacebookIcon />&nbsp;My Tennis Platform</a>
                             </div>
                             <div className="section-wrapper-item">
-                                <a rel="noreferrer" target="_blank" href="https://www.instagram.com/mypt.bg"><InstagramIcon />&nbsp;mytennisplatform</a>          
+                                <a rel="noreferrer" target="_blank" href="https://www.instagram.com/mytennisplatform"><InstagramIcon />&nbsp;mytennisplatform</a>          
                             </div>
                         </div>
                         <div className="section-wrapper">
@@ -64,18 +60,17 @@ const Footer = () => {
                             <Link to="/tournament-calendar">Tournament Calendar</Link>
                             <Link to="/players">All Players</Link>
                         </div>
-                        <div className="section-wrapper">
-                            <h3>Routes Testing</h3>
+                        {userData.role && <div className="section-wrapper">
+                            <h3>For You</h3>
                             {/* <Link to="/contacts">{t("Footer.GetInTouch")}</Link> */}
-                            <Link to="/tournament-submission">Tournament Submission*</Link>
-                            <Link to="/my-tournaments">My Tournaments*</Link>
-                            <Link to="/chats">Chats*</Link>
-                        </div>
+                            {userData.role === 'clubRep' && <Link to="/tournament-submission">Tournament Submission</Link>}
+                            <Link to="/my-tournaments">My Tournaments</Link>
+                            {userData.role === 'player' && <Link to="/chats">Chats</Link>}
+                        </div>}
                     </div>
                 <div className="copyright-wrapper">Copyright © 2022 My Tennis Platform. All Rights Reserved.
                  {/* {t("Rights.1")} */}
                  </div>
-                 *The star indicates pages that are WIP (work in progress).
             </footer>
         </>
     )
