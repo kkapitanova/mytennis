@@ -179,7 +179,7 @@ const Profile = () => {
                     sx={{marginTop: '15px', width: 300}}
                     onChange={handleChange}
                     required
-                    disabled={data.firstName ? true : false}
+                    disabled={userData.firstName ? true : false}
                 />
                 <TextField 
                     id="middleName" 
@@ -191,7 +191,7 @@ const Profile = () => {
                     sx={{marginTop: '15px', width: 300}}
                     onChange={handleChange}
                     required
-                    disabled={data.middleName ? true : false}
+                    disabled={userData.middleName ? true : false}
                 />
                 <TextField 
                     id="familyName" 
@@ -203,7 +203,7 @@ const Profile = () => {
                     sx={{marginTop: '15px', width: 300}}
                     onChange={handleChange}
                     required
-                    disabled={data.familyName ? true : false}
+                    disabled={duserDataata.familyName ? true : false}
                 />
                 <TextField 
                     id="email" 
@@ -232,7 +232,7 @@ const Profile = () => {
                                                 name="gender"
                                                 checked={data.gender === "female" ? true : false} 
                                                 onChange={handleChange}
-                                                disabled={data.gender ? true : false}
+                                                disabled={userData.gender ? true : false}
                                             />} 
                                         label="Female" 
                                     />
@@ -243,7 +243,7 @@ const Profile = () => {
                                                 name="gender"
                                                 checked={data.gender === "male" ? true : false} 
                                                 onChange={handleChange}
-                                                disabled={data.gender ? true : false}
+                                                disabled={userData.gender ? true : false}
                                             />} 
                                         label="Male" 
                                     />
@@ -259,7 +259,7 @@ const Profile = () => {
                         value={data.countryOfBirth}
                         label="Country of Birth"
                         sx={{width: 300}}
-                        disabled={data.countryOfBirth ? true : false}
+                        disabled={userData.countryOfBirth ? true : false}
                     >
                         {countryOptions.map(c => {
                             return (
@@ -278,7 +278,7 @@ const Profile = () => {
                             maxDate={new Date ()}
                             value={data.dateOfBirth || null}
                             onChange={handleDOBChange}
-                            disabled={data.dateOfBirth ? true : false}
+                            disabled={userData.dateOfBirth ? true : false}
                             renderInput={(params) => <TextField required {...params} sx={{margin: '10px 0px 0px 0px !important', width: 300}}
                         />}
                         />
