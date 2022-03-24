@@ -20,8 +20,17 @@ import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
-
 import MuiPhoneNumber from "material-ui-phone-number";
+
+// firebase
+import { getDatabase, ref, child, get, push, update} from "firebase/database";
+
+// toast
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+const database = getDatabase()
+const dbRef = ref(database);
 
 //modal style
 const style = {
@@ -56,8 +65,6 @@ const initialTournamentData = {
     medicalTeamOnSite: ''
 }
 
-
-
 const TournamentSubmission = () => {
     const userData = JSON.parse(localStorage.getItem('userData')) || {} // TODO: replace with function that fetches data from firebase
     const [tournamentData, setTournamentData] = useState(initialTournamentData)
@@ -78,7 +85,7 @@ const TournamentSubmission = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        console.log('form submission', tournamentData)
+        console.log('form submission', {...tournamentData, submittedBy: "WaN1Y7MKkfZ6MrAtM0f3ckCZgo52"})
 
         const valid = validateFields()
 
@@ -91,11 +98,25 @@ const TournamentSubmission = () => {
     }
 
     const confirmSubmission = () => {
-        console.log("submission confirmed", tournamentData)
+        const newPostKey = push(child(dbRef, 'tournaments')).key;
+        const updates = {};
+        updates['/tournaments/' + newPostKey] = {...tournamentData, status: "Waiting for Approval", submittedBy: "WaN1Y7MKkfZ6MrAtM0f3ckCZgo52", submissionTime: new Date (), tournamentID: newPostKey};
+
+        update(dbRef, updates)
+        .then(() => {
+            toast.success("You have submitted a tournament successfully.")
+            console.log("submission confirmed", JSON.stringify({...tournamentData, status: "New", submittedBy: "WaN1Y7MKkfZ6MrAtM0f3ckCZgo52", submissionTime: new Date (), tournamentID: newPostKey}))
+
+        })
+        .catch((error) => {
+            console.log("Error: ", error)
+            toast.error('An error has occured. Please try again.')
+        })
+
         setTournamentData(initialTournamentData)
         setOpen(false)
-        setTimeout(() => setOpenSuccessScreen(true), 300)
-        setTimeout(() => setOpenSuccessScreen(false), 3300)
+        // setTimeout(() => setOpenSuccessScreen(true), 300)
+        // setTimeout(() => setOpenSuccessScreen(false), 3300)
     }
 
     const handleSuccessModalClose = () => {
@@ -185,6 +206,17 @@ const TournamentSubmission = () => {
 
     useEffect(() => {
         window.scrollTo(0,0)
+
+        get(child(dbRef, 'tournaments')).then((snapshot) => {
+            if (snapshot.exists()) {
+              console.log(snapshot.val());
+            } else {
+              console.log("No data available");
+            }
+        }).catch((error) => {
+            console.error(error);
+        });
+        
     }, [])
 
     // useEffect(() => {
@@ -327,9 +359,9 @@ const TournamentSubmission = () => {
                                     defaultValue="female"
                                     name="radio-buttons-group"
                                 >
-                                    <FormControlLabel value="women" control={<Radio   checked={tournamentData.genderGroup === "women" ? true : false} onChange={handleGenderGroupChange}/>} label="Women" />
-                                    <FormControlLabel value="men" control={<Radio   checked={tournamentData.genderGroup === "men"? true : false} onChange={handleGenderGroupChange}/>} label="Men" />
-                                    <FormControlLabel value="mixed" control={<Radio   checked={tournamentData.genderGroup === "mixed" ? true : false} disabled={tournamentData.drawType === "singles" ? true : false} onChange={handleGenderGroupChange}/>} label="Mixed" />
+                                    <FormControlLabel value="Women" control={<Radio   checked={tournamentData.genderGroup === "Women" ? true : false} onChange={handleGenderGroupChange}/>} label="Women" />
+                                    <FormControlLabel value="Men" control={<Radio   checked={tournamentData.genderGroup === "Men"? true : false} onChange={handleGenderGroupChange}/>} label="Men" />
+                                    <FormControlLabel value="Mixed" control={<Radio   checked={tournamentData.genderGroup === "Mixed" ? true : false} disabled={tournamentData.drawType === "singles" ? true : false} onChange={handleGenderGroupChange}/>} label="Mixed" />
                                 </RadioGroup>
                             </FormControl>
                             <FormControl   sx={{margin: "0 50px 20px 0"}}>
@@ -469,6 +501,7 @@ const TournamentSubmission = () => {
                 <div style={{marginTop: 20}}>If you wish to log into another account, please click the button below.</div>
                 <Button variant="contained" sx={{margin: '10px 0px 0px 0px !important'}} onClick={() => handleLogout()}>Logout</Button>
             </div>)}
+            <ToastContainer autoClose={3000}/>
         </div>
     )
 }

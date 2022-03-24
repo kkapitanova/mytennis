@@ -3,7 +3,10 @@ import { Table } from '../../components';
 import { sortData, getDateString } from '../../utils/helpers'
 import { useLocation } from 'react-router';
 import { ageGroups, genderGroups, months, upcomingYears, previousYears, allYears } from '../../data/constants';
-import { mockTournamentData } from '../../data/dummyData';
+import { newMockTournamentData } from '../../data/dummyData';
+
+//firebase
+import { getDatabase, ref, child, get, set, push, update} from "firebase/database";
 
 // material
 import TextField from '@mui/material/TextField';
@@ -16,6 +19,9 @@ import Button from '@mui/material/Button';
 import ClearIcon from '@mui/icons-material/Clear';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+
+const database = getDatabase()
+const dbRef = ref(database);
 
 const style = {
     position: 'absolute',
@@ -33,8 +39,29 @@ const tableRowHeaders = [
     'Location', 'Name', 'Start Date', 'End Date', 'Gender Group', 'Age Groups', 'Draw Types', 'Status'
 ]
 
+const initialTournamentData = {
+    tournamentName: '',
+    description: '',
+    city: '',
+    country: '',
+    street: '',
+    zipCode: '',
+    clubName: '',
+    startDate: '',
+    endDate: '',
+    tournamentDirector: '',
+    tournamentDirectorPhone: '',
+    genderGroup: '',
+    ageGroups: [],
+    drawType: '',
+    entryTax: '',
+    prizeMoney: '',
+    medicalTeamOnSite: ''
+}
+
 const TournamentCalendar = () => {
 
+    const [allData, setAllData] = useState({})
     const location = useLocation()
     const [search, setSearch] = useState({
         name: '',
@@ -65,34 +92,71 @@ const TournamentCalendar = () => {
     const getData = () => {
         let tournamentData = []
 
-        mockTournamentData.forEach(t => {
-            
+        console.log(123, allData)
+
+        for (const key in allData) {
+            const t = allData[key]
+            console.log(1, allData[key])
+
             if (
                 (search.ageGroup ? t.ageGroups.includes(search.ageGroup) : true) && 
-                (search.genderGroup ? t.genderGroups.includes(search.genderGroup) : true) &&
-                (t.location.city + t.location.country).toLowerCase().includes(search.location) &&
-                t.name.toLowerCase().includes(search.name) && 
-                (t.dates.startDate + t.dates.endDate).includes(search.month) &&
-                (t.dates.startDate + t.dates.endDate).includes(search.year) && 
-                t.status.toLowerCase() !== 'waiting for approval' && t.status.toLowerCase() !== 'declined' &&
+                (search.genderGroup ? t.genderGroup.includes(search.genderGroup) : true) &&
+                (t.city + t.country).toLowerCase().includes(search.location) &&
+                t.tournamentName.toLowerCase().includes(search.name) && 
+                (t.startDate + t.endDate).includes(search.month) &&
+                (t.startDate + t.endDate).includes(search.year) && 
+                // t.status.toLowerCase() !== 'waiting for approval' && t.status.toLowerCase() !== 'declined' &&
                 
                 // UPCOMING TOURNAMENTS VS ARCHIVED TOURNAMENTS VS ALL TOURNAMENTS
-                (tournamentsDisplay === 'upcoming' ? new Date (t.dates.endDate).getTime() > new Date ().getTime() : tournamentsDisplay === 'archive' ? new Date (t.dates.endDate).getTime() < new Date ().getTime() : true)
+                (tournamentsDisplay === 'upcoming' ? new Date (t.endDate).getTime() > new Date ().getTime() : tournamentsDisplay === 'archive' ? new Date (t.endDate).getTime() < new Date ().getTime() : true)
             ) {
 
+                console.log('here')
+
                 tournamentData.push({
-                    location: `${t.location.city}, ${t.location.country}`,
-                    name: t.name,
-                    startDate: new Date (t.dates.startDate).getTime(),
-                    endDate: new Date(t.dates.endDate).getTime(),
-                    genderGroups: t.genderGroups,
+                    location: `${t.city}, ${t.country}`,
+                    name: t.tournamentName,
+                    startDate: new Date (t.startDate).getTime(),
+                    endDate: new Date(t.endDate).getTime(),
+                    genderGroup: t.genderGroup,
                     ageGroups: t.ageGroups,
                     draws: t.draws,
                     status: t.status,
                     id: t.tournamentID
                 })
             }
-        })
+
+        }
+
+        // allData.forEach(t => {
+            
+        //     if (
+        //         (search.ageGroup ? t.ageGroups.includes(search.ageGroup) : true) && 
+        //         (search.genderGroup ? t.genderGroup.includes(search.genderGroup) : true) &&
+        //         (t.city + t.country).toLowerCase().includes(search.location) &&
+        //         t.tournamentName.toLowerCase().includes(search.name) && 
+        //         (t.startDate + t.endDate).includes(search.month) &&
+        //         (t.startDate + t.endDate).includes(search.year) && 
+        //         t.status.toLowerCase() !== 'waiting for approval' && t.status.toLowerCase() !== 'declined' &&
+                
+        //         // UPCOMING TOURNAMENTS VS ARCHIVED TOURNAMENTS VS ALL TOURNAMENTS
+        //         (tournamentsDisplay === 'upcoming' ? new Date (t.endDate).getTime() > new Date ().getTime() : tournamentsDisplay === 'archive' ? new Date (t.endDate).getTime() < new Date ().getTime() : true)
+        //     ) {
+
+        //         tournamentData.push({
+        //             location: `${t.city}, ${t.country}`,
+        //             name: t.name,
+        //             startDate: new Date (t.startDate).getTime(),
+        //             endDate: new Date(t.endDate).getTime(),
+        //             genderGroup: t.genderGroup,
+        //             ageGroups: t.ageGroups,
+        //             draws: t.draws,
+        //             status: t.status,
+        //             id: t.tournamentID
+        //         })
+        //     }
+        // })
+        //unitl here
 
         const sortedTableData = sortData(tournamentData, "startDate", 'asc')
         const organizedTableData = sortedTableData.map(t => {
@@ -105,8 +169,8 @@ const TournamentCalendar = () => {
     }
 
     const handleRowClick = (tournamentData) => {
-        const tournamentIndex =  mockTournamentData.findIndex(el => el.tournamentID === tournamentData.id)
-        const current = mockTournamentData[tournamentIndex]
+        const tournamentIndex =  allData.findIndex(el => el.tournamentID === tournamentData.id)
+        const current = allData[tournamentIndex]
         const color = current?.status.toLowerCase() === 'waiting for approval' || current?.status.toLowerCase() === 'postponed' ? 'orange' : current?.status.toLowerCase() === 'declined' ? 'red' : 'green'
 
         setStatusColor(color)
@@ -181,6 +245,19 @@ const TournamentCalendar = () => {
 
     useEffect(() => {
       window.scrollTo(0,0)
+
+      get(child(dbRef, 'tournaments')).then((snapshot) => {
+        if (snapshot.exists()) {
+          console.log(snapshot.val());
+          setAllData(snapshot.val())
+        } else {
+          console.log("No data available");
+        }
+        }).catch((error) => {
+            console.error(error);
+        });
+
+
     }, [])
 
     useEffect(() => {
@@ -342,10 +419,10 @@ const TournamentCalendar = () => {
                                 <div className={`status-indicator ${statusColor}`}>{currentTournament?.status.toUpperCase()}</div> 
                             </div>
                             <div style={{marginBottom: 5}}>
-                                {currentTournament?.dates && <div>{getDateString(new Date (currentTournament?.dates?.startDate).getTime())} - {getDateString(new Date (currentTournament?.dates?.endDate).getTime())}</div>}
+                                {currentTournament?.startDate && currentTournament?.endDate && <div>{getDateString(new Date (currentTournament?.startDate).getTime())} - {getDateString(new Date (currentTournament?.endDate).getTime())}</div>}
                             </div>
-                            <div style={{marginBottom: 5}}>{currentTournament?.site}</div>
-                            <div style={{marginBottom: 5}}>{currentTournament?.location?.city}, {currentTournament?.location?.country}</div>
+                            <div style={{marginBottom: 5}}>{currentTournament?.clubName}</div>
+                            <div style={{marginBottom: 5}}>{currentTournament?.city}, {currentTournament?.country}</div>
                             <h3 style={{marginTop: 40}}>Terms of Play</h3>
                             <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
                             <h3 style={{marginTop: 40}}>Section Title</h3>
