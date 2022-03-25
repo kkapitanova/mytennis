@@ -20,6 +20,10 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 //firebase
 import { getDatabase, ref, child, get, set, push, update} from "firebase/database";
 
+// toast
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 //styles
 import './MyTournaments.scss';
 
@@ -51,7 +55,7 @@ const tableRowHeaders = [
 
 const MyTournaments = () => {
     const [allData, setAllData] = useState({})
-    const userData = JSON.parse(localStorage.getItem('userData')) || {} // TODO: replace with function that fetches data from firebase
+    const userData = JSON.parse(sessionStorage.getItem('userData')) || {} // TODO: replace with function that fetches data from firebase
     const location = useLocation()
     const [search, setSearch] = useState({
         name: '',
@@ -77,9 +81,21 @@ const MyTournaments = () => {
     const [statusColor, setStatusColor] = useState()
 
     //testing user roles
-    const [userRole, setUserRole] = useState(userData.role)
-    const clubRepTestID = '12345'
+    const userRole = userData.role
     const playerTestID = '99999'
+
+    const fetchTournaments = () => {
+        get(child(dbRef, 'tournaments')).then((snapshot) => {
+            if (snapshot.exists()) {
+              console.log(snapshot.val());
+              setAllData(objectToArrayConverter(snapshot.val()))
+            } else {
+              console.log("No data available");
+            }
+            }).catch((error) => {
+                console.error(error);
+            });
+    }
 
     // tournament info modal close
     const handleClose = () => {
@@ -216,11 +232,6 @@ const MyTournaments = () => {
             const updatedData = []
             
             data.forEach(item => {
-                // if (item.id === currentTournament.tournamentID) {
-                //     item.status = "Open"
-                // }
-                // return item
-
                 if (item.id !== currentTournament.tournamentID) {
                     updatedData.push(item)
                 } else {
@@ -231,12 +242,29 @@ const MyTournaments = () => {
             setData(updatedData)
             handleClose()
 
-            setTimeout(() => {
-                setStatusModalOpen(true)
-            }, 200)
-            setTimeout(() => {
-                setStatusModalOpen(false)
-            }, 3000)
+            let updatedTournament = currentTournament;
+            updatedTournament.status = 'Open'
+
+            const updates = {};
+            updates['/tournaments/' + currentTournament.tournamentID] = updatedTournament;
+
+            update(dbRef, updates)
+            .then(() => {
+                toast.success("You have approved a tournament successfully.")
+                toast.info("The tournament is now shown in the tournament calendar.")
+                console.log("submission confirmed")
+            })
+            .catch((error) => {
+                console.log("Error: ", error)
+                toast.error('An error has occured. Please try again.')
+            })
+
+            // setTimeout(() => {
+            //     setStatusModalOpen(true)
+            // }, 200)
+            // setTimeout(() => {
+            //     setStatusModalOpen(false)
+            // }, 3000)
         }
     }
 
@@ -257,33 +285,40 @@ const MyTournaments = () => {
             setData(updatedData)
             handleClose()
 
-            setTimeout(() => {
-                setStatusModalOpen(true)
-            }, 200)
-            setTimeout(() => {
-                setStatusModalOpen(false)
-            }, 3000)
+            let updatedTournament = currentTournament;
+            updatedTournament.status = 'Declined'
+
+            const updates = {};
+            updates['/tournaments/' + currentTournament.tournamentID] = updatedTournament;
+
+            update(dbRef, updates)
+            .then(() => {
+                toast.success("You have declined a tournament successfully.")
+                toast.info("The tournament will stay archived only for you and the club representative to see.")
+                console.log("submission confirmed")
+            })
+            .catch((error) => {
+                console.log("Error: ", error)
+                toast.error('An error has occured. Please try again.')
+            })
+
+            // setTimeout(() => {
+            //     setStatusModalOpen(true)
+            // }, 200)
+            // setTimeout(() => {
+            //     setStatusModalOpen(false)
+            // }, 3000)
         }
     }
 
     const refreshData = () => {
-        //TODO: replace with actual call that fetches data
+        fetchTournaments()
     }
 
     // scroll to top when opening the page for the first time
     useEffect(() => {
         window.scrollTo(0,0)
-
-        get(child(dbRef, 'tournaments')).then((snapshot) => {
-            if (snapshot.exists()) {
-              console.log(snapshot.val());
-              setAllData(objectToArrayConverter(snapshot.val()))
-            } else {
-              console.log("No data available");
-            }
-            }).catch((error) => {
-                console.error(error);
-            });
+        fetchTournaments()
     }, [])
 
     useEffect(() => {
@@ -302,7 +337,7 @@ const MyTournaments = () => {
 
     return (
         <div className="container">
-            <h3 className="accent-color" style={{textAlign: 'left'}}>Search My Tournaments - {userRole === "clubRep" ? 'Club Representative' : userRole === 'player' ? 'Player' : 'Admin'} View</h3>
+            <h3 className="accent-color" style={{textAlign: 'left'}}>My Tournaments - {userRole === "clubRep" ? 'Club Representative' : userRole === 'player' ? 'Player' : 'Admin'} View</h3>
             {userData?.role && userData.role.toLowerCase() === 'admin' && 
                 <div className="helper-text">
                     Here you can preview the tournaments submitted for approval and update their status by either rejecting or approving them. 
@@ -500,25 +535,6 @@ const MyTournaments = () => {
                                 <Button className="red-button" variant={declineButtonVariant} sx={{height: 40, margin: '30px 0px 0px 10px !important'}} onClick={() => confirmDecline()}>{tournamentCancellationText}</Button>
                             </div>
                         )}
-                    </div>
-                </Box>
-                </Fade>
-            </Modal>
-            <Modal
-                aria-labelledby="transition-modal-title"
-                aria-describedby="transition-modal-description"
-                open={statusModalOpen}
-                onClose={handleStatusModalClose}
-                closeAfterTransition
-                BackdropComponent={Backdrop}
-                BackdropProps={{
-                timeout: 500,
-                }}
-            >
-                <Fade in={statusModalOpen}>
-                <Box sx={style}>
-                    <div className="flex justify-center align-center">
-                        <div>You have successfully updated the status of the tournament.</div>
                     </div>
                 </Box>
                 </Fade>

@@ -2,10 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 // material
+import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+import FormGroup from '@mui/material/FormGroup';
+import Checkbox from '@mui/material/Checkbox';
+import FormHelperText from '@mui/material/FormHelperText';
 
 // firebase
 import '../../firebase-config';
@@ -29,6 +36,7 @@ const Register = () => {
     })
     const [userRole, setUserRole] = useState('player')
     const history = useHistory();
+    const [checked, setChecked] = useState(false)
 
     const handleChange = e => {
         const value = e.target.value
@@ -41,6 +49,8 @@ const Register = () => {
 
         if (!userData.password || !userData.email || !userData.confirmPassword) {
             toast.error('Please fill out all of the fields.')
+        } else if (!checked) {
+            toast.error('Please read and agree to the T&Cs.')
         } else if (userData.password !== userData.confirmPassword) {
             toast.error('Passwords do not match.')
         } else {
@@ -56,7 +66,7 @@ const Register = () => {
                     userID: user.uid
                 })
                 .then(() => {
-                    localStorage.setItem('userData', JSON.stringify({
+                    sessionStorage.setItem('userData', JSON.stringify({
                         email: user.email,
                         role: userRole,
                         userID: user.uid
@@ -76,6 +86,8 @@ const Register = () => {
                     toast.error('Invalid email. Please try again.')
                 } else if (error.code === 'auth/email-already-in-use') {
                     toast.error('Email already in use.')
+                } else if (error.code === "auth/weak-password"){
+                    toast.error('Password should be at least 6 characters long.')
                 } else {
                     toast.error('An error has occured. Please try again.')
                 }
@@ -89,7 +101,7 @@ const Register = () => {
 
     return (
         <div className="flex-column justify-center align-center container">
-            <h3>Register Form</h3>
+            <h3 className="accent-color">Register Form</h3>
             <div>I want to register as a:</div>
             <ToggleButtonGroup
                 color="primary"
@@ -103,27 +115,15 @@ const Register = () => {
                 <ToggleButton value="clubRep">Club Rep</ToggleButton>
                 <ToggleButton value="player">Player</ToggleButton>
             </ToggleButtonGroup>
-            <div className="flex-column">
-                {/* <TextField 
-                    id="firstName" 
-                    name="firstName" 
-                    label="First Name*" 
-                    variant="outlined" 
-                    value={userData.firstName}
-                    size="small"
-                    sx={{marginTop: '15px'}}
-                    onChange={handleChange}
-                />
-                <TextField 
-                    id="familyName" 
-                    name="familyName" 
-                    label="Family Name*" 
-                    variant="outlined" 
-                    value={userData.familyName}
-                    size="small"
-                    sx={{marginTop: '15px'}}
-                    onChange={handleChange}
-                /> */}
+            <Box
+                    component="form"
+                    sx={{
+                        '& > :not(style)': { m: 1, width: '30ch' },
+                    }}
+                    noValidate
+                    autoComplete="off"
+                    className="flex-column"
+                >
                 <TextField 
                     id="email" 
                     name="email"
@@ -131,7 +131,6 @@ const Register = () => {
                     variant="outlined" 
                     value={userData.email}
                     size="small"
-                    sx={{marginTop: '15px'}}
                     onChange={handleChange}
                 />
                 <TextField 
@@ -142,7 +141,6 @@ const Register = () => {
                     variant="outlined" 
                     value={userData.password}
                     size="small"
-                    sx={{marginTop: '15px'}}
                     onChange={handleChange}
                 />
                 <TextField 
@@ -153,12 +151,22 @@ const Register = () => {
                     variant="outlined" 
                     value={userData.confirmPassword}
                     size="small"
-                    sx={{marginTop: '15px'}}
                     onChange={handleChange}
                 />
-            </div>
+            </Box>
+            <FormControl sx={{ m: 1 }} component="fieldset" variant="standard" error={!checked}>
+                        {/* <FormLabel component="legend">Assign responsibility</FormLabel> */}
+                        <FormGroup>
+                        <FormControlLabel
+                            control={
+                            <Checkbox checked={checked} onChange={(e) => {setChecked(e.target.checked)}} name="gilad" />
+                            }
+                            label="By registering, I confirm that I agree to the T&Cs of My Tennis."
+                        />
+                        </FormGroup>
+                        <FormHelperText>You must agree to continue forward.</FormHelperText>
+                    </FormControl>
             <Button variant="contained" sx={{margin: '10px !important'}} type="submit" onClick={handleRegister} disabled={!userData.email || !userData.password || !userData.confirmPassword}>Register</Button>
-            <ToastContainer autoClose={3000}/>
         </div>
     )
 }

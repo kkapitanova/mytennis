@@ -14,7 +14,7 @@ import './Footer.scss'
 
 
 const Footer = () => {
-    const userData = JSON.parse(localStorage.getItem('userData')) || {} // TODO: replace with function that fetches data from firebase
+    const userData = JSON.parse(sessionStorage.getItem('userData')) || {} // TODO: replace with function that fetches data from firebase
 
     return (
         <>
@@ -60,7 +60,7 @@ const Footer = () => {
                             <Link to="/tournament-calendar">Tournament Calendar</Link>
                             <Link to="/players">All Players</Link>
                         </div>
-                        {userData.role && <div className="section-wrapper">
+                        {userData && userData.role && <div className="section-wrapper">
                             <h3>For You</h3>
                             {/* <Link to="/contacts">{t("Footer.GetInTouch")}</Link> */}
                             {userData.role === 'clubRep' && <Link to="/tournament-submission">Tournament Submission</Link>}
