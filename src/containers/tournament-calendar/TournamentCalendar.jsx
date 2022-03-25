@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Table } from '../../components';
-import { sortData, getDateString } from '../../utils/helpers'
+import { sortData, getDateString, objectToArrayConverter } from '../../utils/helpers'
 import { useLocation } from 'react-router';
 import { ageGroups, genderGroups, months, upcomingYears, previousYears, allYears } from '../../data/constants';
-import { newMockTournamentData } from '../../data/dummyData';
+// import { newMockTournamentData } from '../../data/dummyData';
 
 //firebase
-import { getDatabase, ref, child, get, set, push, update} from "firebase/database";
+import { getDatabase, ref, child, get } from "firebase/database";
 
 // material
 import TextField from '@mui/material/TextField';
@@ -36,7 +36,14 @@ const style = {
 };
 
 const tableRowHeaders = [
-    'Location', 'Name', 'Start Date', 'End Date', 'Gender Group', 'Age Groups', 'Draw Types', 'Status'
+    'Location', 
+    'Name', 
+    'Start Date', 
+    'End Date', 
+    'Gender Group', 
+    'Age Groups', 
+    // 'Draw Types', 
+    'Status'
 ]
 
 const initialTournamentData = {
@@ -60,7 +67,7 @@ const initialTournamentData = {
 }
 
 const TournamentCalendar = () => {
-
+    const userData = JSON.parse(localStorage.getItem('userData')) || {} // TODO: replace with function that fetches data from firebase
     const [allData, setAllData] = useState({})
     const location = useLocation()
     const [search, setSearch] = useState({
@@ -92,12 +99,7 @@ const TournamentCalendar = () => {
     const getData = () => {
         let tournamentData = []
 
-        console.log(123, allData)
-
-        for (const key in allData) {
-            const t = allData[key]
-            console.log(1, allData[key])
-
+        allData && allData.length && allData.forEach(t => {
             if (
                 (search.ageGroup ? t.ageGroups.includes(search.ageGroup) : true) && 
                 (search.genderGroup ? t.genderGroup.includes(search.genderGroup) : true) &&
@@ -105,14 +107,11 @@ const TournamentCalendar = () => {
                 t.tournamentName.toLowerCase().includes(search.name) && 
                 (t.startDate + t.endDate).includes(search.month) &&
                 (t.startDate + t.endDate).includes(search.year) && 
-                // t.status.toLowerCase() !== 'waiting for approval' && t.status.toLowerCase() !== 'declined' &&
+                t.status.toLowerCase() !== 'waiting for approval' && t.status.toLowerCase() !== 'declined' &&
                 
                 // UPCOMING TOURNAMENTS VS ARCHIVED TOURNAMENTS VS ALL TOURNAMENTS
                 (tournamentsDisplay === 'upcoming' ? new Date (t.endDate).getTime() > new Date ().getTime() : tournamentsDisplay === 'archive' ? new Date (t.endDate).getTime() < new Date ().getTime() : true)
             ) {
-
-                console.log('here')
-
                 tournamentData.push({
                     location: `${t.city}, ${t.country}`,
                     name: t.tournamentName,
@@ -120,43 +119,13 @@ const TournamentCalendar = () => {
                     endDate: new Date(t.endDate).getTime(),
                     genderGroup: t.genderGroup,
                     ageGroups: t.ageGroups,
-                    draws: t.draws,
+                    // draws: t.draws,
                     status: t.status,
                     id: t.tournamentID
                 })
             }
 
-        }
-
-        // allData.forEach(t => {
-            
-        //     if (
-        //         (search.ageGroup ? t.ageGroups.includes(search.ageGroup) : true) && 
-        //         (search.genderGroup ? t.genderGroup.includes(search.genderGroup) : true) &&
-        //         (t.city + t.country).toLowerCase().includes(search.location) &&
-        //         t.tournamentName.toLowerCase().includes(search.name) && 
-        //         (t.startDate + t.endDate).includes(search.month) &&
-        //         (t.startDate + t.endDate).includes(search.year) && 
-        //         t.status.toLowerCase() !== 'waiting for approval' && t.status.toLowerCase() !== 'declined' &&
-                
-        //         // UPCOMING TOURNAMENTS VS ARCHIVED TOURNAMENTS VS ALL TOURNAMENTS
-        //         (tournamentsDisplay === 'upcoming' ? new Date (t.endDate).getTime() > new Date ().getTime() : tournamentsDisplay === 'archive' ? new Date (t.endDate).getTime() < new Date ().getTime() : true)
-        //     ) {
-
-        //         tournamentData.push({
-        //             location: `${t.city}, ${t.country}`,
-        //             name: t.name,
-        //             startDate: new Date (t.startDate).getTime(),
-        //             endDate: new Date(t.endDate).getTime(),
-        //             genderGroup: t.genderGroup,
-        //             ageGroups: t.ageGroups,
-        //             draws: t.draws,
-        //             status: t.status,
-        //             id: t.tournamentID
-        //         })
-        //     }
-        // })
-        //unitl here
+        })
 
         const sortedTableData = sortData(tournamentData, "startDate", 'asc')
         const organizedTableData = sortedTableData.map(t => {
@@ -169,7 +138,7 @@ const TournamentCalendar = () => {
     }
 
     const handleRowClick = (tournamentData) => {
-        const tournamentIndex =  allData.findIndex(el => el.tournamentID === tournamentData.id)
+        const tournamentIndex = allData.findIndex(el => el.tournamentID === tournamentData.id)
         const current = allData[tournamentIndex]
         const color = current?.status.toLowerCase() === 'waiting for approval' || current?.status.toLowerCase() === 'postponed' ? 'orange' : current?.status.toLowerCase() === 'declined' ? 'red' : 'green'
 
@@ -241,7 +210,7 @@ const TournamentCalendar = () => {
 
     useEffect(() => {
         setData(getData())
-    }, [search.ageGroup, search.genderGroup, search.draws, tournamentsDisplay])
+    }, [search.ageGroup, search.genderGroup, search.draws, tournamentsDisplay, allData])
 
     useEffect(() => {
       window.scrollTo(0,0)
@@ -249,14 +218,13 @@ const TournamentCalendar = () => {
       get(child(dbRef, 'tournaments')).then((snapshot) => {
         if (snapshot.exists()) {
           console.log(snapshot.val());
-          setAllData(snapshot.val())
+          setAllData(objectToArrayConverter(snapshot.val()))
         } else {
           console.log("No data available");
         }
         }).catch((error) => {
             console.error(error);
         });
-
 
     }, [])
 
@@ -415,7 +383,7 @@ const TournamentCalendar = () => {
                     <div className="flex-column justify-center align-center">
                         <div className='flex-column' style={{marginBottom: 30}}>
                             <div className="flex justify-between align-center">
-                                <h2 style={{fontWeight: '500'}}>{currentTournament?.name}</h2>
+                                <h2 style={{fontWeight: '500'}}>{currentTournament?.tournamentName}</h2>
                                 <div className={`status-indicator ${statusColor}`}>{currentTournament?.status.toUpperCase()}</div> 
                             </div>
                             <div style={{marginBottom: 5}}>
@@ -430,7 +398,7 @@ const TournamentCalendar = () => {
                             <h3 style={{marginTop: 40}}>Section Title</h3>
                             <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
                         </div>
-                        <div className="flex">
+                        {userData.role === 'player' && <div className="flex">
                             <Button 
                                 variant={entryButtonText === 'Enter' ? 'outlined' : 'contained'} 
                                 sx={{height: 40, margin: '0px 5px 0px 0px !important'}} 
@@ -446,7 +414,7 @@ const TournamentCalendar = () => {
                             >
                                 {withdrawalButtonText}
                             </Button>
-                        </div>
+                        </div>}
                         {entryButtonText === "Confirm Entry" && <div>Please keep in mind that you can enter a tournament only once. If you decide to withdraw, you will not be able to enter this tournament again.</div>}
                         {withdrawalButtonText === "Confirm Withdrawal" && <div>Please keep in mind that after withdrawing, you will not be able to sign up for the tournament again.</div>}
                     </div>

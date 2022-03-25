@@ -56,3 +56,14 @@ export const handleLogout = () => {
     localStorage.removeItem('userData');
     toast.success("You have been logged out successfully.")
 }
+
+export const objectToArrayConverter = (obj) => {
+
+    const arr = []
+ 
+    for (const key in obj) {
+        arr.push(obj[key])
+    }
+
+    return arr
+}

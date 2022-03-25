@@ -85,8 +85,6 @@ const TournamentSubmission = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        console.log('form submission', {...tournamentData, submittedBy: "WaN1Y7MKkfZ6MrAtM0f3ckCZgo52"})
-
         const valid = validateFields()
 
         if (valid) {
@@ -100,12 +98,12 @@ const TournamentSubmission = () => {
     const confirmSubmission = () => {
         const newPostKey = push(child(dbRef, 'tournaments')).key;
         const updates = {};
-        updates['/tournaments/' + newPostKey] = {...tournamentData, status: "Waiting for Approval", submittedBy: "WaN1Y7MKkfZ6MrAtM0f3ckCZgo52", submissionTime: new Date (), tournamentID: newPostKey};
+        updates['/tournaments/' + newPostKey] = {...tournamentData, status: "Waiting for Approval", submittedBy: userData.userID, submissionTime: new Date (), tournamentID: newPostKey};
 
         update(dbRef, updates)
         .then(() => {
             toast.success("You have submitted a tournament successfully.")
-            console.log("submission confirmed", JSON.stringify({...tournamentData, status: "New", submittedBy: "WaN1Y7MKkfZ6MrAtM0f3ckCZgo52", submissionTime: new Date (), tournamentID: newPostKey}))
+            console.log("submission confirmed", JSON.stringify({...tournamentData, status: "Waiting for Approval", submittedBy: userData.userID, submissionTime: new Date (), tournamentID: newPostKey}))
 
         })
         .catch((error) => {
@@ -225,7 +223,7 @@ const TournamentSubmission = () => {
 
     return (
         <div className='container'>
-            {userData.role === 'clubRep' ? (
+            {userData && userData.role === 'clubRep' ? (
             <>
                 <h3 className="accent-color left-align-text">Tournament Submission</h3>
                 <form onSubmit={handleSubmit}>
@@ -359,9 +357,9 @@ const TournamentSubmission = () => {
                                     defaultValue="female"
                                     name="radio-buttons-group"
                                 >
-                                    <FormControlLabel value="Women" control={<Radio   checked={tournamentData.genderGroup === "Women" ? true : false} onChange={handleGenderGroupChange}/>} label="Women" />
-                                    <FormControlLabel value="Men" control={<Radio   checked={tournamentData.genderGroup === "Men"? true : false} onChange={handleGenderGroupChange}/>} label="Men" />
-                                    <FormControlLabel value="Mixed" control={<Radio   checked={tournamentData.genderGroup === "Mixed" ? true : false} disabled={tournamentData.drawType === "singles" ? true : false} onChange={handleGenderGroupChange}/>} label="Mixed" />
+                                    <FormControlLabel value="Women" control={<Radio checked={tournamentData.genderGroup === "Women" ? true : false} onChange={handleGenderGroupChange}/>} label="Women" />
+                                    <FormControlLabel value="Men" control={<Radio checked={tournamentData.genderGroup === "Men"? true : false} onChange={handleGenderGroupChange}/>} label="Men" />
+                                    <FormControlLabel value="Mixed" control={<Radio checked={tournamentData.genderGroup === "Mixed" ? true : false} disabled={tournamentData.drawType === "singles" ? true : false} onChange={handleGenderGroupChange}/>} label="Mixed" />
                                 </RadioGroup>
                             </FormControl>
                             <FormControl   sx={{margin: "0 50px 20px 0"}}>
@@ -385,7 +383,7 @@ const TournamentSubmission = () => {
                                 >
                                     <FormControlLabel value="U40" control={<Checkbox   checked={tournamentData.ageGroups.includes("U40") ? true : false} onChange={handleAgeGroupChange}/>} label="U40" />
                                     <FormControlLabel value="U60" control={<Checkbox   checked={tournamentData.ageGroups.includes("U60") ? true : false} onChange={handleAgeGroupChange}/>} label="U60" />
-                                    <FormControlLabel value="plus60" control={<Checkbox   checked={tournamentData.ageGroups.includes("plus60") ? true : false} onChange={handleAgeGroupChange}/>} label="60+" />
+                                    <FormControlLabel value="60+" control={<Checkbox   checked={tournamentData.ageGroups.includes("60+") ? true : false} onChange={handleAgeGroupChange}/>} label="60+" />
                                 </RadioGroup>
                             </FormControl>
                         </div>
@@ -433,7 +431,7 @@ const TournamentSubmission = () => {
                             {/* <button className='button action-button' type="submit" style={{marginRight: 10}} disabled={validateFields()}>Submit</button> */}
                             <Button variant="contained" sx={{height: 40, margin: '0px 10px 10px 0px !important'}} type="submit">Submit</Button> 
                             {/* //TODO: disabled state when not all data fields are entered*/}
-                            <Button variant="contained" sx={{height: 40, margin: '0px 10px 10px 0px !important'}} onClick={() => setTournamentData({"tournamentName":"Test Tournament Name", "clubName": "Test Club Name", "description":"This is the tournament description","city":"Sofia","country":"Bulgaria","street":"ul. 671-va 3A","zipCode":"1632","startDate":"2023-02-15T12:04:46.000Z","endDate":"2023-02-18T12:04:47.000Z","tournamentDirector":"Kristina Kapitanova","tournamentDirectorPhone":"+1 (233) 23","genderGroup":"mixed","ageGroups":["U60"],"drawType":"singlesAndDoubles","entryTax":"75","prizeMoney":"20000","medicalTeamOnSite":false})}>FILL WITH TEST DATA</Button>
+                            <Button variant="contained" sx={{height: 40, margin: '0px 10px 10px 0px !important'}} onClick={() => setTournamentData({"tournamentName":"Test Tournament Name", "clubName": "Test Club Name", "description":"This is the tournament description","city":"Sofia","country":"Bulgaria","street":"Borisova Garden, NTC","zipCode":"1632","startDate":"2023-02-15T12:04:46.000Z","endDate":"2023-02-18T12:04:47.000Z","tournamentDirector":"Kristina Kapitanova","tournamentDirectorPhone":"+1 (233) 23","genderGroup":"Mixed","ageGroups":["U60"],"drawType":"singlesAndDoubles","entryTax":"75","prizeMoney":"20000","medicalTeamOnSite":false})}>FILL WITH TEST DATA</Button>
                             {checkIfInfoIsFilledIn() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} sx={{height: 40, margin: '0px 10px 0px 0px !important'}} onClick={clearFields}>Clear Fields</Button>}
                         </div>
                         {displayError && <div className="error">Please fill in all of the fields above.</div>}

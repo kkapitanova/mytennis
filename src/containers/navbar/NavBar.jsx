@@ -55,9 +55,7 @@ const NavBar = ({ unauthRoutes, authRoutes, unauthRouteLast }) => {
         if (authToken) {
             setLoggedIn(true)
 
-            console.log(123, userData)
             if (!userData.firstName) {
-                console.log("here")
                 history.push('/profile')
             }
             // navigate('/home')
@@ -94,8 +92,7 @@ const NavBar = ({ unauthRoutes, authRoutes, unauthRouteLast }) => {
                             </NavLink>
                         </div>
                     ))}
-                    {loggedIn && authRoutes && authRoutes.map((route, index) => {
-
+                    {/* {loggedIn && authRoutes && authRoutes.map((route, index) => {
                         if (route.path === '/tournament-submission' && userData.role !== 'clubRep') {
                         } else {
                             return (
@@ -116,7 +113,7 @@ const NavBar = ({ unauthRoutes, authRoutes, unauthRouteLast }) => {
                                 </div>
                             )
                         }
-                    })}
+                    })} */}
                     {unauthRouteLast && unauthRouteLast.map((route, index) => (
                         <div className="flex-column" key={index}>
                             <NavLink
