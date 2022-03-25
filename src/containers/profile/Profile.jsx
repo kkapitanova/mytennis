@@ -17,6 +17,9 @@ import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import Stack from '@mui/material/Stack';
+import FormGroup from '@mui/material/FormGroup';
+import Checkbox from '@mui/material/Checkbox';
+import FormHelperText from '@mui/material/FormHelperText';
 
 // country dropdown
 // import Select from 'react-select'
@@ -54,9 +57,13 @@ const Profile = () => {
         role: userData.role,
         userID: userData.userID
     })
+    const [dataConfirmCheck, setDataConfirmCheck] = useState()
+    const [termsCheck, setTermsCheck] = useState()
     const countryOptions = useMemo(() => countryList().getData(), [])    
     const history = useHistory()
     const location = useLocation()
+
+    const dataUsageError = !(dataConfirmCheck && termsCheck)
 
     const isDisabled = () => {
         const { 
@@ -71,7 +78,8 @@ const Profile = () => {
             phoneNumber 
         } = data
 
-        if ((!firstName || !middleName ||
+        if (!dataConfirmCheck || !termsCheck ||
+            (!firstName || !middleName ||
             !familyName || !gender || 
             !countryOfBirth || !dateOfBirth ||
             !firstName.replace(/^\s+|\s+$/gm,'') || !middleName.replace(/^\s+|\s+$/gm,'') ||
@@ -148,9 +156,9 @@ const Profile = () => {
         setData({...data, dateOfBirth: value})
     }
 
-    useEffect(() => {
-        window.scrollTo(0,0)
-    }, [])
+    // useEffect(() => {
+    //     window.scrollTo(0,0)
+    // }, [])
 
     useEffect(() => {
         if (!userData.firstName) {
@@ -159,6 +167,10 @@ const Profile = () => {
             setShowForm(false)
         }
     }, [location.pathname, history])
+
+    useEffect(() => {
+        window.scrollTo(0,0)
+    }, [showForm])
 
     return (
         <div className="container flex-column align-center">
@@ -295,6 +307,27 @@ const Profile = () => {
                     sx={{marginTop: '10px', width: 300}}
                     onChange={handleChange}
                 />
+                <div className="flex-column align-start">
+                    <FormControl sx={{ m: 3 }} component="fieldset" variant="standard" error={dataUsageError}>
+                        {/* <FormLabel component="legend">Assign responsibility</FormLabel> */}
+                        <FormGroup>
+                        <FormControlLabel
+                            control={
+                            <Checkbox checked={dataConfirmCheck} onChange={(e) => setDataConfirmCheck(e.target.checked)} name="gilad" />
+                            }
+                            label="I agree to the T&Cs and allow my data to be used for purposes relating to this site."
+                        />
+                        <FormControlLabel
+                            control={
+                            <Checkbox checked={termsCheck} onChange={(e) => setTermsCheck(e.target.checked)} name="jason" />
+                            }
+                            label="I confirm that all data I provide is correct and in accordance to my passport details."
+                        />
+                        </FormGroup>
+                        <FormHelperText>You must agree to continue forward.</FormHelperText>
+                        <FormHelperText>It is important to be truthful when filling this data, as club representatives will use it confirm your identity.</FormHelperText>
+                    </FormControl>
+                </div>
                 <div className="flex wrap align-center justify-center" style={{marginTop: 10}}>
                     <Button variant="contained" sx={{margin: '10px 5px 0px 5px !important'}} type="submit" onClick={handleDataUpdate} disabled={isDisabled()}>Update Profile</Button>
                     {userData.firstName && <Button variant="outlined" sx={{margin: '10px 5px 0px 5px !important'}} type="submit" onClick={() => setShowForm(false)}>Cancel Edit</Button>}

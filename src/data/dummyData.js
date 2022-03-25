@@ -476,6 +476,11 @@ export const mockPlayerData = [
     },
 ]
 
+export const newMockTournamentData = [
+    {"tournamentName":"Test Tournament Name","clubName":"Test Club Name","description":"This is the tournament description","city":"Sofia","country":"Bulgaria","street":"ul. 671-va 3A","zipCode":"1632","startDate":"2023-02-15T12:04:46.000Z","endDate":"2023-02-18T12:04:47.000Z","tournamentDirector":"Kristina Kapitanova","tournamentDirectorPhone":"+1 (233) 23","genderGroup":"mixed","ageGroups":["U60"],"drawType":"singlesAndDoubles","entryTax":"75","prizeMoney":"20000","medicalTeamOnSite":false,"status":"New","submittedBy":"WaN1Y7MKkfZ6MrAtM0f3ckCZgo52","submissionTime":"2022-03-24T18:30:37.037Z","tournamentID":"-MyxBT2LiY8i0nnaG4Pq"},
+    {"tournamentName":"Test Tournament Name","clubName":"Test Club Name","description":"This is the tournament description","city":"Sofia","country":"Bulgaria","street":"ul. 671-va 3A","zipCode":"1632","startDate":"2023-02-15T12:04:46.000Z","endDate":"2023-02-18T12:04:47.000Z","tournamentDirector":"Kristina Kapitanova","tournamentDirectorPhone":"+1 (233) 23","genderGroup":"mixed","ageGroups":["U60"],"drawType":"singlesAndDoubles","entryTax":"75","prizeMoney":"20000","medicalTeamOnSite":false,"status":"New","submittedBy":"WaN1Y7MKkfZ6MrAtM0f3ckCZgo52","submissionTime":"2022-03-24T18:34:47.294Z","tournamentID":"-MyxCQ8hEmzLQhgVZ3IR"}
+]
+
 export const mockTournamentData = [
     {
         tournamentID: 1,

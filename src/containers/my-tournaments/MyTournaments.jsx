@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Table } from '../../components';
-import { sortData } from '../../utils/helpers'
 import { useLocation } from 'react-router';
 import { ageGroups, genderGroups, months, upcomingYears, previousYears, allYears } from '../../data/constants';
 import { mockTournamentData } from '../../data/dummyData';
-import { getDateString } from '../../utils/helpers';
+import { sortData, getDateString, objectToArrayConverter } from '../../utils/helpers'
 
 // material
 import Backdrop from '@mui/material/Backdrop';
@@ -18,8 +17,14 @@ import MenuItem from '@mui/material/MenuItem';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
+//firebase
+import { getDatabase, ref, child, get, set, push, update} from "firebase/database";
+
 //styles
 import './MyTournaments.scss';
+
+const database = getDatabase()
+const dbRef = ref(database);
 
 const style = {
     position: 'absolute',
@@ -34,10 +39,18 @@ const style = {
 };
 
 const tableRowHeaders = [
-    'Location', 'Name', 'Start Date', 'End Date', 'Gender Group', 'Age Groups', 'Draw Types', 'Status'
+    'Location', 
+    'Name', 
+    'Start Date', 
+    'End Date', 
+    'Gender Group', 
+    'Age Groups', 
+    // 'Draw Types', 
+    'Status'
 ]
 
 const MyTournaments = () => {
+    const [allData, setAllData] = useState({})
     const userData = JSON.parse(localStorage.getItem('userData')) || {} // TODO: replace with function that fetches data from firebase
     const location = useLocation()
     const [search, setSearch] = useState({
@@ -86,42 +99,43 @@ const MyTournaments = () => {
 
     const getData = () => {
         let tournamentData = []
+        
+        allData && allData.length && allData.forEach(t => {
 
-        mockTournamentData.forEach(t => {
-            // display only the tournaments that match the following conditions:
             if (
-                ((search.ageGroup ? t.ageGroups.includes(search.ageGroup) : true) && 
-                (search.genderGroup ? t.genderGroups.includes(search.genderGroup) : true) &&
-                (t.location.city + t.location.country).toLowerCase().includes(search.location) &&
-                t.name.toLowerCase().includes(search.name) && 
-                (t.dates.startDate + t.dates.endDate).includes(search.month) &&
-                (t.dates.startDate + t.dates.endDate).includes(search.year) &&
-
-                // UPCOMING TOURNAMENTS VS ARCHIVED TOURNAMENTS VS ALL TOURNAMENTS
-                (tournamentsDisplay === 'upcoming' ? new Date (t.dates.endDate).getTime() > new Date ().getTime() : tournamentsDisplay === 'archive' ? new Date (t.dates.endDate).getTime() < new Date ().getTime() : true)) &&
+                (search.ageGroup ? t.ageGroups.includes(search.ageGroup) : true) && 
+                (search.genderGroup ? t.genderGroup.includes(search.genderGroup) : true) &&
+                (t.city + t.country).toLowerCase().includes(search.location) &&
+                t.tournamentName.toLowerCase().includes(search.name) && 
+                (t.startDate + t.endDate).includes(search.month) &&
+                (t.startDate + t.endDate).includes(search.year) && 
+                // (t.status.toLowerCase() === 'waiting for approval' || t.status.toLowerCase() === 'declined') &&
+                
+                /// UPCOMING TOURNAMENTS VS ARCHIVED TOURNAMENTS VS ALL TOURNAMENTS
+                (tournamentsDisplay === 'upcoming' ? new Date (t.endDate).getTime() > new Date ().getTime() : tournamentsDisplay === 'archive' ? new Date (t.endDate).getTime() < new Date ().getTime() : true) &&
 
                 // ADMIN VIEW
                 (((userRole.toLowerCase() === 'admin') ? (t.status.toLowerCase() === "waiting for approval" || t.status.toLowerCase() === 'declined') : false) ||
 
                 // CLUB REP VIEW
-                (userRole.toLowerCase() === 'clubrep' && t.organizerID === clubRepTestID) ||
+                (userRole.toLowerCase() === 'clubrep' && t.submittedBy === userData.userID) ||
 
                 // PLAYER VIEW 
                 (userRole.toLowerCase() === 'player' && t.playersSignedUp && t.playersSignedUp.length && t.playersSignedUp.includes(playerTestID)))
             ) {
-
                 tournamentData.push({
-                    location: `${t.location.city}, ${t.location.country}`,
-                    name: t.name,
-                    startDate: new Date (t.dates.startDate).getTime(),
-                    endDate: new Date(t.dates.endDate).getTime(),
-                    genderGroups: t.genderGroups,
+                    location: `${t.city}, ${t.country}`,
+                    name: t.tournamentName,
+                    startDate: new Date (t.startDate).getTime(),
+                    endDate: new Date(t.endDate).getTime(),
+                    genderGroup: t.genderGroup,
                     ageGroups: t.ageGroups,
-                    draws: t.draws,
+                    // draws: t.draws,
                     status: t.status,
                     id: t.tournamentID
                 })
             }
+
         })
 
         // sort data by start data in ascending order (sooner tournaments will appear first)
@@ -139,8 +153,8 @@ const MyTournaments = () => {
 
 
     const handleRowClick = (tournamentData) => {
-        const tournamentIndex = mockTournamentData.findIndex(el => el.tournamentID === tournamentData.id)
-        const current = mockTournamentData[tournamentIndex]
+        const tournamentIndex = allData.findIndex(el => el.tournamentID === tournamentData.id)
+        const current = allData[tournamentIndex]
         const color = current?.status.toLowerCase() === 'waiting for approval' || current?.status.toLowerCase() === 'postponed' ? 'orange' : current?.status.toLowerCase() === 'declined' ? 'red' : 'green'
 
         setStatusColor(color)
@@ -259,11 +273,22 @@ const MyTournaments = () => {
     // scroll to top when opening the page for the first time
     useEffect(() => {
         window.scrollTo(0,0)
+
+        get(child(dbRef, 'tournaments')).then((snapshot) => {
+            if (snapshot.exists()) {
+              console.log(snapshot.val());
+              setAllData(objectToArrayConverter(snapshot.val()))
+            } else {
+              console.log("No data available");
+            }
+            }).catch((error) => {
+                console.error(error);
+            });
     }, [])
 
     useEffect(() => {
         setData(getData())
-    }, [search.ageGroup, search.genderGroup, search.draws, userRole, tournamentsDisplay])
+    }, [search.ageGroup, search.genderGroup, search.draws, userRole, tournamentsDisplay, allData])
 
     // update data accordingly if the search query changes in the location 
     useEffect(() => {
@@ -277,26 +302,26 @@ const MyTournaments = () => {
 
     return (
         <div className="container">
-            <h3 className="accent-color" style={{textAlign: 'left'}}>Search My Tournaments {userRole} View</h3>
-            {userRole.toLowerCase() === 'admin' && 
+            <h3 className="accent-color" style={{textAlign: 'left'}}>Search My Tournaments - {userRole === "clubRep" ? 'Club Representative' : userRole === 'player' ? 'Player' : 'Admin'} View</h3>
+            {userData?.role && userData.role.toLowerCase() === 'admin' && 
                 <div className="helper-text">
                     Here you can preview the tournaments submitted for approval and update their status by either rejecting or approving them. 
                     Approved tournaments will be moved to the tournament calendar.
                 </div>
             }
-            {userRole.toLowerCase() === 'clubrep' && 
+            {userData?.role  && userData.role.toLowerCase() === 'clubrep' && 
                 <div className="helper-text">
                     Here you can preview all of the tournaments you have submitted and their status. 
                     'Waiting for Approval' means that the tournament is waiting to be approved by an admin. 'Declined' means that the request for a tournament has been rejected.
                 </div>
             }
-            {userRole.toLowerCase() === 'player' && 
+            {userData?.role  && userData.role.toLowerCase() === 'player' && 
                 <div className="helper-text">
                     Here you can preview the tournaments you have signed up for. 
                     You can withdraw from any tournament, but withdrawing meeans you will not be able to sign up for the tournament again.
                 </div>
             }
-            <div className="flex wrap align-center">
+            {/* <div className="flex wrap align-center">
                 <ToggleButtonGroup
                     color="primary"
                     value={userRole}
@@ -311,7 +336,7 @@ const MyTournaments = () => {
                     <ToggleButton value="player">Player</ToggleButton>
                 </ToggleButtonGroup>
                 <div style={{color: "rgba(0, 0, 0, 0.5)"}}>Testing accounts</div>
-            </div>
+            </div> */}
             <div className="flex wrap align-center">
                 <ToggleButtonGroup
                     color="primary"
@@ -454,14 +479,14 @@ const MyTournaments = () => {
                     <div className="flex-column justify-center align-center">
                         <div className="flex-column">
                             <div className="flex justify-between align-center tournament-header">
-                                <h2 style={{fontWeight: '500'}}>{currentTournament?.name}</h2>
+                                <h2 style={{fontWeight: '500'}}>{currentTournament?.tournamentName}</h2>
                                 <div className={`status-indicator ${statusColor}`}>{currentTournament?.status.toUpperCase()}</div> 
                             </div>
                             <div style={{marginBottom: 5}}>
-                                {currentTournament?.dates && <div>{getDateString(new Date (currentTournament?.dates?.startDate).getTime())} - {getDateString(new Date (currentTournament?.dates?.endDate).getTime())}</div>}
+                                {currentTournament?.startDate && currentTournament?.endDate && <div>{getDateString(new Date (currentTournament?.startDate).getTime())} - {getDateString(new Date (currentTournament?.endDate).getTime())}</div>}
                             </div>
-                            <div style={{marginBottom: 5}}>{currentTournament?.site}</div>
-                            <div style={{marginBottom: 5}}>{currentTournament?.location?.city}, {currentTournament?.location?.country}</div>
+                            <div style={{marginBottom: 5}}>{currentTournament?.clubName}</div>
+                            <div style={{marginBottom: 5}}>{currentTournament?.city}, {currentTournament?.country}</div>
                             <h3 style={{fontWeight: '600', marginTop: 40}}>Terms of Play</h3>
                             <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
                             <h3 style={{fontWeight: '600', marginTop: 40}}>Section Title</h3>
