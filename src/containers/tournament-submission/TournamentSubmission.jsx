@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getDateString, handleLogout } from '../../utils/helpers';
+import { useHistory } from 'react-router-dom';
 
 // material imports
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
@@ -66,11 +67,12 @@ const initialTournamentData = {
 }
 
 const TournamentSubmission = () => {
-    const userData = JSON.parse(localStorage.getItem('userData')) || {} // TODO: replace with function that fetches data from firebase
+    const userData = JSON.parse(sessionStorage.getItem('userData')) || {} // TODO: replace with function that fetches data from firebase
     const [tournamentData, setTournamentData] = useState(initialTournamentData)
     const [open, setOpen] = useState(false)
     const [openSuccessScreen, setOpenSuccessScreen] = useState(false)
     const [displayError, setDisplayError] = useState(false)
+    const history = useHistory()
 
     const validateFields = () => {
         let bool = false
@@ -213,8 +215,7 @@ const TournamentSubmission = () => {
             }
         }).catch((error) => {
             console.error(error);
-        });
-        
+        });        
     }, [])
 
     // useEffect(() => {
@@ -235,6 +236,7 @@ const TournamentSubmission = () => {
                                 name="tournamentName"
                                 label="Tournament Name"
                                 variant="outlined"
+                                // // size="small"
                                 value={tournamentData.tournamentName}
                                 onChange={handleChange}
                                 style={{minWidth: 200, maxWidth: 410, marginBottom: 10, width: "80vw"}}
@@ -244,6 +246,7 @@ const TournamentSubmission = () => {
                                 name="description"
                                 label="Tournament Description"
                                 variant="outlined"
+                                // size="small"
                                 multiline
                                 minRows={3}
                                 maxRows={4}
@@ -256,6 +259,7 @@ const TournamentSubmission = () => {
                                     type="text" 
                                     name="tournamentDirector"
                                     label="Tournament Director"
+                                    // size="small"
                                     variant="outlined"
                                     value={tournamentData.tournamentDirector}
                                     onChange={handleChange}
@@ -265,6 +269,7 @@ const TournamentSubmission = () => {
                                     name="phone"
                                     label="Phone Number"
                                     data-cy="user-phone"
+                                    // size="small"
                                     defaultCountry={"us"}
                                     value={tournamentData.tournamentDirectorPhone}
                                     onChange={handlePhoneChange}
@@ -279,6 +284,7 @@ const TournamentSubmission = () => {
                                     type="text" 
                                     name="clubName"
                                     label="Club Name"
+                                    // size="small"
                                     variant="outlined" 
                                     value={tournamentData.clubName}
                                     onChange={handleChange}
@@ -290,6 +296,7 @@ const TournamentSubmission = () => {
                                     type="text"
                                     label="City" 
                                     variant="outlined"
+                                    // size="small"
                                     name="city"
                                     value={tournamentData.city}
                                     onChange={handleChange}
@@ -301,6 +308,7 @@ const TournamentSubmission = () => {
                                     label="Country"
                                     variant="outlined" 
                                     name="country"
+                                    // size="small"
                                     value={tournamentData.country}
                                     onChange={handleChange}
                                     style={{marginRight: 10, marginBottom: 10, minWidth: 200}}
@@ -310,6 +318,7 @@ const TournamentSubmission = () => {
                                     label="Street"
                                     variant="outlined" 
                                     name="street"
+                                    // size="small"
                                     value={tournamentData.street}
                                     onChange={handleChange}
                                     style={{marginRight: 10, marginBottom: 10, minWidth: 200}}
@@ -319,6 +328,7 @@ const TournamentSubmission = () => {
                                     label="Zip Code"
                                     variant="outlined" 
                                     name="zipCode"
+                                    // size="small"
                                     value={tournamentData.zipCode}
                                     onChange={handleChange}
                                     style={{marginRight: 10, marginBottom: 10, minWidth: 200}}
@@ -395,6 +405,7 @@ const TournamentSubmission = () => {
                                 inputProps={{min: 0}}
                                 label="Amount (€)"
                                 variant="outlined" 
+                                // size="small"
                                 value={tournamentData.entryTax}
                                 onChange={handleChange}
                                 sx={{width: 200, marginBottom: '10px', marginRight: '10px'}}
@@ -408,6 +419,7 @@ const TournamentSubmission = () => {
                                 inputProps={{min: 0}}
                                 label="Amount (€)"
                                 variant="outlined" 
+                                // size="small"
                                 value={tournamentData.prizeMoney}
                                 onChange={handleChange}
                                 sx={{width: 200, marginBottom: '10px', marginRight: '10px'}}
@@ -496,10 +508,15 @@ const TournamentSubmission = () => {
             (<div className="flex-column justify-center align-center">
                 <div>You do not have access to this page because it is accessible only by club representatives. </div>
                 <div>If you believe this is a mistake, please contact an administrator.</div>
-                <div style={{marginTop: 20}}>If you wish to log into another account, please click the button below.</div>
-                <Button variant="contained" sx={{margin: '10px 0px 0px 0px !important'}} onClick={() => handleLogout()}>Logout</Button>
+                {userData && userData.role && userData.role !== 'clubRep' && <div> 
+                    <div style={{marginTop: 20}}>If you wish to log into another account, please click the button below.</div>
+                    <Button variant="contained" sx={{margin: '10px 0px 0px 0px !important'}} onClick={() => handleLogout()}>Logout</Button>
+                </div>}
+                {!Object.keys(userData).length && <div> 
+                    <div style={{marginTop: 20}}>If you wish to log into your account, please click the button below.</div>
+                    <Button variant="contained" sx={{margin: '10px 0px 0px 0px !important'}} onClick={() => history.push('/login')}>Login</Button>
+                </div>}
             </div>)}
-            <ToastContainer autoClose={3000}/>
         </div>
     )
 }

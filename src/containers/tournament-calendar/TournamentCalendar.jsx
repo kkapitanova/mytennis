@@ -67,7 +67,7 @@ const initialTournamentData = {
 }
 
 const TournamentCalendar = () => {
-    const userData = JSON.parse(localStorage.getItem('userData')) || {} // TODO: replace with function that fetches data from firebase
+    const userData = JSON.parse(sessionStorage.getItem('userData')) || {} // TODO: replace with function that fetches data from firebase
     const [allData, setAllData] = useState({})
     const location = useLocation()
     const [search, setSearch] = useState({
@@ -426,3 +426,4 @@ const TournamentCalendar = () => {
 }
 
 export default TournamentCalendar
+//TODO: GOOGLE CALENDAR INTEGRATION

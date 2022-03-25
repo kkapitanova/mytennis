@@ -20,7 +20,7 @@ import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
 import logo from '../../assets/images/logo.png'
 
 // toast
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
     
 const NavBar = ({ unauthRoutes, authRoutes, unauthRouteLast }) => {
@@ -28,7 +28,7 @@ const NavBar = ({ unauthRoutes, authRoutes, unauthRouteLast }) => {
     const history = useHistory();
     const location = useLocation();
     const [loggedIn, setLoggedIn] = useState(false)
-    const userData = JSON.parse(localStorage.getItem('userData')) || {} // TODO: replace with function that fetches data from firebase
+    const userData = JSON.parse(sessionStorage.getItem('userData')) || {} // TODO: replace with function that fetches data from firebase
 
     const expandMenu = () => {
 
@@ -178,7 +178,7 @@ const NavBar = ({ unauthRoutes, authRoutes, unauthRouteLast }) => {
                     <FontAwesomeIcon icon={expanded ? faTimes : faBars}/>
                 </div>
             </div>
-            <ToastContainer autoClose={3000} />
+            <ToastContainer autoClose={5000} />
         </>
     )
 }

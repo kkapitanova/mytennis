@@ -275,7 +275,7 @@ const Chats = () => {
                         <TextField
                             id="search-input"
                             // label="Search for User"
-                            placeholder="Search"
+                            placeholder="Search through existing chats"
                             variant="standard"
                             size="medium"
                             value={search}

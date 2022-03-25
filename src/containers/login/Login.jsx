@@ -32,13 +32,12 @@ const Login = () => {
                 const user = response?.user
 
                 sessionStorage.setItem('Auth Token', response._tokenResponse.refreshToken)
-
                 const dbref = ref(getDatabase());
 
                 get(child(dbref, `users/${user.uid}`)).then((snapshot) => {
                     if (snapshot.exists()) {
                         const data = snapshot.val();
-                        localStorage.setItem('userData', JSON.stringify(data))
+                        sessionStorage.setItem('userData', JSON.stringify(data))
                         setUserData(data)
                         history.push('/profile')
                         toast.success("You have logged in successfully.")
@@ -88,28 +87,32 @@ const Login = () => {
                 <Box
                     component="form"
                     sx={{
-                        '& > :not(style)': { m: 1, width: '25ch' },
+                        '& > :not(style)': { m: 1, width: '30ch' },
                     }}
                     noValidate
                     autoComplete="off"
+                    className="flex-column"
                 >
                     <TextField 
                         id="email" 
                         label="Enter email" 
                         variant="outlined" 
+                        size="small"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
                     <TextField 
                         id="password" 
                         type="password"
+                        size="small"
                         label="Enter password" 
                         variant="outlined" 
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
                 </Box>
-                <Button variant="contained" sx={{margin: '0 !important'}} onClick={handleLogin}>Login</Button>
+                <Button variant="contained" sx={{margin: '10px !important'}} onClick={handleLogin}>Login</Button>
+                <div>You are new? <span className="underlined pointer" onClick={() => history.push('/register')}>Register here.</span></div>
                 </div>) : 
                 (<div>
                     <h3 className="accent-color">Hi, {userData.firstName}!</h3>
@@ -118,7 +121,6 @@ const Login = () => {
                     <Button variant="contained" sx={{margin: '20px 0px 0px 0px !important'}} onClick={onLogout}>Logout</Button>
                 </div>)
             }
-            <ToastContainer autoClose={3000} />
         </div>
     )
 }

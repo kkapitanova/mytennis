@@ -38,8 +38,10 @@ const database = getDatabase();
 // replace(/^\s+|\s+$/gm,'')
 
 const Profile = () => {
-    const userData = JSON.parse(localStorage.getItem('userData')) || {} // TODO: replace with redux store function with initial value from localstorage
+    const userData = JSON.parse(sessionStorage.getItem('userData')) || {} // TODO: replace with redux store function with initial value from localstorage
     const [showForm, setShowForm] = useState(false)
+    const [dataConfirmCheck, setDataConfirmCheck] = useState(userData.dataConfirmCheck)
+    const [termsCheck, setTermsCheck] = useState(userData.termsCheck)
     const [data, setData] = useState({
         firstName: userData.firstName,
         middleName: userData.middleName,
@@ -55,10 +57,10 @@ const Profile = () => {
         },
         about: userData.about  || '',
         role: userData.role,
-        userID: userData.userID
+        userID: userData.userID,
+        dataConfirmCheck:  dataConfirmCheck,
+        termsCheck: termsCheck
     })
-    const [dataConfirmCheck, setDataConfirmCheck] = useState()
-    const [termsCheck, setTermsCheck] = useState()
     const countryOptions = useMemo(() => countryList().getData(), [])    
     const history = useHistory()
     const location = useLocation()
@@ -127,14 +129,16 @@ const Profile = () => {
             },
             about: about,
             role: role,
-            userID: userID
+            userID: userID,
+            dataConfirmCheck: dataConfirmCheck,
+            termsCheck: termsCheck
         }
 
         console.log("updatedData", updatedData)
 
         set(ref(database, 'users/' + userID), updatedData)
         .then(() => {
-            localStorage.setItem('userData', JSON.stringify(data))
+            sessionStorage.setItem('userData', JSON.stringify(updatedData))
             toast.success("You have updated your profile successfully.")
             setShowForm(false)
         })
@@ -142,6 +146,10 @@ const Profile = () => {
             console.log("error: ", error)
             toast.error("An error has occured. Please try again.")
         })
+
+        if (role === 'player') {
+            set(ref(database, 'players/' + userID), updatedData)
+        }
         // history.push('/')
     }
 
@@ -156,9 +164,9 @@ const Profile = () => {
         setData({...data, dateOfBirth: value})
     }
 
-    // useEffect(() => {
-    //     window.scrollTo(0,0)
-    // }, [])
+    useEffect(() => {
+        window.scrollTo(0,0)
+    }, [])
 
     useEffect(() => {
         if (!userData.firstName) {
@@ -167,10 +175,6 @@ const Profile = () => {
             setShowForm(false)
         }
     }, [location.pathname, history])
-
-    useEffect(() => {
-        window.scrollTo(0,0)
-    }, [showForm])
 
     return (
         <div className="container flex-column align-center">
@@ -187,7 +191,7 @@ const Profile = () => {
                     label="First Name" 
                     variant="outlined" 
                     value={data.firstName}
-                    // size="small"
+                    size="small"
                     sx={{marginTop: '15px', width: 300}}
                     onChange={handleChange}
                     required
@@ -199,7 +203,7 @@ const Profile = () => {
                     label="Middle Name" 
                     variant="outlined" 
                     value={data.middleName}
-                    // size="small"
+                    size="small"
                     sx={{marginTop: '15px', width: 300}}
                     onChange={handleChange}
                     required
@@ -211,7 +215,7 @@ const Profile = () => {
                     label="Family Name" 
                     variant="outlined" 
                     value={data.familyName}
-                    // size="small"
+                    size="small"
                     sx={{marginTop: '15px', width: 300}}
                     onChange={handleChange}
                     required
@@ -223,7 +227,7 @@ const Profile = () => {
                     label="Email" 
                     variant="outlined" 
                     value={data.email}
-                    // size="small"
+                    size="small"
                     sx={{marginTop: '15px', width: 300}}
                     // onChange={handleChange}
                     disabled
@@ -303,7 +307,7 @@ const Profile = () => {
                     variant="outlined" 
                     value={data.about}
                     rows={4}
-                    // size="small"
+                    size="small"
                     sx={{marginTop: '10px', width: 300}}
                     onChange={handleChange}
                 />
@@ -313,19 +317,23 @@ const Profile = () => {
                         <FormGroup>
                         <FormControlLabel
                             control={
-                            <Checkbox checked={dataConfirmCheck} onChange={(e) => setDataConfirmCheck(e.target.checked)} name="gilad" />
+                            <Checkbox checked={dataConfirmCheck} disabled={userData.dataConfirmCheck} onChange={(e) => setDataConfirmCheck(e.target.checked)} name="gilad" />
                             }
                             label="I agree to the T&Cs and allow my data to be used for purposes relating to this site."
                         />
                         <FormControlLabel
                             control={
-                            <Checkbox checked={termsCheck} onChange={(e) => setTermsCheck(e.target.checked)} name="jason" />
+                            <Checkbox checked={termsCheck} disabled={userData.termsCheck} onChange={(e) => setTermsCheck(e.target.checked)} name="jason" />
                             }
                             label="I confirm that all data I provide is correct and in accordance to my passport details."
                         />
                         </FormGroup>
-                        <FormHelperText>You must agree to continue forward.</FormHelperText>
-                        <FormHelperText>It is important to be truthful when filling this data, as club representatives will use it confirm your identity.</FormHelperText>
+                        <FormHelperText>
+                            <div className="flex-column">
+                                <div>You must agree to continue forward.</div>
+                                <div>It is important to be truthful when filling this data, as club representatives will use it confirm your identity.</div>
+                            </div>
+                        </FormHelperText>
                     </FormControl>
                 </div>
                 <div className="flex wrap align-center justify-center" style={{marginTop: 10}}>
@@ -333,9 +341,9 @@ const Profile = () => {
                     {userData.firstName && <Button variant="outlined" sx={{margin: '10px 5px 0px 5px !important'}} type="submit" onClick={() => setShowForm(false)}>Cancel Edit</Button>}
                 </div>
             </div>)}
-            <ToastContainer autoClose={3000} />
         </div>
     )
 }
 
 export default Profile
+//TODO CHATS PERMISSION - I want people to chat with me

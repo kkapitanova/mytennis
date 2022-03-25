@@ -259,6 +259,14 @@ h3 {
   position: fixed;
 }
 
+.underlined {
+  text-decoration: underline;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
 .align {
   &-center {
     align-items: center;
