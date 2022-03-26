@@ -215,8 +215,7 @@ const Rankings = () => {
                     {filterApplied() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} sx={{height: 40, margin: '0px !important'}} onClick={clearFilters}>Clear Search</Button>}
                 </div>
             </div>
-            {data && data.length > 0 && <Table tableData={data} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>}
-            {(!data || !data.length > 0) && <div>No Results Found</div>}
+            <Table tableData={data} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>
             <Modal
                 aria-labelledby="transition-modal-title"
                 aria-describedby="transition-modal-description"

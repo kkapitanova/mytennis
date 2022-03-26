@@ -142,8 +142,7 @@ const Home = () => {
                         </TextField>
                     </div>
                 </div>
-                {organizedTableData && organizedTableData.length > 0 && <Table tableData={organizedTableData.slice(0, 10)} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>}
-                {organizedTableData && !organizedTableData.length && <div>NO RESULTS FOUND</div>}
+                <Table tableData={organizedTableData.slice(0, 10)} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>
                 <div className="flex justify-end" style={{marginTop: 10}}>
                     <Button variant="contained" onClick={() => history.push('/rankings/')} sx={{height: 40, margin: '0px !important'}} endIcon={<PeopleOutlineOutlinedIcon />}>See All</Button>
                 </div>

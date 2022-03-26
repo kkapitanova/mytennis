@@ -57,6 +57,40 @@ const tableRowHeaders = [
     'Status'
 ]
 
+const enteredPlayersTableRowHeaders = [
+    'Name', 
+    'Entry Date',
+    'Status'
+]
+
+const withdrawedPlayersTableRowHeaders = [
+    'Name', 
+    'Withdrawal Date',
+    'Status'
+]
+
+
+// const fetchPlayerData = (playerID) => {
+//     let playerData = {};
+
+//     get(child(dbRef, `players/${playerID}`))
+//     .then((snapshot) => {
+//         if (snapshot.exists()) {
+//             playerData = snapshot.val();
+//             console.log("PLAYER DATA", playerData)
+//         } else {
+//           console.log("No data available");
+//         }
+//       })
+//       .catch((error) => {
+//         console.error(error);
+//         toast.error('An error has occured. Please try again.')
+//       });
+
+//       console.log('we return', playerData)
+//       return playerData
+// }
+
 const MyTournaments = () => {
     const [allData, setAllData] = useState({})
     const userData = JSON.parse(sessionStorage.getItem('userData')) || {} // TODO: replace with function that fetches data from firebase
@@ -71,6 +105,7 @@ const MyTournaments = () => {
         year: ''
     }) 
 
+    const [signedUpPlayersData, setSignedUpPlayersData] = useState([])
     const [data, setData] = useState([]) // data displayed in the table
     const [dataByCategories, setDataByCategories] = useState([]) // all data filtered by categories (gender group, age group, dates)
     const [currentTournament, setCurrentTournament] = useState() // current tournament clicked on for which the modal is opened
@@ -88,19 +123,55 @@ const MyTournaments = () => {
     const userRole = userData.role
     const userID = userData.userID
 
+    const getSignedUpPlayers = (playersSignedUp, withdrawed = false) => {
+
+        const test = [{
+            name: "Kristina Kapitanova",
+            date: getDateString(new Date ().toString()),
+            status: "Entered"
+        }]    
+
+        const playersData = []
+    
+        Object.keys(playersSignedUp).map((key, index) => {
+            const player = playersSignedUp[key]
+            console.log(player)
+
+            if (withdrawed && player.withdrawed && player.withdrawalTime) {
+                playersData.push({
+                    name: player.name,
+                    time: getDateString(player.withdrawalTime),
+                    status: 'Withdrawed'
+                })
+            } else if (!withdrawed && !player.withdrawed && !player.withdrawalTime) {
+                playersData.push({
+                    name: player.name,
+                    time: getDateString(player.signUpTime),
+                    status: 'Entered'
+                })
+            }
+        })
+    
+        console.log(playersData)
+        return playersData
+    }
+
     const fetchTournaments = ( refresh = false) => {
+        if (refresh) {
+            toast.info("The list has been refreshed.")
+        }
+
         get(child(dbRef, 'tournaments')).then((snapshot) => {
             if (snapshot.exists()) {
-              console.log(snapshot.val());
               setAllData(objectToArrayConverter(snapshot.val()))
-              if (refresh) {
-                  toast.info("The list has been refreshed.")
-              }
             } else {
               console.log("No data available");
+              setAllData([])
+              toast.info("There is no data available currently.")
             }
             }).catch((error) => {
                 console.error(error);
+                toast.error("An error has occured.")
             });
     }
 
@@ -137,7 +208,7 @@ const MyTournaments = () => {
                 // CLUB REP VIEW
                 (userRole.toLowerCase() === 'clubrep' && t.submittedBy === userData.userID) ||
 
-                // PLAYER VIEW 
+                // PLAYER VIEW - show only tournaments you've signed up for/withdrawn from
                 (userRole.toLowerCase() === 'player' &&  t.playersSignedUp && Object.keys(t.playersSignedUp) && t.playersSignedUp[userID] && ((tournamentsDisplay === 'entered' ? !t.playersSignedUp[userID].withdrawalTime : tournamentsDisplay === 'withdrawn' ? t.playersSignedUp[userID].withdrawalTime : true))))
             ) {
                 tournamentData.push({
@@ -385,7 +456,7 @@ const MyTournaments = () => {
                 </ToggleButtonGroup>
                 <div style={{color: "rgba(0, 0, 0, 0.5)"}}>Testing accounts</div>
             </div> */}
-            <div className="flex wrap align-center">
+            {userRole === 'player' && <div className="flex wrap align-center">
                 <ToggleButtonGroup
                     color="primary"
                     value={tournamentsDisplay}
@@ -399,7 +470,7 @@ const MyTournaments = () => {
                     <ToggleButton value={"entered"}>Entered</ToggleButton>
                 </ToggleButtonGroup>
                 {/* <div style={{color: "rgba(0, 0, 0, 0.5)"}}>{tournamentsDisplay === "archive" ? 'Only past tournaments will be shown.' : tournamentsDisplay === "upcoming" ? 'Only upcoming tournaments will be shown.' : "All tournaments will be shown."}</div> */}
-            </div>
+            </div>}
             <div className="flex wrap align-center">
                 <ToggleButtonGroup
                     color="primary"
@@ -523,8 +594,7 @@ const MyTournaments = () => {
                     {filterApplied() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} sx={{height: 40, minWidth: 180, margin: '0px !important'}} onClick={clearFilters}>Clear Search</Button>}
                 </div>
             </div>
-            {data && data.length > 0 && <Table tableData={data} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>}
-            {(!data || !data.length > 0) && <div>No Results Found</div>}
+            <Table tableData={data} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>
             <Button variant="contained" sx={{height: 40, margin: '30px 10px 0px 0px !important'}} onClick={refreshData} endIcon={<RefreshIcon />}>Refresh Data</Button>
             <Modal
                 aria-labelledby="transition-modal-title"
@@ -542,7 +612,7 @@ const MyTournaments = () => {
                     <div className="flex-column justify-center align-center">
                         <div className="flex-column" style={{marginBottom: 30}}>
                             <div className="flex justify-between align-center tournament-header">
-                                <h2 style={{fontWeight: '500'}}>{currentTournament?.tournamentName}</h2>
+                                <h2 className="accent-color" style={{fontWeight: '500'}}>{currentTournament?.tournamentName}</h2>
                                 <div className={`status-indicator ${statusColor}`}>{currentTournament?.status.toUpperCase()}</div> 
                             </div>
                             <div style={{marginBottom: 5}}>
@@ -550,11 +620,11 @@ const MyTournaments = () => {
                             </div>
                             <div style={{marginBottom: 5}}>{currentTournament?.clubName}</div>
                             <div style={{marginBottom: 5}}>{currentTournament?.city}, {currentTournament?.country}</div>
-                            <h3 style={{fontWeight: '600', marginTop: 40}}>Terms of Play</h3>
+                            <h3 className="accent-color" style={{fontWeight: '600', marginTop: 40}}>Terms of Play</h3>
                             <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
-                            <h3 style={{fontWeight: '600', marginTop: 40}}>Section Title</h3>
+                            <h3 className="accent-color" style={{fontWeight: '600', marginTop: 40}}>Section Title</h3>
                             <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
-                            <h3 style={{fontWeight: '600', marginTop: 40}}>Section Title</h3>
+                            <h3 className="accent-color" style={{fontWeight: '600', marginTop: 40}}>Section Title</h3>
                             <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
                         </div>
                         {userRole?.toLowerCase() === "admin" && currentTournament?.status.toLowerCase() === 'waiting for approval' && (
@@ -588,7 +658,22 @@ const MyTournaments = () => {
                         currentTournament?.playersSignedUp[userData.userID].withdrawed === true && 
                         <div>You have already withdrawn from this tournament. You cannot enter again.</div>}
                         {withdrawalButtonText === "Confirm Withdrawal" && <div>Please keep in mind that after withdrawing, you will not be able to sign up for the tournament again.</div>}
-                    
+                        {userRole === 'clubRep' && currentTournament?.playersSignedUp ? 
+                        (<div className="flex-column full-width">
+                            <div>
+                                <h3 className="accent-color">Signed Up Players</h3>
+                                <Table tableData={getSignedUpPlayers(currentTournament.playersSignedUp)} rowHeaders={enteredPlayersTableRowHeaders}/>
+                            </div>
+                            <div>
+                                <h3 className="accent-color">Withdrawed Players</h3>
+                                <Table tableData={getSignedUpPlayers(currentTournament.playersSignedUp, true)} rowHeaders={withdrawedPlayersTableRowHeaders}/>
+                            </div>
+                        </div>) : currentTournament?.status.toLowerCase() === 'open' ? 
+                        (<div>
+                            No people have signed up yet.
+                        </div>) : (
+                        <div></div>
+                        )}
                     </div>
                 </Box>
                 </Fade>

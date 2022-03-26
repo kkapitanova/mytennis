@@ -75,18 +75,21 @@ const TournamentCalendar = () => {
     const [tournamentsDisplay, setTournamentsDisplay] = useState("upcoming") // toggle between archive and upcoming tournaments
 
     const fetchTournaments = ( refresh = false ) => {
+        if (refresh) {
+            toast.info("The list has been refreshed.")
+        }
+
         get(child(dbRef, 'tournaments')).then((snapshot) => {
             if (snapshot.exists()) {
-              console.log(snapshot.val());
               setAllData(objectToArrayConverter(snapshot.val()))
-              if (refresh) {
-                  toast.info("The list has been refreshed.")
-              }
             } else {
               console.log("No data available");
+              setAllData([])
+              toast.info("There is no data available currently.")
             }
             }).catch((error) => {
                 console.error(error);
+                toast.error("An error has occured.")
             });
     }
 
@@ -223,7 +226,12 @@ const TournamentCalendar = () => {
             setEntryButtonText("Confirm Entry")
         } else {
             const updates = {};
-            updates['tournaments/' + currentTournament.tournamentID + '/playersSignedUp/' + userData.userID] = {playerID: userData.userID, signUpTime: new Date(), entered: true};
+            updates['tournaments/' + currentTournament.tournamentID + '/playersSignedUp/' + userData.userID] = {
+                name: `${userData.firstName}  ${userData.familyName}`,
+                signUpTime: new Date(), 
+                signedUp: true,
+                playerID: userData.userID, 
+            };
 
             update(dbRef, updates)
             .then(() => {
@@ -392,8 +400,7 @@ const TournamentCalendar = () => {
                     {filterApplied() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} sx={{height: 40, minWidth: 180, margin: '0px !important'}} onClick={clearFilters}>Clear Search</Button>}
                 </div>
             </div>
-            {data && data.length > 0 && <Table tableData={data} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>}
-            {(!data || !data.length > 0) && <div>No Results Found</div>}
+            <Table tableData={data} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>
             <Button variant="contained" sx={{height: 40, margin: '30px 10px 0px 0px !important'}} onClick={refreshData} endIcon={<RefreshIcon />}>Refresh Data</Button>
             <Modal
                 aria-labelledby="transition-modal-title"

@@ -247,8 +247,13 @@ h3 {
   color: red;
 }
 
-.full-height {
-  height: 100%;
+.full {
+  &-height {
+    height: 100%;
+  }
+  &-width {
+    width: 100%;
+  }
 }
 
 .relative {
@@ -306,7 +311,7 @@ textarea {
 }
 
 .green {
-  color: rgb(11, 175, 11) !important;
+  color: $accent !important;
 }
 
 .justify {
@@ -561,6 +566,10 @@ button {
   background-color: silver !important;
   border: none !important;
   color: white !important
+}
+
+.MuiModal-root {
+  overflow: scroll;
 }
 
 @media only screen and (max-width: 425px) {
