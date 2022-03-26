@@ -16,6 +16,10 @@ import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
+import CheckIcon from '@mui/icons-material/Check';
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 
 //firebase
 import { getDatabase, ref, child, get, set, push, update} from "firebase/database";
@@ -71,9 +75,9 @@ const MyTournaments = () => {
     const [dataByCategories, setDataByCategories] = useState([]) // all data filtered by categories (gender group, age group, dates)
     const [currentTournament, setCurrentTournament] = useState() // current tournament clicked on for which the modal is opened
     const [open, setOpen] = useState(false) // tournament info modal open state
-    const [statusModalOpen, setStatusModalOpen] = useState(false) // tournament status update modal
-    const [tournamentsDisplay, setTournamentsDisplay] = useState("upcoming") // toggle between archive and upcoming tournaments
-
+    const [tournamentsTime, setTournamentsTime] = useState("upcoming") // toggle between archive and upcoming tournaments
+    const [tournamentsDisplay, setTournamentsDisplay] = useState(userData.role === 'player' ? 'entered' : '') // toggle between enterd and withdrawn from tournaments for player view only
+    const [withdrawalButtonText, setWithdrawalButtonText] = useState("Withdraw")
     const [tournamentApprovalText, setTournamentApprovalText] = useState("Approve")
     const [tournamentCancellationText, setTournamentCancellationText] = useState("Decline")
     const [approvalButtonVariant, setApprovalButtonVariant] = useState("outlined")
@@ -82,13 +86,16 @@ const MyTournaments = () => {
 
     //testing user roles
     const userRole = userData.role
-    const playerTestID = '99999'
+    const userID = userData.userID
 
-    const fetchTournaments = () => {
+    const fetchTournaments = ( refresh = false) => {
         get(child(dbRef, 'tournaments')).then((snapshot) => {
             if (snapshot.exists()) {
               console.log(snapshot.val());
               setAllData(objectToArrayConverter(snapshot.val()))
+              if (refresh) {
+                  toast.info("The list has been refreshed.")
+              }
             } else {
               console.log("No data available");
             }
@@ -108,16 +115,10 @@ const MyTournaments = () => {
         }, 300)
     }
 
-    // status modal close
-    const handleStatusModalClose = () => {
-        setStatusModalOpen(false)
-    }
-
     const getData = () => {
         let tournamentData = []
         
         allData && allData.length && allData.forEach(t => {
-
             if (
                 (search.ageGroup ? t.ageGroups.includes(search.ageGroup) : true) && 
                 (search.genderGroup ? t.genderGroup.includes(search.genderGroup) : true) &&
@@ -128,7 +129,7 @@ const MyTournaments = () => {
                 // (t.status.toLowerCase() === 'waiting for approval' || t.status.toLowerCase() === 'declined') &&
                 
                 /// UPCOMING TOURNAMENTS VS ARCHIVED TOURNAMENTS VS ALL TOURNAMENTS
-                (tournamentsDisplay === 'upcoming' ? new Date (t.endDate).getTime() > new Date ().getTime() : tournamentsDisplay === 'archive' ? new Date (t.endDate).getTime() < new Date ().getTime() : true) &&
+                (tournamentsTime === 'upcoming' ? new Date (t.endDate).getTime() > new Date ().getTime() : tournamentsTime === 'archive' ? new Date (t.endDate).getTime() < new Date ().getTime() : true) &&
 
                 // ADMIN VIEW
                 (((userRole.toLowerCase() === 'admin') ? (t.status.toLowerCase() === "waiting for approval" || t.status.toLowerCase() === 'declined') : false) ||
@@ -137,7 +138,7 @@ const MyTournaments = () => {
                 (userRole.toLowerCase() === 'clubrep' && t.submittedBy === userData.userID) ||
 
                 // PLAYER VIEW 
-                (userRole.toLowerCase() === 'player' && t.playersSignedUp && t.playersSignedUp.length && t.playersSignedUp.includes(playerTestID)))
+                (userRole.toLowerCase() === 'player' &&  t.playersSignedUp && Object.keys(t.playersSignedUp) && t.playersSignedUp[userID] && ((tournamentsDisplay === 'entered' ? !t.playersSignedUp[userID].withdrawalTime : tournamentsDisplay === 'withdrawn' ? t.playersSignedUp[userID].withdrawalTime : true))))
             ) {
                 tournamentData.push({
                     location: `${t.city}, ${t.country}`,
@@ -258,16 +259,10 @@ const MyTournaments = () => {
                 console.log("Error: ", error)
                 toast.error('An error has occured. Please try again.')
             })
-
-            // setTimeout(() => {
-            //     setStatusModalOpen(true)
-            // }, 200)
-            // setTimeout(() => {
-            //     setStatusModalOpen(false)
-            // }, 3000)
         }
     }
 
+    // admin tournament decline
     const confirmDecline = () => {
         setDeclineButtonVariant("contained")
         setTournamentCancellationText("Confirm Decline")
@@ -301,18 +296,36 @@ const MyTournaments = () => {
                 console.log("Error: ", error)
                 toast.error('An error has occured. Please try again.')
             })
+        }
+    }
 
-            // setTimeout(() => {
-            //     setStatusModalOpen(true)
-            // }, 200)
-            // setTimeout(() => {
-            //     setStatusModalOpen(false)
-            // }, 3000)
+    // player withdrawal from tournament
+    const confirmWithdrawal = () => {
+        if (withdrawalButtonText === 'Withdraw') {
+            setWithdrawalButtonText("Confirm Withdrawal")
+        } else {
+            const updates = {};
+            updates['tournaments/' + currentTournament.tournamentID + '/playersSignedUp/' + userData.userID + '/withdrawed'] = true;
+            updates['tournaments/' + currentTournament.tournamentID + '/playersSignedUp/' + userData.userID + '/withdrawalTime'] = new Date();
+
+            update(dbRef, updates)
+            .then(() => {
+                fetchTournaments()
+                toast.success("You have withdrawn from the tournament successfully.")
+                // toast.info("You can view tournaments you've signed up for in the 'My Tournaments' section.")
+            })
+            .catch((error) => {
+                console.log("Error: ", error)
+                toast.error('An error has occured. Please try again.')
+            })
+
+            setOpen(false)
+            setWithdrawalButtonText("Withdraw")
         }
     }
 
     const refreshData = () => {
-        fetchTournaments()
+        fetchTournaments(true)
     }
 
     // scroll to top when opening the page for the first time
@@ -323,7 +336,7 @@ const MyTournaments = () => {
 
     useEffect(() => {
         setData(getData())
-    }, [search.ageGroup, search.genderGroup, search.draws, userRole, tournamentsDisplay, allData])
+    }, [search.ageGroup, search.genderGroup, search.draws, userRole, tournamentsTime, tournamentsDisplay, allData])
 
     // update data accordingly if the search query changes in the location 
     useEffect(() => {
@@ -382,6 +395,21 @@ const MyTournaments = () => {
                         setTournamentsDisplay(e.target.value)
                     }}
                     >
+                    <ToggleButton value={"withdrawn"} className="red-option">Withdrawn from</ToggleButton>
+                    <ToggleButton value={"entered"}>Entered</ToggleButton>
+                </ToggleButtonGroup>
+                {/* <div style={{color: "rgba(0, 0, 0, 0.5)"}}>{tournamentsDisplay === "archive" ? 'Only past tournaments will be shown.' : tournamentsDisplay === "upcoming" ? 'Only upcoming tournaments will be shown.' : "All tournaments will be shown."}</div> */}
+            </div>
+            <div className="flex wrap align-center">
+                <ToggleButtonGroup
+                    color="primary"
+                    value={tournamentsTime}
+                    sx={{height: 40, margin: '5px 5px 10px 0px'}}
+                    exclusive
+                    onChange={(e) => {
+                        setTournamentsTime(e.target.value)
+                    }}
+                    >
                     <ToggleButton value={"archive"}>Archive</ToggleButton>
                     <ToggleButton value={"all"}>All</ToggleButton>
                     <ToggleButton value={"upcoming"}>Upcoming</ToggleButton>
@@ -436,21 +464,21 @@ const MyTournaments = () => {
                         size="small"
                         style={{width: 150, margin: '0 5px 10px 0'}}
                     >
-                        {tournamentsDisplay === 'upcoming' &&
+                        {tournamentsTime === 'upcoming' &&
                             upcomingYears.map((option, index) => (
                                 <MenuItem key={index} value={option}>
                                     {option}
                                 </MenuItem>
                             ))
                         }
-                        {tournamentsDisplay === 'archive' &&
+                        {tournamentsTime === 'archive' &&
                             previousYears.map((option, index) => (
                                 <MenuItem key={index} value={option}>
                                     {option}
                                 </MenuItem>
                             ))
                         }
-                        {tournamentsDisplay === 'all' &&
+                        {tournamentsTime === 'all' &&
                             allYears.map((option, index) => (
                                 <MenuItem key={index} value={option}>
                                     {option}
@@ -497,7 +525,7 @@ const MyTournaments = () => {
             </div>
             {data && data.length > 0 && <Table tableData={data} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>}
             {(!data || !data.length > 0) && <div>No Results Found</div>}
-            <Button variant="contained" sx={{height: 40, margin: '30px 10px 0px 0px !important'}} onClick={refreshData}>Refresh Data</Button>
+            <Button variant="contained" sx={{height: 40, margin: '30px 10px 0px 0px !important'}} onClick={refreshData} endIcon={<RefreshIcon />}>Refresh Data</Button>
             <Modal
                 aria-labelledby="transition-modal-title"
                 aria-describedby="transition-modal-description"
@@ -512,7 +540,7 @@ const MyTournaments = () => {
                 <Fade in={open}>
                 <Box sx={style} className="large-modal">
                     <div className="flex-column justify-center align-center">
-                        <div className="flex-column">
+                        <div className="flex-column" style={{marginBottom: 30}}>
                             <div className="flex justify-between align-center tournament-header">
                                 <h2 style={{fontWeight: '500'}}>{currentTournament?.tournamentName}</h2>
                                 <div className={`status-indicator ${statusColor}`}>{currentTournament?.status.toUpperCase()}</div> 
@@ -531,10 +559,36 @@ const MyTournaments = () => {
                         </div>
                         {userRole?.toLowerCase() === "admin" && currentTournament?.status.toLowerCase() === 'waiting for approval' && (
                             <div className="flex">
-                                <Button variant={approvalButtonVariant} sx={{height: 40, margin: '30px 10px 0px 0px !important'}} onClick={() => confirmApproval()}>{tournamentApprovalText}</Button>
-                                <Button className="red-button" variant={declineButtonVariant} sx={{height: 40, margin: '30px 0px 0px 10px !important'}} onClick={() => confirmDecline()}>{tournamentCancellationText}</Button>
+                                <Button variant={approvalButtonVariant} sx={{height: 40, margin: '30px 10px 0px 0px !important'}} onClick={() => confirmApproval()} startIcon={<CheckIcon />}>{tournamentApprovalText}</Button>
+                                <Button className="red-button" variant={declineButtonVariant} sx={{height: 40, margin: '30px 0px 0px 10px !important'}} onClick={() => confirmDecline()} endIcon={<CancelOutlinedIcon />}>{tournamentCancellationText}</Button>
                             </div>
                         )}
+                        {userRole.toLowerCase() === 'player' && <div className="flex">
+                            {currentTournament?.playersSignedUp && 
+                            currentTournament?.playersSignedUp[userData.userID] && 
+                            currentTournament?.playersSignedUp[userData.userID].withdrawed !== true ? (<Button 
+                                className="red-button" 
+                                variant={withdrawalButtonText === 'Withdraw' ? 'outlined' : 'contained'} 
+                                sx={{height: 40, margin: '0px 0px 5px 0px !important'}} 
+                                onClick={confirmWithdrawal}
+                                endIcon={<LogoutOutlinedIcon />}
+                            >
+                                {withdrawalButtonText}
+                            </Button>) : (
+                                <Button 
+                                    variant={'outlined'} 
+                                    sx={{height: 40, margin: '0px 5px 0px 0px !important'}} 
+                                    disabled
+                                    startIcon={<CheckIcon />}
+                                >Enter</Button>
+                            )}
+                        </div>}
+                        {currentTournament?.playersSignedUp && 
+                        currentTournament?.playersSignedUp[userData.userID] &&
+                        currentTournament?.playersSignedUp[userData.userID].withdrawed === true && 
+                        <div>You have already withdrawn from this tournament. You cannot enter again.</div>}
+                        {withdrawalButtonText === "Confirm Withdrawal" && <div>Please keep in mind that after withdrawing, you will not be able to sign up for the tournament again.</div>}
+                    
                     </div>
                 </Box>
                 </Fade>

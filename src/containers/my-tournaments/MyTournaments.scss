@@ -2,18 +2,6 @@
 
 .status-indicator {
     font-weight: bold;
-
-    &.orange {
-        color: #f4a410;
-    }
-    
-    &.red {
-        color: red;
-    }
-
-    &.green {
-        color: rgb(11, 175, 11);
-    }
 }
 
 .helper-text {
@@ -36,6 +24,11 @@
 
 .Mui-selected {
     color: $accent !important;
+}
+
+.red-option.Mui-selected {
+    color: red !important;
+    background-color: #fff3f3 !important;
 }
 
 @media only screen and (max-width: 500px) {

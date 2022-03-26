@@ -15,6 +15,9 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
+import SendIcon from '@mui/icons-material/Send';
+import EditIcon from '@mui/icons-material/Edit';
+import CheckIcon from '@mui/icons-material/Check';
 
 //modal material
 import Backdrop from '@mui/material/Backdrop';
@@ -105,8 +108,7 @@ const TournamentSubmission = () => {
         update(dbRef, updates)
         .then(() => {
             toast.success("You have submitted a tournament successfully.")
-            console.log("submission confirmed", JSON.stringify({...tournamentData, status: "Waiting for Approval", submittedBy: userData.userID, submissionTime: new Date (), tournamentID: newPostKey}))
-
+            toast.info("You can view your tournaments in the 'My Tournaments' section.")
         })
         .catch((error) => {
             console.log("Error: ", error)
@@ -367,8 +369,8 @@ const TournamentSubmission = () => {
                                     defaultValue="female"
                                     name="radio-buttons-group"
                                 >
-                                    <FormControlLabel value="Women" control={<Radio checked={tournamentData.genderGroup === "Women" ? true : false} onChange={handleGenderGroupChange}/>} label="Women" />
-                                    <FormControlLabel value="Men" control={<Radio checked={tournamentData.genderGroup === "Men"? true : false} onChange={handleGenderGroupChange}/>} label="Men" />
+                                    <FormControlLabel value="Female" control={<Radio checked={tournamentData.genderGroup === "Female" ? true : false} onChange={handleGenderGroupChange}/>} label="Women" />
+                                    <FormControlLabel value="Male" control={<Radio checked={tournamentData.genderGroup === "Male"? true : false} onChange={handleGenderGroupChange}/>} label="Men" />
                                     <FormControlLabel value="Mixed" control={<Radio checked={tournamentData.genderGroup === "Mixed" ? true : false} disabled={tournamentData.drawType === "singles" ? true : false} onChange={handleGenderGroupChange}/>} label="Mixed" />
                                 </RadioGroup>
                             </FormControl>
@@ -441,7 +443,7 @@ const TournamentSubmission = () => {
                         </div>
                         <div className="flex wrap">
                             {/* <button className='button action-button' type="submit" style={{marginRight: 10}} disabled={validateFields()}>Submit</button> */}
-                            <Button variant="contained" sx={{height: 40, margin: '0px 10px 10px 0px !important'}} type="submit">Submit</Button> 
+                            <Button variant="contained" sx={{height: 40, margin: '0px 10px 10px 0px !important'}} type="submit" endIcon={<SendIcon />}>Submit</Button> 
                             {/* //TODO: disabled state when not all data fields are entered*/}
                             <Button variant="contained" sx={{height: 40, margin: '0px 10px 10px 0px !important'}} onClick={() => setTournamentData({"tournamentName":"Test Tournament Name", "clubName": "Test Club Name", "description":"This is the tournament description","city":"Sofia","country":"Bulgaria","street":"Borisova Garden, NTC","zipCode":"1632","startDate":"2023-02-15T12:04:46.000Z","endDate":"2023-02-18T12:04:47.000Z","tournamentDirector":"Kristina Kapitanova","tournamentDirectorPhone":"+1 (233) 23","genderGroup":"Mixed","ageGroups":["U60"],"drawType":"singlesAndDoubles","entryTax":"75","prizeMoney":"20000","medicalTeamOnSite":false})}>FILL WITH TEST DATA</Button>
                             {checkIfInfoIsFilledIn() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} sx={{height: 40, margin: '0px 10px 0px 0px !important'}} onClick={clearFields}>Clear Fields</Button>}
@@ -474,8 +476,8 @@ const TournamentSubmission = () => {
                                     <h3 style={{fontWeight: '600', marginTop: 40}}>Section Title</h3>
                                     <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
                                     <div className='flex wrap justify-center' style={{marginTop: 40}}>
-                                        <Button variant="contained" onClick={confirmSubmission} sx={{margin: '0 5px 0 0 !important'}}>Confirm Submission</Button>
-                                        <Button variant="outlined" onClick={handleClose} sx={{margin: '0 0 0 5px !important'}}>Edit Submission</Button>
+                                        <Button variant="contained" onClick={confirmSubmission} sx={{margin: '0 5px 0 0 !important'}} startIcon={<CheckIcon />}>Confirm Submission</Button>
+                                        <Button variant="outlined" onClick={handleClose} sx={{margin: '0 0 0 5px !important'}} endIcon={<EditIcon />}>Edit Submission</Button>
                                     </div>
                                 </div>
                             </Box>

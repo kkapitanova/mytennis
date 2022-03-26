@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Table } from '../../components';
 import { sortData, getAge } from '../../utils/helpers'
-import TextField from '@mui/material/TextField';
-import MenuItem from '@mui/material/MenuItem';
 import { useHistory } from 'react-router';
 import { ageGroups, genderGroups } from '../../data/constants';
 import { mockPlayerData, mockRanking } from '../../data/dummyData';
 import sampleBackground from '../../assets/images/sample_background.jpeg';
 import moment from 'moment';
 
-// modal
+// material
+import PeopleOutlineOutlinedIcon from '@mui/icons-material/PeopleOutlineOutlined';
+import TextField from '@mui/material/TextField';
+import MenuItem from '@mui/material/MenuItem';
+
+// material modal
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
@@ -142,7 +145,7 @@ const Home = () => {
                 {organizedTableData && organizedTableData.length > 0 && <Table tableData={organizedTableData.slice(0, 10)} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>}
                 {organizedTableData && !organizedTableData.length && <div>NO RESULTS FOUND</div>}
                 <div className="flex justify-end" style={{marginTop: 10}}>
-                    <Button variant="contained" onClick={() => history.push('/rankings/')} sx={{height: 40, margin: '0px !important'}}>See All</Button>
+                    <Button variant="contained" onClick={() => history.push('/rankings/')} sx={{height: 40, margin: '0px !important'}} endIcon={<PeopleOutlineOutlinedIcon />}>See All</Button>
                 </div>
                 <Modal
                     aria-labelledby="transition-modal-title"

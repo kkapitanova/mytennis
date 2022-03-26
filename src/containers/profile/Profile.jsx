@@ -20,6 +20,9 @@ import Stack from '@mui/material/Stack';
 import FormGroup from '@mui/material/FormGroup';
 import Checkbox from '@mui/material/Checkbox';
 import FormHelperText from '@mui/material/FormHelperText';
+import EditIcon from '@mui/icons-material/Edit';
+import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
+import UpdateIcon from '@mui/icons-material/Update';
 
 // country dropdown
 // import Select from 'react-select'
@@ -181,7 +184,7 @@ const Profile = () => {
             <h3 className="accent-color" style={{textAlign: 'left'}}>My Profile</h3>
             {!showForm ? (<div className='flex-column align-center justify-center'>
                 <div>Your profile is complete. Thank you!</div>
-                <Button variant="contained" onClick={() => setShowForm(true)} sx={{margin: '20px 0px 0px 0px !important'}}>Edit Profile</Button>
+                <Button variant="contained" onClick={() => setShowForm(true)} sx={{margin: '20px 0px 0px 0px !important'}} endIcon={<EditIcon />}>Edit Profile</Button>
             </div>) :
             (<div className="flex-column wrap align-center">
                 {!userData.firstName && <div>Before you continue, you must complete your profile.</div>}
@@ -337,8 +340,8 @@ const Profile = () => {
                     </FormControl>
                 </div>
                 <div className="flex wrap align-center justify-center" style={{marginTop: 10}}>
-                    <Button variant="contained" sx={{margin: '10px 5px 0px 5px !important'}} type="submit" onClick={handleDataUpdate} disabled={isDisabled()}>Update Profile</Button>
-                    {userData.firstName && <Button variant="outlined" sx={{margin: '10px 5px 0px 5px !important'}} type="submit" onClick={() => setShowForm(false)}>Cancel Edit</Button>}
+                    <Button variant="contained" sx={{margin: '10px 5px 0px 5px !important'}} type="submit" onClick={handleDataUpdate} disabled={isDisabled()} startIcon={<UpdateIcon />}>Update Profile</Button>
+                    {userData.firstName && <Button variant="outlined" sx={{margin: '10px 5px 0px 5px !important'}} type="submit" onClick={() => setShowForm(false)} endIcon={<CancelOutlinedIcon />}>Cancel Edit</Button>}
                 </div>
             </div>)}
         </div>

@@ -1,1 +1,1 @@
-export { default as Table } from './table/Table'
+export { default as Table } from './table/Table.jsx'

@@ -45,7 +45,18 @@ const BasicTable = ({ tableData, rowHeaders, onRowClick }) => {
 
                             if (index < rowHeaders.length) {
                                 return (
-                                    <TableCell key={index + new Date().getTime()} align={`${index === rowHeaders.length - 1 ? "right" : 'left'}`} onClick={() => onRowClick(dataItem)}>{value}</TableCell>
+                                    <TableCell 
+                                        key={index + new Date().getTime()} 
+                                        align={`${index === rowHeaders.length - 1 ? "right" : 'left'}`} 
+                                        onClick={() => onRowClick(dataItem)} 
+                                        className={`${ typeof value === 'string' &&
+                                            (value.toLowerCase() === 'waiting for approval' || value.toLowerCase() === 'postponed' ? 'orange' : 
+                                            value.toLowerCase() === 'declined' ? 'red' :
+                                            value.toLowerCase() === 'open' || value.toLowerCase() === 'concluded' ? 'green' : '')
+                                        }`}
+                                    >
+                                        {value}
+                                    </TableCell>
                                 )
                             }
                         })}
