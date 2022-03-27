@@ -141,7 +141,7 @@ const MyTournaments = () => {
                 playersData.push({
                     name: player.name,
                     time: getDateString(player.withdrawalTime),
-                    status: 'Withdrawed'
+                    status: 'Withdrawn'
                 })
             } else if (!withdrawed && !player.withdrawed && !player.withdrawalTime) {
                 playersData.push({
@@ -610,7 +610,7 @@ const MyTournaments = () => {
                 <Fade in={open}>
                 <Box sx={style} className="large-modal">
                     <div className="flex-column justify-center align-center">
-                        <div className="flex-column" style={{marginBottom: 30}}>
+                        <div className="flex-column">
                             <div className="flex justify-between align-center tournament-header">
                                 <h2 className="accent-color" style={{fontWeight: '500'}}>{currentTournament?.tournamentName}</h2>
                                 <div className={`status-indicator ${statusColor}`}>{currentTournament?.status.toUpperCase()}</div> 
@@ -620,14 +620,14 @@ const MyTournaments = () => {
                             </div>
                             <div style={{marginBottom: 5}}>{currentTournament?.clubName}</div>
                             <div style={{marginBottom: 5}}>{currentTournament?.city}, {currentTournament?.country}</div>
-                            <h3 className="accent-color" style={{fontWeight: '600', marginTop: 40}}>Terms of Play</h3>
+                            <h3 className="accent-color section-title">Terms of Play</h3>
                             <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
-                            <h3 className="accent-color" style={{fontWeight: '600', marginTop: 40}}>Section Title</h3>
+                            <h3 className="accent-color section-title">Section Title</h3>
                             <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
-                            <h3 className="accent-color" style={{fontWeight: '600', marginTop: 40}}>Section Title</h3>
+                            <h3 className="accent-color section-title">Section Title</h3>
                             <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
                         </div>
-                        {userRole?.toLowerCase() === "admin" && currentTournament?.status.toLowerCase() === 'waiting for approval' && (
+                        {userRole.toLowerCase() === "admin" && currentTournament?.status.toLowerCase() === 'waiting for approval' && (
                             <div className="flex">
                                 <Button variant={approvalButtonVariant} sx={{height: 40, margin: '30px 10px 0px 0px !important'}} onClick={() => confirmApproval()} startIcon={<CheckIcon />}>{tournamentApprovalText}</Button>
                                 <Button className="red-button" variant={declineButtonVariant} sx={{height: 40, margin: '30px 0px 0px 10px !important'}} onClick={() => confirmDecline()} endIcon={<CancelOutlinedIcon />}>{tournamentCancellationText}</Button>
@@ -636,10 +636,11 @@ const MyTournaments = () => {
                         {userRole.toLowerCase() === 'player' && <div className="flex">
                             {currentTournament?.playersSignedUp && 
                             currentTournament?.playersSignedUp[userData.userID] && 
-                            currentTournament?.playersSignedUp[userData.userID].withdrawed !== true ? (<Button 
+                            currentTournament?.playersSignedUp[userData.userID].withdrawed !== true ? 
+                            (<Button 
                                 className="red-button" 
                                 variant={withdrawalButtonText === 'Withdraw' ? 'outlined' : 'contained'} 
-                                sx={{height: 40, margin: '0px 0px 5px 0px !important'}} 
+                                sx={{height: 40, marginTop: '30px !important'}} 
                                 onClick={confirmWithdrawal}
                                 endIcon={<LogoutOutlinedIcon />}
                             >
@@ -647,7 +648,7 @@ const MyTournaments = () => {
                             </Button>) : (
                                 <Button 
                                     variant={'outlined'} 
-                                    sx={{height: 40, margin: '0px 5px 0px 0px !important'}} 
+                                    sx={{height: 40, marginTop: '30px !important'}} 
                                     disabled
                                     startIcon={<CheckIcon />}
                                 >Enter</Button>
@@ -658,14 +659,14 @@ const MyTournaments = () => {
                         currentTournament?.playersSignedUp[userData.userID].withdrawed === true && 
                         <div>You have already withdrawn from this tournament. You cannot enter again.</div>}
                         {withdrawalButtonText === "Confirm Withdrawal" && <div>Please keep in mind that after withdrawing, you will not be able to sign up for the tournament again.</div>}
-                        {userRole === 'clubRep' && currentTournament?.playersSignedUp ? 
+                        {userRole === 'clubRep' && (currentTournament?.playersSignedUp ? 
                         (<div className="flex-column full-width">
                             <div>
-                                <h3 className="accent-color">Signed Up Players</h3>
+                                <h3 className="accent-color section-title">Signed Up Players</h3>
                                 <Table tableData={getSignedUpPlayers(currentTournament.playersSignedUp)} rowHeaders={enteredPlayersTableRowHeaders}/>
                             </div>
                             <div>
-                                <h3 className="accent-color">Withdrawed Players</h3>
+                                <h3 className="accent-color section-title">Withdrawn Players</h3>
                                 <Table tableData={getSignedUpPlayers(currentTournament.playersSignedUp, true)} rowHeaders={withdrawedPlayersTableRowHeaders}/>
                             </div>
                         </div>) : currentTournament?.status.toLowerCase() === 'open' ? 
@@ -673,7 +674,7 @@ const MyTournaments = () => {
                             No people have signed up yet.
                         </div>) : (
                         <div></div>
-                        )}
+                        ))}
                     </div>
                 </Box>
                 </Fade>

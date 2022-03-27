@@ -34,7 +34,6 @@ const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: '90%',
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
@@ -418,7 +417,7 @@ const TournamentCalendar = () => {
                     <div className="flex-column justify-center align-center">
                         <div className='flex-column' style={{marginBottom: 30}}>
                             <div className="flex justify-between align-center">
-                                <h2 style={{fontWeight: '500'}}>{currentTournament?.tournamentName}</h2>
+                                <h2 className="accent-color" style={{fontWeight: '500'}}>{currentTournament?.tournamentName}</h2>
                                 <div className={`status-indicator ${statusColor}`}>{currentTournament?.status.toUpperCase()}</div> 
                             </div>
                             <div style={{marginBottom: 5}}>
@@ -426,11 +425,11 @@ const TournamentCalendar = () => {
                             </div>
                             <div style={{marginBottom: 5}}>{currentTournament?.clubName}</div>
                             <div style={{marginBottom: 5}}>{currentTournament?.city}, {currentTournament?.country}</div>
-                            <h3 style={{marginTop: 40}}>Terms of Play</h3>
+                            <h3 className="accent-color" style={{marginTop: 40}}>Terms of Play</h3>
                             <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
-                            <h3 style={{marginTop: 40}}>Section Title</h3>
+                            <h3 className="accent-color" style={{marginTop: 40}}>Section Title</h3>
                             <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
-                            <h3 style={{marginTop: 40}}>Section Title</h3>
+                            <h3 className="accent-color" style={{marginTop: 40}}>Section Title</h3>
                             <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
                         </div>
                         {userData.role === 'player' && <div className="flex">

@@ -53,7 +53,7 @@ const BasicTable = ({ tableData, rowHeaders, onRowClick }) => {
                                                 onClick={() => onRowClick(dataItem)} 
                                                 className={`${ typeof value === 'string' &&
                                                     (value.toLowerCase() === 'waiting for approval' || value.toLowerCase() === 'postponed' ? 'orange' : 
-                                                    value.toLowerCase() === 'declined' || value.toLowerCase() === 'withdrawed' ? 'red' :
+                                                    value.toLowerCase() === 'declined' || value.toLowerCase() === 'withdrawn' ? 'red' :
                                                     value.toLowerCase() === 'open' || value.toLowerCase() === 'concluded' || value.toLowerCase() === 'entered' ? 'green' : '')
                                                 }`}
                                             >

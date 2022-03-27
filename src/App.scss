@@ -560,6 +560,12 @@ button {
 
 .MuiBox-root {
   overflow: scroll;
+  border-color: transparent !important;
+  border-radius: 10px;
+  max-width: 80vw;
+  max-height: 80vh;
+  width: fit-content;
+  height: fit-content;
 }
 
 .MuiButton-root.Mui-disabled {
@@ -600,16 +606,16 @@ button {
 }
 
 @media only screen and (max-width: 500px) {
-  .MuiBox-root.large-modal{
-    max-width: 60vw !important;
-    max-height: 60vh !important;
+  .MuiBox-root.large-modal {
+    width: 85vw !important;
+    height: 85vh !important;
   }
 }
 
 @media only screen and (min-width: 500px) and (max-width: 1024px) {
-  .MuiBox-root.large-modal{
-    max-width: 70vw !important;
-    max-height: 70vh !important;
+  .MuiBox-root.large-modal {
+    width: 80vw !important;
+    height: 80vh !important;
   }
 }
 
