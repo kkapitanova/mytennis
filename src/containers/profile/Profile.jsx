@@ -181,169 +181,178 @@ const Profile = () => {
 
     return (
         <div className="container flex-column align-center">
-            <h3 className="accent-color" style={{textAlign: 'left'}}>My Profile</h3>
-            {!showForm ? (<div className='flex-column align-center justify-center'>
-                <div>Your profile is complete. Thank you!</div>
-                <Button variant="contained" onClick={() => setShowForm(true)} sx={{margin: '20px 0px 0px 0px !important'}} endIcon={<EditIcon />}>Edit Profile</Button>
-            </div>) :
-            (<div className="flex-column wrap align-center">
-                {!userData.firstName && <div>Before you continue, you must complete your profile.</div>}
-                <TextField 
-                    id="firstName" 
-                    name="firstName"
-                    label="First Name" 
-                    variant="outlined" 
-                    value={data.firstName}
-                    size="small"
-                    sx={{marginTop: '15px', width: 300}}
-                    onChange={handleChange}
-                    required
-                    disabled={userData.firstName ? true : false}
-                />
-                <TextField 
-                    id="middleName" 
-                    name="middleName"
-                    label="Middle Name" 
-                    variant="outlined" 
-                    value={data.middleName}
-                    size="small"
-                    sx={{marginTop: '15px', width: 300}}
-                    onChange={handleChange}
-                    required
-                    disabled={userData.middleName ? true : false}
-                />
-                <TextField 
-                    id="familyName" 
-                    name="familyName"
-                    label="Family Name" 
-                    variant="outlined" 
-                    value={data.familyName}
-                    size="small"
-                    sx={{marginTop: '15px', width: 300}}
-                    onChange={handleChange}
-                    required
-                    disabled={userData.familyName ? true : false}
-                />
-                <TextField 
-                    id="email" 
-                    name="email"
-                    label="Email" 
-                    variant="outlined" 
-                    value={data.email}
-                    size="small"
-                    sx={{marginTop: '15px', width: 300}}
-                    // onChange={handleChange}
-                    disabled
-                    required
-                />
-                <div className='flex align-start justify-start' style={{width: '300px'}}>
-                    <FormControl sx={{margin: "10px 0px 0px 0px"}}>
-                                <FormLabel id="demo-radio-buttons-group-label" sx={{textAlign: "left"}} required disabled={data.gender ? true : false}>Gender</FormLabel>
-                                <RadioGroup
-                                    aria-labelledby="demo-radio-buttons-group-label"
-                                    defaultValue="female"
-                                    name="radio-buttons-group"
-                                >
-                                    <FormControlLabel 
-                                        value="female" 
-                                        control={
-                                            <Radio 
-                                                name="gender"
-                                                checked={data.gender === "female" ? true : false} 
-                                                onChange={handleChange}
-                                                disabled={userData.gender ? true : false}
-                                            />} 
-                                        label="Female" 
-                                    />
-                                    <FormControlLabel
-                                        value="male" 
-                                        control={
-                                            <Radio
-                                                name="gender"
-                                                checked={data.gender === "male" ? true : false} 
-                                                onChange={handleChange}
-                                                disabled={userData.gender ? true : false}
-                                            />} 
-                                        label="Male" 
-                                    />
-                                </RadioGroup>
-                    </FormControl>
-                </div>
-                <FormControl sx={{ m: 1, minWidth: 120 }}>
-                    <InputLabel id="country-select-label" required>Country of Birth</InputLabel>
-                    <Select
-                        name="countryOfBirth"
-                        id="country-select"
+            {userData?.role ? <>
+                <h3 className="accent-color" style={{textAlign: 'left'}}>My Profile</h3>
+                {!showForm ? (<div className='flex-column align-center justify-center'>
+                    <div>Your profile is complete. Thank you!</div>
+                    <Button variant="contained" onClick={() => setShowForm(true)} sx={{margin: '20px 0px 0px 0px !important'}} endIcon={<EditIcon />}>Edit Profile</Button>
+                </div>) :
+                (<div className="flex-column wrap align-center">
+                    {!userData.firstName && <div>Before you continue, you must complete your profile.</div>}
+                    <TextField 
+                        id="firstName" 
+                        name="firstName"
+                        label="First Name" 
+                        variant="outlined" 
+                        value={data.firstName}
+                        size="small"
+                        sx={{marginTop: '15px', width: 300}}
                         onChange={handleChange}
-                        value={data.countryOfBirth}
-                        label="Country of Birth"
-                        sx={{width: 300}}
-                        disabled={userData.countryOfBirth ? true : false}
-                    >
-                        {countryOptions.map(c => {
-                            return (
-                                <MenuItem value={c.label}>{c.label}</MenuItem>
-                            )
-                        })}
-                    </Select>
-                </FormControl>
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <Stack spacing={1}>
-                        <DesktopDatePicker
-                            label="Date of Birth"
-                            name="dateOfBirth"
-                            className="dob-picker"
-                            maxDate={new Date().setFullYear(new Date().getFullYear() - 18)}// only 18+ allowed
-                            value={data.dateOfBirth || null}
-                            onChange={handleDOBChange}
-                            disabled={userData.dateOfBirth ? true : false}
-                            renderInput={(params) => <TextField required {...params} sx={{margin: '10px 0px 0px 0px !important', width: 300}}
-                        />}
-                        />
-                    </Stack>
-                </LocalizationProvider>
-                <TextField 
-                    id="about" 
-                    name="about"
-                    multiline
-                    label="About Me" 
-                    variant="outlined" 
-                    value={data.about}
-                    rows={4}
-                    size="small"
-                    sx={{marginTop: '10px', width: 300}}
-                    onChange={handleChange}
-                />
-                <div className="flex-column align-start">
-                    <FormControl sx={{ m: 3 }} component="fieldset" variant="standard" error={dataUsageError}>
-                        {/* <FormLabel component="legend">Assign responsibility</FormLabel> */}
-                        <FormGroup>
-                        <FormControlLabel
-                            control={
-                            <Checkbox checked={dataConfirmCheck} disabled={userData.dataConfirmCheck} onChange={(e) => setDataConfirmCheck(e.target.checked)} name="gilad" />
-                            }
-                            label="I agree to the T&Cs and allow my data to be used for purposes relating to this site."
-                        />
-                        <FormControlLabel
-                            control={
-                            <Checkbox checked={termsCheck} disabled={userData.termsCheck} onChange={(e) => setTermsCheck(e.target.checked)} name="jason" />
-                            }
-                            label="I confirm that all data I provide is correct and in accordance to my passport details."
-                        />
-                        </FormGroup>
-                        <FormHelperText>
-                            <div className="flex-column">
-                                <div>You must agree to continue forward.</div>
-                                <div>It is important to be truthful when filling this data, as club representatives will use it confirm your identity.</div>
-                            </div>
-                        </FormHelperText>
+                        required
+                        disabled={userData.firstName ? true : false}
+                    />
+                    <TextField 
+                        id="middleName" 
+                        name="middleName"
+                        label="Middle Name" 
+                        variant="outlined" 
+                        value={data.middleName}
+                        size="small"
+                        sx={{marginTop: '15px', width: 300}}
+                        onChange={handleChange}
+                        required
+                        disabled={userData.middleName ? true : false}
+                    />
+                    <TextField 
+                        id="familyName" 
+                        name="familyName"
+                        label="Family Name" 
+                        variant="outlined" 
+                        value={data.familyName}
+                        size="small"
+                        sx={{marginTop: '15px', width: 300}}
+                        onChange={handleChange}
+                        required
+                        disabled={userData.familyName ? true : false}
+                    />
+                    <TextField 
+                        id="email" 
+                        name="email"
+                        label="Email" 
+                        variant="outlined" 
+                        value={data.email}
+                        size="small"
+                        sx={{marginTop: '15px', width: 300}}
+                        // onChange={handleChange}
+                        disabled
+                        required
+                    />
+                    <div className='flex align-start justify-start' style={{width: '300px'}}>
+                        <FormControl sx={{margin: "10px 0px 0px 0px"}}>
+                                    <FormLabel id="demo-radio-buttons-group-label" sx={{textAlign: "left"}} required disabled={data.gender ? true : false}>Gender</FormLabel>
+                                    <RadioGroup
+                                        aria-labelledby="demo-radio-buttons-group-label"
+                                        defaultValue="female"
+                                        name="radio-buttons-group"
+                                    >
+                                        <FormControlLabel 
+                                            value="female" 
+                                            control={
+                                                <Radio 
+                                                    name="gender"
+                                                    checked={data.gender === "female" ? true : false} 
+                                                    onChange={handleChange}
+                                                    disabled={userData.gender ? true : false}
+                                                />} 
+                                            label="Female" 
+                                        />
+                                        <FormControlLabel
+                                            value="male" 
+                                            control={
+                                                <Radio
+                                                    name="gender"
+                                                    checked={data.gender === "male" ? true : false} 
+                                                    onChange={handleChange}
+                                                    disabled={userData.gender ? true : false}
+                                                />} 
+                                            label="Male" 
+                                        />
+                                    </RadioGroup>
+                        </FormControl>
+                    </div>
+                    <FormControl sx={{ m: 1, minWidth: 120 }}>
+                        <InputLabel id="country-select-label" required>Country of Birth</InputLabel>
+                        <Select
+                            name="countryOfBirth"
+                            id="country-select"
+                            onChange={handleChange}
+                            value={data.countryOfBirth}
+                            label="Country of Birth"
+                            sx={{width: 300}}
+                            disabled={userData.countryOfBirth ? true : false}
+                        >
+                            {countryOptions.map(c => {
+                                return (
+                                    <MenuItem value={c.label}>{c.label}</MenuItem>
+                                )
+                            })}
+                        </Select>
                     </FormControl>
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                        <Stack spacing={1}>
+                            <DesktopDatePicker
+                                label="Date of Birth"
+                                name="dateOfBirth"
+                                className="dob-picker"
+                                maxDate={new Date().setFullYear(new Date().getFullYear() - 18)}// only 18+ allowed
+                                value={data.dateOfBirth || null}
+                                onChange={handleDOBChange}
+                                disabled={userData.dateOfBirth ? true : false}
+                                renderInput={(params) => <TextField required {...params} sx={{margin: '10px 0px 0px 0px !important', width: 300}}
+                            />}
+                            />
+                        </Stack>
+                    </LocalizationProvider>
+                    <TextField 
+                        id="about" 
+                        name="about"
+                        multiline
+                        label="About Me" 
+                        variant="outlined" 
+                        value={data.about}
+                        rows={4}
+                        size="small"
+                        sx={{marginTop: '10px', width: 300}}
+                        onChange={handleChange}
+                    />
+                    <div className="flex-column align-start">
+                        <FormControl sx={{ m: 3 }} component="fieldset" variant="standard" error={dataUsageError}>
+                            {/* <FormLabel component="legend">Assign responsibility</FormLabel> */}
+                            <FormGroup>
+                            <FormControlLabel
+                                control={
+                                <Checkbox checked={dataConfirmCheck} disabled={userData.dataConfirmCheck} onChange={(e) => setDataConfirmCheck(e.target.checked)} name="gilad" />
+                                }
+                                label="I agree to the T&Cs and allow my data to be used for purposes relating to this site."
+                            />
+                            <FormControlLabel
+                                control={
+                                <Checkbox checked={termsCheck} disabled={userData.termsCheck} onChange={(e) => setTermsCheck(e.target.checked)} name="jason" />
+                                }
+                                label="I confirm that all data I provide is correct and in accordance to my passport details."
+                            />
+                            </FormGroup>
+                            <FormHelperText>
+                                <div className="flex-column">
+                                    <div>You must agree to continue forward.</div>
+                                    <div>It is important to be truthful when filling this data, as club representatives will use it confirm your identity.</div>
+                                </div>
+                            </FormHelperText>
+                        </FormControl>
+                    </div>
+                    <div className="flex wrap align-center justify-center" style={{marginTop: 10}}>
+                        <Button variant="contained" sx={{margin: '10px 5px 0px 5px !important'}} type="submit" onClick={handleDataUpdate} disabled={isDisabled()} startIcon={<UpdateIcon />}>Update Profile</Button>
+                        {userData.firstName && <Button variant="outlined" sx={{margin: '10px 5px 0px 5px !important'}} type="submit" onClick={() => setShowForm(false)} endIcon={<CancelOutlinedIcon />}>Cancel Edit</Button>}
+                    </div>
+                </div>)}
+            </> : <>
+                <div>You do not have access to this page.</div>
+                <div>Please login or register to gain access.</div>
+                <div className="flex">
+                    <Button variant="contained" sx={{margin: '10px 5px 0px 0px !important'}} onClick={() => history.push('/login')}>Login</Button>
+                    <Button variant="outlined" sx={{margin: '10px 0px 0px 5px !important'}} onClick={() => history.push('/register')}>Register</Button>
                 </div>
-                <div className="flex wrap align-center justify-center" style={{marginTop: 10}}>
-                    <Button variant="contained" sx={{margin: '10px 5px 0px 5px !important'}} type="submit" onClick={handleDataUpdate} disabled={isDisabled()} startIcon={<UpdateIcon />}>Update Profile</Button>
-                    {userData.firstName && <Button variant="outlined" sx={{margin: '10px 5px 0px 5px !important'}} type="submit" onClick={() => setShowForm(false)} endIcon={<CancelOutlinedIcon />}>Cancel Edit</Button>}
-                </div>
-            </div>)}
+            </>}
         </div>
     )
 }
