@@ -1074,3 +1074,104 @@ export const mockTournamentData = [
         draws: ['Singles', 'Doubles']
     } 
 ]
+
+const testMessages = {
+    "1324fsds234": {
+        sent: new Date("03/20/2022 16:55:01").getTime(), //6
+        senderID: "12345",
+        receiverID: "99999",
+        message: "Tuesday at 8pm?",
+        id: 6,
+    },
+    "1324fdsf234": {
+        sent: new Date("03/20/2022 16:56:01").getTime(), //7
+        senderID: "12345",
+        receiverID: "99999",
+        message: "Is that convenient for you?",
+        id: 7,
+    },
+    "1fds32dfsf4234": {
+        sent: new Date("03/20/2022 16:57:01").getTime(), //8
+        senderID: "12345",
+        receiverID: "99999",
+        message: "Tuesday at 8pm?",
+        id: 8,
+    },
+    "1324fdsfsd234": {
+        sent: new Date("03/20/2022 16:57:01").getTime(), //9
+        senderID: "12345",
+        receiverID: "99999",
+        message: "Tuesday at 8pm?",
+        id: 9,
+    },
+    "1324234fdsfds": {
+        sent: new Date("03/20/2022 16:57:01").getTime(), //10
+        senderID: "12345",
+        receiverID: "99999",
+        message: "Tuesday at 8pm?",
+        id: 10,
+    },
+    "13fdsfds24234fdsf": {
+        sent: new Date("03/20/2022 16:57:01").getTime(), //10
+        senderID: "12345",
+        receiverID: "99999",
+        message: "Tuesday at 8pm?",
+        id: 11
+    },
+    "1fdsfsdfds324234": {
+        sent: new Date("03/20/2022 16:57:02").getTime(), //10
+        senderID: "12345",
+        receiverID: "99999",
+        message: "Tuesday at 8pm?",
+        id: 12
+    },
+    "1fsdfsdfs324234": {
+        sent: new Date("03/20/2022 16:57:03").getTime(), //10
+        senderID: "12345",
+        receiverID: "99999",
+        message: "Tuesday at 8pm?",
+        id: 13
+    },
+    "13fdsfsdf24234": {
+        sent: new Date("03/20/2022 16:57:04").getTime(), //10
+        senderID: "12345",
+        receiverID: "99999",
+        message: "Tuesday at 8pm?",
+        id: 14,
+    },
+    "132fsdfsdfs4234": {
+        sent: new Date('12/11/2021 16:55:01').getTime(), //2
+        senderID: "99999",
+        receiverID: "12345",
+        message: "Hi there!",
+        id: 1
+    },
+    "13fsdfsd24234": {
+        sent: new Date('12/11/2021 16:54:32').getTime(), //1
+        senderID: "12345",
+        receiverID: "99999",
+        message: "Hi",
+        id: 2
+    },
+    "1324fsfsd234": {
+        sent: new Date('12/11/2021 16:59:01').getTime(), //4
+        senderID: "99999",
+        receiverID: "12345",
+        message: "Yeah sure!",
+        id: 4
+    },
+    "fsdffsdf2444": {
+        sent: new Date('12/11/2021 16:55:58').getTime(), //3
+        senderID: "12345",
+        receiverID: "99999",
+        message: "Do you want to play?",
+        id: 3
+    },
+    "1323424csfds4234": {
+        sent: new Date('12/11/2021 16:59:13').getTime(), //5
+        senderID: "99999",
+        receiverID: "12345",
+        message: "When",
+        id: 5
+    },
+}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './Chats.scss';
-import { sortData } from '../../utils/helpers';
+import { objectToArrayConverter, sortData, getMessageTimeStamp } from '../../utils/helpers';
 
 // material
 import TextField from '@mui/material/TextField';
@@ -10,132 +10,29 @@ import InfoIcon from '@mui/icons-material/Info';
 import ClearIcon from '@mui/icons-material/Clear';
 import InputAdornment from '@mui/material/InputAdornment';
 import SendIcon from '@mui/icons-material/Send';
+import Button from '@mui/material/Button';
+
+// firebase
+import { getDatabase, ref, onValue, update, get, child } from "firebase/database";
+
+// toast
+import { toast } from 'react-toastify';
+
+const database = getDatabase();
+const dbRef = ref(database);
 
 const testCurrent = {
-    playerId: 1,
+    playerID: '99999',
     firstName: 'Jane',
     familyName: 'Doe',
     gender: 'Female',
     nationCompetingFor: 'Bulgaria',
     dateOfBirth: 'November 13, 2000 03:24:00',
-    chatMessages: [
-        {
-            sent: new Date(),
-            senderID: "12345",
-            receiverID: "99999",
-            message: "Hi"
-        },
-        {
-            sent: new Date(),
-            senderID: "12345",
-            receiverID: "99999",
-            message: "Hi there!"
-        }
-    ]
 }
 
 const userID = '12345'
 const test = [1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8]
-const testMessages = [
-    {
-        sent: new Date("03/20/2022 16:55:01").getTime(), //6
-        senderID: "12345",
-        receiverID: "99999",
-        message: "Tuesday at 8pm?",
-        id: 6,
-    },
-    {
-        sent: new Date("03/20/2022 16:56:01").getTime(), //7
-        senderID: "12345",
-        receiverID: "99999",
-        message: "Is that convenient for you?",
-        id: 7,
-    },
-    {
-        sent: new Date("03/20/2022 16:57:01").getTime(), //8
-        senderID: "12345",
-        receiverID: "99999",
-        message: "Tuesday at 8pm?",
-        id: 8,
-    },
-    {
-        sent: new Date("03/20/2022 16:57:01").getTime(), //9
-        senderID: "12345",
-        receiverID: "99999",
-        message: "Tuesday at 8pm?",
-        id: 9,
-    },
-    {
-        sent: new Date("03/20/2022 16:57:01").getTime(), //10
-        senderID: "12345",
-        receiverID: "99999",
-        message: "Tuesday at 8pm?",
-        id: 10,
-    },
-    {
-        sent: new Date("03/20/2022 16:57:01").getTime(), //10
-        senderID: "12345",
-        receiverID: "99999",
-        message: "Tuesday at 8pm?",
-        id: 11
-    },
-    {
-        sent: new Date("03/20/2022 16:57:02").getTime(), //10
-        senderID: "12345",
-        receiverID: "99999",
-        message: "Tuesday at 8pm?",
-        id: 12
-    },
-    {
-        sent: new Date("03/20/2022 16:57:03").getTime(), //10
-        senderID: "12345",
-        receiverID: "99999",
-        message: "Tuesday at 8pm?",
-        id: 13
-    },
-    {
-        sent: new Date("03/20/2022 16:57:04").getTime(), //10
-        senderID: "12345",
-        receiverID: "99999",
-        message: "Tuesday at 8pm?",
-        id: 14,
-    },
-    {
-        sent: new Date('12/11/2021 16:55:01').getTime(), //2
-        senderID: "99999",
-        receiverID: "12345",
-        message: "Hi there!",
-        id: 1
-    },
-    {
-        sent: new Date('12/11/2021 16:54:32').getTime(), //1
-        senderID: "12345",
-        receiverID: "99999",
-        message: "Hi",
-        id: 2
-    },
-    {
-        sent: new Date('12/11/2021 16:59:01').getTime(), //4
-        senderID: "99999",
-        receiverID: "12345",
-        message: "Yeah sure!",
-        id: 4
-    },
-    {
-        sent: new Date('12/11/2021 16:55:58').getTime(), //3
-        senderID: "12345",
-        receiverID: "99999",
-        message: "Do you want to play?",
-        id: 3
-    },
-    {
-        sent: new Date('12/11/2021 16:59:13').getTime(), //5
-        senderID: "99999",
-        receiverID: "12345",
-        message: "When",
-        id: 5
-    },
-]
+
 
 const sort = (data) => {
     const sortedData = sortData(data, "sent", 'asc')
@@ -148,49 +45,35 @@ const sort = (data) => {
 }
 
 const Chats = () => {
-
+    const userData = JSON.parse(sessionStorage.getItem('userData')) || {} // TODO: replace with redux store function with initial value from localstorage
     const [search, setSearch] = useState()
     const [message, setMessage] = useState()
     const [current, setCurrent] = useState()
-    const [chatMessages, setChatMessages] = useState(testMessages)
+    const [chatMessages, setChatMessages] = useState({})
+    const [currentChatID, setCurrentChatID] = useState()
 
-    const getTimeStamp = (dateString, allMessages, currentMessageIndex) => {
-        const date = new Date(dateString)
-        const year = date.getFullYear()
-        const month = date.getMonth()
-        const hours = date.getHours()
-        const minutes = date.getMinutes()
-        const currentDate = new Date().getDate()
-    
-        let previousDate;
-
-        if (currentMessageIndex !== 0) {
-            previousDate = new Date(allMessages[currentMessageIndex - 1].sent)
-        }
-    
-        let timestamp = ''
-    
-        if (previousDate &&
-            previousDate.getFullYear() === year && 
-            previousDate.getMonth() === month && 
-            previousDate.getDate() === date.getDate() &&
-            previousDate.getHours() === hours &&
-            previousDate.getMinutes() === minutes) {
-                return timestamp
-
-        } else if (year === new Date().getFullYear()) {
-
-            if (currentDate === date.getDate()) { //timestamp for today in format of hours:minutes (12:34)
-                timestamp = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
+    const fetchConversation = receiver => {
+        get(child(dbRef, "chats/chatsInfo")).then((snapshot) => {
+            if (snapshot.exists()) {
+                const chatsInfo = snapshot.val();
+                Object.keys(chatsInfo).map(key => {
+                    const chat = chatsInfo[key]
+                    if (chat.recipients.includes(receiver.playerID) && chat.recipients.includes('12345')) {
+                        setCurrentChatID(chat.chatID)
+                        
+                        get(child(dbRef, "chats/" + chat.chatID))
+                        .then((snapshot) => {
+                            setChatMessages(snapshot.val())
+                        })
+                    }
+                })
             } else {
-                timestamp = `${date.getDate()}/${month + 1}, ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}` //timestamp for current year in format of date/month, hours:minutes (12/3, 12:34)
+                toast.info('No data available.')
             }
-
-        } else { //timestamp for past years in format of date/month/year, hours:minutes (12/3, 12:34)
-            timestamp = `${date.getDate()}/${month + 1}/${year}, ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
-        }
-    
-        return timestamp
+          }).catch((error) => {
+            console.error(error);
+            toast.error('An error has occured. Please try again.')
+          });
     }
 
     const handleSearchChange = (e) => {
@@ -207,15 +90,15 @@ const Chats = () => {
 
     const onKeyDown = (e) => {
         if (e.keyCode === 13 && e.target.value) { // check if message is not empty & enter has been clicked
-            setChatMessages([
+            setChatMessages({
                 ...chatMessages,
-                {
+                'rjeoe24235o': {
                     sent: new Date().getTime(),
                     senderID: "12345",
                     receiverID: "99999",
-                    message: e.target.value
+                    message: message
                 }
-            ])
+            })
             setMessage('')
             scrollToBottom("chat-messages")
         }
@@ -223,15 +106,15 @@ const Chats = () => {
 
     const handleMessageSubmit = () => {
         if (message) { // check if message is not empty
-            setChatMessages([
+            setChatMessages({
                 ...chatMessages,
-                {
+                'rjeoe24235o': {
                     sent: new Date().getTime(),
                     senderID: "12345",
                     receiverID: "99999",
                     message: message
                 }
-            ])
+            })
             setMessage('')
             scrollToBottom("chat-messages")
         }
@@ -260,11 +143,39 @@ const Chats = () => {
     // scroll to top when opening the page for the first time
     useEffect(() => {
         window.scrollTo(0,0)
+
+        const messagesRef = ref(database, 'chats');
+        onValue(messagesRef, (snapshot) => {
+            const data = snapshot.val();
+            console.log("UPDATED DATA", data)
+            scrollToBottom("chat-messages")
+        });
     }, [])
 
     useEffect(() => {
         setMessage() //clear input when switching between chats
+        if (current) {
+            fetchConversation(current)
+        }
     }, [current])
+
+    useEffect(() => {
+        console.log(currentChatID)
+        if (currentChatID) {
+            const updates = {};
+            updates['chats/' + currentChatID] = chatMessages
+            // updates['tournaments/' + currentTournament.tournamentID + '/playersSignedUp/' + userData.userID + '/withdrawalTime'] = new Date();
+    
+            update(dbRef, updates)
+            .then(() => {
+                // toast.info("You can view tournaments you've signed up for in the 'My Tournaments' section.")
+            })
+            .catch((error) => {
+                console.log("Error: ", error)
+                toast.error('An error has occured. Please try again.')
+            })
+        }
+    }, [chatMessages, currentChatID])
 
     return (
         <div className="container">
@@ -319,12 +230,12 @@ const Chats = () => {
                                 </div>
                             </div>
                             <div className="flex-column chat-messages" id="chat-messages">
-                                {chatMessages && chatMessages.length && sort(chatMessages).map((m, index) => {                                    
+                                {chatMessages && Object.keys(chatMessages).length && sort(objectToArrayConverter(chatMessages)).map((m, index) => {                                    
                                     return (
                                         <div key={m.id} className={`flex-column message-container align-${m.senderID === userID ? 'end' : 'start'}`}>
                                             <div className="flex align-center">
                                                 <div className="message">{m.message}</div>
-                                                <div className="timestamp">{getTimeStamp(m.sent, chatMessages, index)}</div>
+                                                <div className="timestamp">{getMessageTimeStamp(m.sent, sort(objectToArrayConverter(chatMessages)), index)}</div>
                                             </div>
                                         </div>
                                     )
@@ -353,10 +264,24 @@ const Chats = () => {
                         </div>
                     </>}
                     {!current && <div className="flex justify-center align-center full-height">
-                        <div>Open up a chat to see your messages or start a new converstation by searching for a player in the search bar.</div>
+                        <div className="chats-info">Open up a chat to see your messages or start a new converstation by searching for a player in the search bar.</div>
                     </div>}
                 </div>
             </div>
+            {current && <Button variant="outlined" sx={{marginTop: '10px'}} onClick={() => {
+                const randomID = `${new Date().getTime()}2432523`
+
+                setChatMessages({
+                    ...chatMessages,
+                    [randomID]: {
+                        sent: new Date().getTime(),
+                        senderID: current.playerID,
+                        receiverID: "12345",
+                        message: "Test Receiver Message"
+                    }
+                })}
+
+            }>Send Test Receiver Message</Button>}
         </div>
     )
 

@@ -30,8 +30,7 @@ import MuiPhoneNumber from "material-ui-phone-number";
 import { getDatabase, ref, child, get, push, update} from "firebase/database";
 
 // toast
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 
 const database = getDatabase()
 const dbRef = ref(database);

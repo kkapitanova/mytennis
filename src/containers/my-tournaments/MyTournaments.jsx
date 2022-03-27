@@ -26,7 +26,6 @@ import { getDatabase, ref, child, get, set, push, update} from "firebase/databas
 
 // toast
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 //styles
 import './MyTournaments.scss';

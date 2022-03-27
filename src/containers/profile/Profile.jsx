@@ -29,8 +29,7 @@ import UpdateIcon from '@mui/icons-material/Update';
 import countryList from 'react-select-country-list'
 
 // toast
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 
 // firebase
 import { getDatabase, ref, set } from "firebase/database";

@@ -196,7 +196,7 @@ const App = () => {
                 </Route>
               ))}
               <Route path="/*" component={Footer} />
-              <Redirect to="/" />
+              {/* <Redirect to="/" /> */}
             </div>
           </Switch>
         </Router>

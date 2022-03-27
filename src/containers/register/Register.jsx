@@ -20,8 +20,7 @@ import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
 import { getDatabase, ref, set } from "firebase/database";
 
 // toast
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 
 const authentication = getAuth()
 const database = getDatabase()

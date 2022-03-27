@@ -67,3 +67,42 @@ export const objectToArrayConverter = (obj) => {
 
     return arr
 }
+
+export const getMessageTimeStamp = (dateString, allMessages, currentMessageIndex) => {
+    const date = new Date(dateString)
+    const year = date.getFullYear()
+    const month = date.getMonth()
+    const hours = date.getHours()
+    const minutes = date.getMinutes()
+    const currentDate = new Date().getDate()
+
+    let previousDate;
+
+    if (currentMessageIndex !== 0) {
+        previousDate = new Date(allMessages[currentMessageIndex - 1].sent)
+    }
+
+    let timestamp = ''
+
+    if (previousDate &&
+        previousDate.getFullYear() === year && 
+        previousDate.getMonth() === month && 
+        previousDate.getDate() === date.getDate() &&
+        previousDate.getHours() === hours &&
+        previousDate.getMinutes() === minutes) {
+            return timestamp
+
+    } else if (year === new Date().getFullYear()) {
+
+        if (currentDate === date.getDate()) { //timestamp for today in format of hours:minutes (12:34)
+            timestamp = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
+        } else {
+            timestamp = `${date.getDate()}/${month + 1}, ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}` //timestamp for current year in format of date/month, hours:minutes (12/3, 12:34)
+        }
+
+    } else { //timestamp for past years in format of date/month/year, hours:minutes (12/3, 12:34)
+        timestamp = `${date.getDate()}/${month + 1}/${year}, ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
+    }
+
+    return timestamp
+}
