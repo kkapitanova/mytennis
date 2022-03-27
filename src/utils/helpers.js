@@ -106,3 +106,17 @@ export const getMessageTimeStamp = (dateString, allMessages, currentMessageIndex
 
     return timestamp
 }
+
+export const alphabeticalSort = (arr, sortingParameter) => {
+    arr.sort((a, b) => {
+        if (a[sortingParameter] < b[sortingParameter]) { 
+            return -1; 
+        }
+
+        if (a[sortingParameter] > b[sortingParameter]) {
+             return 1; 
+        }
+        
+        return 0;
+    })
+}
