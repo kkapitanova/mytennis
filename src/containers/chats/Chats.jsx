@@ -13,7 +13,7 @@ import SendIcon from '@mui/icons-material/Send';
 import Button from '@mui/material/Button';
 
 // firebase
-import { getDatabase, ref, onValue, update, get, child } from "firebase/database";
+import { getDatabase, ref, onValue, update, get, child, push } from "firebase/database";
 
 // toast
 import { toast } from 'react-toastify';
@@ -90,9 +90,10 @@ const Chats = () => {
 
     const onKeyDown = (e) => {
         if (e.keyCode === 13 && e.target.value) { // check if message is not empty & enter has been clicked
+            const newPostKey = push(child(dbRef, 'chats/' + currentChatID)).key;
             setChatMessages({
                 ...chatMessages,
-                'rjeoe24235o': {
+                [newPostKey]: {
                     sent: new Date().getTime(),
                     senderID: "12345",
                     receiverID: "99999",
@@ -106,9 +107,10 @@ const Chats = () => {
 
     const handleMessageSubmit = () => {
         if (message) { // check if message is not empty
+            const newPostKey = push(child(dbRef, 'chats/' + currentChatID)).key;
             setChatMessages({
                 ...chatMessages,
-                'rjeoe24235o': {
+                [newPostKey]: {
                     sent: new Date().getTime(),
                     senderID: "12345",
                     receiverID: "99999",
