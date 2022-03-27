@@ -191,10 +191,10 @@ const MyTournaments = () => {
         
         allData && allData.length && allData.forEach(t => {
             if (
-                (search.ageGroup ? t.ageGroups.includes(search.ageGroup) : true) && 
-                (search.genderGroup ? t.genderGroup.includes(search.genderGroup) : true) &&
-                (t.city + t.country).toLowerCase().includes(search.location) &&
-                t.tournamentName.toLowerCase().includes(search.name) && 
+                (search.ageGroup ? t.ageGroups && t.ageGroups.includes(search.ageGroup) : true) && 
+                (search.genderGroup ? t.genderGroup && t.genderGroup.includes(search.genderGroup) : true) &&
+                (t.city + t.country)?.toLowerCase().includes(search.location) &&
+                t.tournamentName?.toLowerCase().includes(search.name) && 
                 (t.startDate + t.endDate).includes(search.month) &&
                 (t.startDate + t.endDate).includes(search.year) && 
                 // (t.status.toLowerCase() === 'waiting for approval' || t.status.toLowerCase() === 'declined') &&
@@ -203,13 +203,13 @@ const MyTournaments = () => {
                 (tournamentsTime === 'upcoming' ? new Date (t.endDate).getTime() > new Date ().getTime() : tournamentsTime === 'archive' ? new Date (t.endDate).getTime() < new Date ().getTime() : true) &&
 
                 // ADMIN VIEW
-                (((userRole.toLowerCase() === 'admin') ? (t.status.toLowerCase() === "waiting for approval" || t.status.toLowerCase() === 'declined') : false) ||
+                (((userRole && userRole.toLowerCase() === 'admin') ? (t.status?.toLowerCase() === "waiting for approval" || t.status?.toLowerCase() === 'declined') : false) ||
 
                 // CLUB REP VIEW
-                (userRole.toLowerCase() === 'clubrep' && t.submittedBy === userData.userID) ||
+                (userRole && userRole.toLowerCase() === 'clubrep' && t.submittedBy === userData.userID) ||
 
                 // PLAYER VIEW - show only tournaments you've signed up for/withdrawn from
-                (userRole.toLowerCase() === 'player' &&  t.playersSignedUp && Object.keys(t.playersSignedUp) && t.playersSignedUp[userID] && ((tournamentsDisplay === 'entered' ? !t.playersSignedUp[userID].withdrawalTime : tournamentsDisplay === 'withdrawn' ? t.playersSignedUp[userID].withdrawalTime : true))))
+                (userRole && userRole.toLowerCase() === 'player' &&  t.playersSignedUp && Object.keys(t.playersSignedUp) && t.playersSignedUp[userID] && ((tournamentsDisplay === 'entered' ? !t.playersSignedUp[userID].withdrawalTime : tournamentsDisplay === 'withdrawn' ? t.playersSignedUp[userID].withdrawalTime : true))))
             ) {
                 tournamentData.push({
                     location: `${t.city}, ${t.country}`,
@@ -227,7 +227,7 @@ const MyTournaments = () => {
         })
 
         // sort data by start data in ascending order (sooner tournaments will appear first)
-        const sortedTableData = userRole.toLowerCase() !== 'clubrep' ? sortData(tournamentData, "startDate", 'asc') : sortData(tournamentData, "startDate", 'desc')
+        const sortedTableData = userRole?.toLowerCase() !== 'clubrep' ? sortData(tournamentData, "startDate", 'asc') : sortData(tournamentData, "startDate", 'desc')
 
         // format the tournaments' start and end dates
         const organizedTableData = sortedTableData.map(t => {
@@ -243,7 +243,7 @@ const MyTournaments = () => {
     const handleRowClick = (tournamentData) => {
         const tournamentIndex = allData.findIndex(el => el.tournamentID === tournamentData.id)
         const current = allData[tournamentIndex]
-        const color = current?.status.toLowerCase() === 'waiting for approval' || current?.status.toLowerCase() === 'postponed' ? 'orange' : current?.status.toLowerCase() === 'declined' ? 'red' : 'green'
+        const color = current?.status?.toLowerCase() === 'waiting for approval' || current?.status?.toLowerCase() === 'postponed' ? 'orange' : current?.status?.toLowerCase() === 'declined' ? 'red' : 'green'
 
         setStatusColor(color)
         setCurrentTournament(current)
@@ -422,19 +422,19 @@ const MyTournaments = () => {
     return (
         <div className="container">
             <h3 className="accent-color" style={{textAlign: 'left'}}>My Tournaments - {userRole === "clubRep" ? 'Club Representative' : userRole === 'player' ? 'Player' : 'Admin'} View</h3>
-            {userData?.role && userData.role.toLowerCase() === 'admin' && 
+            {userData?.role?.toLowerCase() === 'admin' && 
                 <div className="helper-text">
                     Here you can preview the tournaments submitted for approval and update their status by either rejecting or approving them. 
                     Approved tournaments will be moved to the tournament calendar.
                 </div>
             }
-            {userData?.role  && userData.role.toLowerCase() === 'clubrep' && 
+            {userData?.role?.toLowerCase() === 'clubrep' && 
                 <div className="helper-text">
                     Here you can preview all of the tournaments you have submitted and their status. 
                     'Waiting for Approval' means that the tournament is waiting to be approved by an admin. 'Declined' means that the request for a tournament has been rejected.
                 </div>
             }
-            {userData?.role  && userData.role.toLowerCase() === 'player' && 
+            {userData?.role?.toLowerCase() === 'player' && 
                 <div className="helper-text">
                     Here you can preview the tournaments you have signed up for. 
                     You can withdraw from any tournament, but withdrawing meeans you will not be able to sign up for the tournament again.
@@ -456,7 +456,7 @@ const MyTournaments = () => {
                 </ToggleButtonGroup>
                 <div style={{color: "rgba(0, 0, 0, 0.5)"}}>Testing accounts</div>
             </div> */}
-            {userRole === 'player' && <div className="flex wrap align-center">
+            {userRole && userRole === 'player' && <div className="flex wrap align-center">
                 <ToggleButtonGroup
                     color="primary"
                     value={tournamentsDisplay}
@@ -627,13 +627,13 @@ const MyTournaments = () => {
                             <h3 className="accent-color section-title">Section Title</h3>
                             <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
                         </div>
-                        {userRole.toLowerCase() === "admin" && currentTournament?.status.toLowerCase() === 'waiting for approval' && (
+                        {userData?.role?.toLowerCase() === "admin" && currentTournament?.status?.toLowerCase() === 'waiting for approval' && (
                             <div className="flex">
                                 <Button variant={approvalButtonVariant} sx={{height: 40, margin: '30px 10px 0px 0px !important'}} onClick={() => confirmApproval()} startIcon={<CheckIcon />}>{tournamentApprovalText}</Button>
                                 <Button className="red-button" variant={declineButtonVariant} sx={{height: 40, margin: '30px 0px 0px 10px !important'}} onClick={() => confirmDecline()} endIcon={<CancelOutlinedIcon />}>{tournamentCancellationText}</Button>
                             </div>
                         )}
-                        {userRole.toLowerCase() === 'player' && <div className="flex">
+                        {userData?.role?.toLowerCase() === 'player' && <div className="flex">
                             {currentTournament?.playersSignedUp && 
                             currentTournament?.playersSignedUp[userData.userID] && 
                             currentTournament?.playersSignedUp[userData.userID].withdrawed !== true ? 
@@ -669,7 +669,7 @@ const MyTournaments = () => {
                                 <h3 className="accent-color section-title">Withdrawn Players</h3>
                                 <Table tableData={getSignedUpPlayers(currentTournament.playersSignedUp, true)} rowHeaders={withdrawedPlayersTableRowHeaders}/>
                             </div>
-                        </div>) : currentTournament?.status.toLowerCase() === 'open' ? 
+                        </div>) : currentTournament?.status && currentTournament?.status?.toLowerCase() === 'open' ? 
                         (<div>
                             No people have signed up yet.
                         </div>) : (
