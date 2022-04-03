@@ -377,6 +377,9 @@ textarea {
   // -webkit-text-fill-color: transparent;
 }
 
+.bold {
+  font-weight: bold;
+}
 
 button {
   text-decoration: none;
@@ -559,7 +562,7 @@ button {
 }
 
 .MuiBox-root {
-  overflow: scroll;
+  overflow: scroll !important;
   border-color: transparent !important;
   border-radius: 10px;
   max-width: 80vw;
@@ -608,14 +611,14 @@ button {
 @media only screen and (max-width: 500px) {
   .MuiBox-root.large-modal {
     width: 85vw !important;
-    height: 85vh !important;
+    max-height: 85vh !important;
   }
 }
 
 @media only screen and (min-width: 500px) and (max-width: 1024px) {
   .MuiBox-root.large-modal {
     width: 80vw !important;
-    height: 80vh !important;
+    max-height: 80vh !important;
   }
 }
 

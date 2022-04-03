@@ -4,6 +4,14 @@
     font-weight: bold;
 }
 
+.draws-wrapper {
+    margin: 0px 10px 30px 0px;
+
+    > div {
+        width: 210px;
+    }
+}
+
 .helper-text {
     color: rgba(0, 0, 0, 0.5);
     text-align: left;
@@ -32,7 +40,7 @@
 }
 
 .section-title {
-    font-weight: '600';
+    font-weight: 600;
     margin-top: 40px;
 }
 

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Table } from '../../components';
 import { useLocation } from 'react-router';
 import { ageGroups, genderGroups, months, upcomingYears, previousYears, allYears } from '../../data/constants';
-import { mockTournamentData } from '../../data/dummyData';
 import { sortData, getDateString, objectToArrayConverter } from '../../utils/helpers'
 
 // material
@@ -68,27 +67,37 @@ const withdrawedPlayersTableRowHeaders = [
     'Status'
 ]
 
+const getDraws = (ageGroups, genderGroup, drawType) => {
 
-// const fetchPlayerData = (playerID) => {
-//     let playerData = {};
+    const drawDisplayName = drawType === 'singles' ? 'Singles' : drawType === 'doubles' ? 'Doubles' : 'Singles & Doubles'
+    const genderGroupDisplayName = genderGroup === "Female" ? "Women" : "Men"
 
-//     get(child(dbRef, `players/${playerID}`))
-//     .then((snapshot) => {
-//         if (snapshot.exists()) {
-//             playerData = snapshot.val();
-//             console.log("PLAYER DATA", playerData)
-//         } else {
-//           console.log("No data available");
-//         }
-//       })
-//       .catch((error) => {
-//         console.error(error);
-//         toast.error('An error has occured. Please try again.')
-//       });
-
-//       console.log('we return', playerData)
-//       return playerData
-// }
+    return (
+        <div className="flex wrap">
+            {ageGroups && genderGroup && drawType && ageGroups.map(ag => {
+                return (
+                    <div className="flex-column draws-wrapper">
+                        <div>{ag}</div>
+                        {genderGroup === "Mixed" && drawType === 'singlesAndDoubles' ? (
+                            <div>
+                                <div>Women's {drawDisplayName}</div>
+                                <div>Men's {drawDisplayName}</div>
+                                <div>Mixed Doubles</div>
+                            </div>
+                        ) : genderGroup === "Mixed" && drawType !== 'singlesAndDoubles' ? (
+                            <div>
+                                <div>Women's {drawDisplayName}</div>
+                                <div>Men's {drawDisplayName}</div>
+                            </div>
+                        ) : (
+                            <div>{genderGroupDisplayName}'s {drawDisplayName}</div>
+                        )}
+                    </div>
+                )
+            })}
+        </div>
+    )
+}
 
 const MyTournaments = () => {
     const [allData, setAllData] = useState({})
@@ -104,7 +113,6 @@ const MyTournaments = () => {
         year: ''
     }) 
 
-    const [signedUpPlayersData, setSignedUpPlayersData] = useState([])
     const [data, setData] = useState([]) // data displayed in the table
     const [dataByCategories, setDataByCategories] = useState([]) // all data filtered by categories (gender group, age group, dates)
     const [currentTournament, setCurrentTournament] = useState() // current tournament clicked on for which the modal is opened
@@ -122,6 +130,7 @@ const MyTournaments = () => {
     const userRole = userData.role
     const userID = userData.userID
 
+    // get the players signed up for the current tournament
     const getSignedUpPlayers = (playersSignedUp, withdrawed = false) => {
 
         const test = [{
@@ -134,7 +143,6 @@ const MyTournaments = () => {
     
         Object.keys(playersSignedUp).map((key, index) => {
             const player = playersSignedUp[key]
-            console.log(player)
 
             if (withdrawed && player.withdrawed && player.withdrawalTime) {
                 playersData.push({
@@ -151,7 +159,6 @@ const MyTournaments = () => {
             }
         })
     
-        console.log(playersData)
         return playersData
     }
 
@@ -239,6 +246,7 @@ const MyTournaments = () => {
     }
 
 
+    // open details modal upon row click
     const handleRowClick = (tournamentData) => {
         const tournamentIndex = allData.findIndex(el => el.tournamentID === tournamentData.id)
         const current = allData[tournamentIndex]
@@ -295,6 +303,7 @@ const MyTournaments = () => {
         return bool
     }
 
+    // tournament approval by admin
     const confirmApproval = () => {
         setApprovalButtonVariant("contained")
         setTournamentApprovalText("Confirm Approval")
@@ -332,7 +341,7 @@ const MyTournaments = () => {
         }
     }
 
-    // admin tournament decline
+    // tournament decline by admin
     const confirmDecline = () => {
         setDeclineButtonVariant("contained")
         setTournamentCancellationText("Confirm Decline")
@@ -418,6 +427,10 @@ const MyTournaments = () => {
         })
     }, [location])
 
+    useEffect(() => {
+        console.log("current", currentTournament)
+    }, [currentTournament])
+
     return (
         <div className="container">
             <h3 className="accent-color" style={{textAlign: 'left'}}>My Tournaments - {userRole === "clubRep" ? 'Club Representative' : userRole === 'player' ? 'Player' : 'Admin'} View</h3>
@@ -439,22 +452,6 @@ const MyTournaments = () => {
                     You can withdraw from any tournament, but withdrawing meeans you will not be able to sign up for the tournament again.
                 </div>
             }
-            {/* <div className="flex wrap align-center">
-                <ToggleButtonGroup
-                    color="primary"
-                    value={userRole}
-                    sx={{height: 40, margin: '10px 5px 5px 0px'}}
-                    exclusive
-                    onChange={(e) => {
-                        setUserRole(e.target.value)
-                    }}
-                    >
-                    <ToggleButton value="admin">Admin</ToggleButton>
-                    <ToggleButton value="clubRep">Club Rep</ToggleButton>
-                    <ToggleButton value="player">Player</ToggleButton>
-                </ToggleButtonGroup>
-                <div style={{color: "rgba(0, 0, 0, 0.5)"}}>Testing accounts</div>
-            </div> */}
             {userRole && userRole === 'player' && <div className="flex wrap align-center">
                 <ToggleButtonGroup
                     color="primary"
@@ -609,7 +606,7 @@ const MyTournaments = () => {
                 <Fade in={open}>
                 <Box sx={style} className="large-modal">
                     <div className="flex-column justify-center align-center">
-                        <div className="flex-column">
+                        <div className="flex-column full-width">
                             <div className="flex justify-between align-center tournament-header">
                                 <h2 className="accent-color" style={{fontWeight: '500'}}>{currentTournament?.tournamentName}</h2>
                                 <div className={`status-indicator ${statusColor}`}>{currentTournament?.status.toUpperCase()}</div> 
@@ -618,13 +615,25 @@ const MyTournaments = () => {
                                 {currentTournament?.startDate && currentTournament?.endDate && <div>{getDateString(new Date (currentTournament?.startDate).getTime())} - {getDateString(new Date (currentTournament?.endDate).getTime())}</div>}
                             </div>
                             <div style={{marginBottom: 5}}>{currentTournament?.clubName}</div>
-                            <div style={{marginBottom: 5}}>{currentTournament?.city}, {currentTournament?.country}</div>
+                            <div style={{marginBottom: 5}}>{currentTournament?.street}, {currentTournament?.city}, {currentTournament?.country} {currentTournament?.zipCode}</div>
+                            <h3 className="accent-color section-title">General Information</h3>
+                            <div>{currentTournament?.description}</div>
                             <h3 className="accent-color section-title">Terms of Play</h3>
-                            <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
-                            <h3 className="accent-color section-title">Section Title</h3>
-                            <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
-                            <h3 className="accent-color section-title">Section Title</h3>
-                            <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
+                            <div className="flex-column">
+                                <div className="flex-column justify-start" style={{marginRight: 40}}> 
+                                    <div style={{marginBottom: 5}}>Draw(s):</div>
+                                    {getDraws(currentTournament?.ageGroups, currentTournament?.genderGroup, currentTournament?.drawType)}
+                                </div>
+                                <div className="flex-column justify-start"> 
+                                    <div style={{marginBottom: 5}}>Entry Tax:</div>
+                                    <div style={{marginBottom: 30}}>{currentTournament?.entryTax > 0 ? `${currentTournament?.entryTax} EUR` : 'No entry tax.'}</div>
+                                </div>
+                                <div className="flex-column justify-start"> 
+                                    <div style={{marginBottom: 5}}>Prize Money:</div>
+                                    <div style={{marginBottom: 30}}>{currentTournament?.prizeMoney > 0 ? `${currentTournament?.prizeMoney} EUR` : 'No prize money.'}</div>
+                                </div>
+                                <div>{currentTournament?.medicalTeamOnSite ? 'There will be a medical team available on site.' : 'No medical team available on site.'}</div>
+                            </div>
                         </div>
                         {userData?.role?.toLowerCase() === "admin" && currentTournament?.status?.toLowerCase() === 'waiting for approval' && (
                             <div className="flex">
