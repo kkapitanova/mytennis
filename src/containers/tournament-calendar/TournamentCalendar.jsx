@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table } from '../../components';
-import { sortData, getDateString, objectToArrayConverter } from '../../utils/helpers'
+import { sortData, getDateString, objectToArrayConverter, getDraws } from '../../utils/helpers'
 import { useLocation } from 'react-router';
 import { ageGroups, genderGroups, months, upcomingYears, previousYears, allYears } from '../../data/constants';
 // import { newMockTournamentData } from '../../data/dummyData';
@@ -415,7 +415,7 @@ const TournamentCalendar = () => {
                 <Fade in={open}>
                 <Box sx={style} className="large-modal">
                     <div className="flex-column justify-center align-center">
-                        <div className='flex-column' style={{marginBottom: 30}}>
+                        <div className='flex-column full-width' style={{marginBottom: 30}}>
                             <div className="flex justify-between align-center">
                                 <h2 className="accent-color" style={{fontWeight: '500'}}>{currentTournament?.tournamentName}</h2>
                                 <div className={`status-indicator ${statusColor}`}>{currentTournament?.status.toUpperCase()}</div> 
@@ -424,13 +424,25 @@ const TournamentCalendar = () => {
                                 {currentTournament?.startDate && currentTournament?.endDate && <div>{getDateString(new Date (currentTournament?.startDate).getTime())} - {getDateString(new Date (currentTournament?.endDate).getTime())}</div>}
                             </div>
                             <div style={{marginBottom: 5}}>{currentTournament?.clubName}</div>
-                            <div style={{marginBottom: 5}}>{currentTournament?.city}, {currentTournament?.country}</div>
-                            <h3 className="accent-color" style={{marginTop: 40}}>Terms of Play</h3>
-                            <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
-                            <h3 className="accent-color" style={{marginTop: 40}}>Section Title</h3>
-                            <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
-                            <h3 className="accent-color" style={{marginTop: 40}}>Section Title</h3>
-                            <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
+                            <div style={{marginBottom: 5}}>{currentTournament?.street}, {currentTournament?.city}, {currentTournament?.country} {currentTournament?.zipCode}</div>
+                            <h3 className="accent-color section-title">General Information</h3>
+                            <div>{currentTournament?.description}</div>
+                            <h3 className="accent-color section-title">Terms of Play</h3>
+                            <div className="flex-column">
+                                <div className="flex-column justify-start" style={{marginRight: 40}}> 
+                                    <div style={{marginBottom: 5}}>Draw(s):</div>
+                                    {getDraws(currentTournament?.ageGroups, currentTournament?.genderGroup, currentTournament?.drawType)}
+                                </div>
+                                <div className="flex-column justify-start"> 
+                                    <div style={{marginBottom: 5}}>Entry Tax:</div>
+                                    <div style={{marginBottom: 30}}>{currentTournament?.entryTax > 0 ? `${currentTournament?.entryTax} EUR` : 'No entry tax.'}</div>
+                                </div>
+                                <div className="flex-column justify-start"> 
+                                    <div style={{marginBottom: 5}}>Prize Money:</div>
+                                    <div style={{marginBottom: 30}}>{currentTournament?.prizeMoney > 0 ? `${currentTournament?.prizeMoney} EUR` : 'No prize money.'}</div>
+                                </div>
+                                <div>{currentTournament?.medicalTeamOnSite ? 'There will be a medical team available on site.' : 'No medical team available on site.'}</div>
+                            </div>
                         </div>
                         {userData.role === 'player' && <div className="flex">
                             {currentTournament?.playersSignedUp && 

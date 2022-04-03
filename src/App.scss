@@ -475,6 +475,13 @@ button {
   background-size: cover !important;
 }
 
+.draws-wrapper {
+  margin: 0px 10px 30px 0px;
+
+  > div {
+      width: 210px;
+  }
+}
 
 // MATERIAL STYLES OVERRIDES
 

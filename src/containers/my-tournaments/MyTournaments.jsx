@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Table } from '../../components';
 import { useLocation } from 'react-router';
 import { ageGroups, genderGroups, months, upcomingYears, previousYears, allYears } from '../../data/constants';
-import { sortData, getDateString, objectToArrayConverter } from '../../utils/helpers'
+import { sortData, getDateString, objectToArrayConverter, getDraws } from '../../utils/helpers'
 
 // material
 import Backdrop from '@mui/material/Backdrop';
@@ -66,38 +66,6 @@ const withdrawedPlayersTableRowHeaders = [
     'Withdrawal Date',
     'Status'
 ]
-
-const getDraws = (ageGroups, genderGroup, drawType) => {
-
-    const drawDisplayName = drawType === 'singles' ? 'Singles' : drawType === 'doubles' ? 'Doubles' : 'Singles & Doubles'
-    const genderGroupDisplayName = genderGroup === "Female" ? "Women" : "Men"
-
-    return (
-        <div className="flex wrap">
-            {ageGroups && genderGroup && drawType && ageGroups.map(ag => {
-                return (
-                    <div className="flex-column draws-wrapper">
-                        <div>{ag}</div>
-                        {genderGroup === "Mixed" && drawType === 'singlesAndDoubles' ? (
-                            <div>
-                                <div>Women's {drawDisplayName}</div>
-                                <div>Men's {drawDisplayName}</div>
-                                <div>Mixed Doubles</div>
-                            </div>
-                        ) : genderGroup === "Mixed" && drawType !== 'singlesAndDoubles' ? (
-                            <div>
-                                <div>Women's {drawDisplayName}</div>
-                                <div>Men's {drawDisplayName}</div>
-                            </div>
-                        ) : (
-                            <div>{genderGroupDisplayName}'s {drawDisplayName}</div>
-                        )}
-                    </div>
-                )
-            })}
-        </div>
-    )
-}
 
 const MyTournaments = () => {
     const [allData, setAllData] = useState({})
