@@ -13,11 +13,11 @@ import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { getDatabase, ref, child, get } from "firebase/database";
 
 // toast
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 
 const authentication = getAuth()
 const database = getDatabase();
+const dbref = ref(database);
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -32,7 +32,6 @@ const Login = () => {
                 const user = response?.user
 
                 sessionStorage.setItem('Auth Token', response._tokenResponse.refreshToken)
-                const dbref = ref(getDatabase());
 
                 get(child(dbref, `users/${user.uid}`)).then((snapshot) => {
                     if (snapshot.exists()) {

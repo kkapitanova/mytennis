@@ -5,19 +5,27 @@
     border-right: none;
     width: 350px;
     transition: width 1s;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
 }
 
 .search-container {
-    background-color: white;
     z-index: 1;
+    background: transparent;
 }
 
 .chats-container {
     overflow: scroll;
 }
 
+.chats-info {
+    padding: 20px;
+}
+
 .right-container {
     border: 0.5px solid rgba(0, 0, 0, 0.5);
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
     width: calc(100% - 350px);
     z-index: 2;
 
@@ -110,6 +118,10 @@
     }
 }
 
+.MuiInput-root {
+    padding: 3px;
+}
+
 .MuiInput-root:after {
     border-bottom-color: $accent !important;
 }
@@ -152,7 +164,7 @@
 
     .messages-search, .message-input {
         .MuiSvgIcon-root {
-            margin-left: 5px !important;
+            margin-left: 10px !important;
         }
     
        .MuiInput-input {
@@ -166,6 +178,7 @@
         transition: width 1s;
         // animation: fadeInWithoutScale 1s;
         border-right: 0.5px solid rgba(0, 0, 0, 0.5);
+        border-radius: 20px !important;
 
         &.right-open {
             width: 0px !important;
@@ -178,6 +191,7 @@
     .right-container {
         width: 100% !important;
         transition: width 1s;
+        border-radius: 20px !important;
         // animation: fadeInWithoutScale 1s;
 
         &.left-open {

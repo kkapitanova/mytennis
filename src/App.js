@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.scss';
 
 // router
@@ -6,7 +6,7 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  // Redirect,
+  Redirect,
   NavLink,
 } from "react-router-dom";
 
@@ -58,8 +58,8 @@ const unauthenticatedNavbarRoutes = [
     exact: false,
     dropdown: {
       content: <div className="flex-column slide-in-left">
-        <div><NavLink to={{ pathname: '/tournament-calendar/women', state: { tournamentCalendar: 'women'} }}>Women's Calendar</NavLink></div>
-        <div><NavLink to={{ pathname: '/tournament-calendar/men', state: { tournamentCalendar: 'men'} }}>Men's Calendar</NavLink></div>
+        <div><NavLink className="dropdown-option" to={{ pathname: '/tournament-calendar/women', state: { tournamentCalendar: 'women'} }}>Women's Calendar</NavLink></div>
+        <div><NavLink className="dropdown-option" to={{ pathname: '/tournament-calendar/men', state: { tournamentCalendar: 'men'} }}>Men's Calendar</NavLink></div>
       </div>
     } 
   },
@@ -76,9 +76,9 @@ const unauthenticatedNavbarRoutes = [
     exact: false,
     dropdown: {
       content: <div className="flex-column slide-in-left">
-        <div><NavLink to={{ pathname: '/rankings/women', state: { rankings: 'women'} }}>Women's Rankings</NavLink></div>
-        <div><NavLink to={{ pathname: '/rankings/men', state: { rankings: 'men'} }}>Men's Rankings</NavLink></div>
-        <div><NavLink to={{ pathname: '/rankings/mixed-doubles', state: { rankings: 'mixed-doubles'} }}>Mixed Doubles Rankings</NavLink></div>
+        <div><NavLink className="dropdown-option" to={{ pathname: '/rankings/women', state: { rankings: 'women'} }}>Women's Rankings</NavLink></div>
+        <div><NavLink className="dropdown-option" to={{ pathname: '/rankings/men', state: { rankings: 'men'} }}>Men's Rankings</NavLink></div>
+        <div><NavLink className="dropdown-option" to={{ pathname: '/rankings/mixed-doubles', state: { rankings: 'mixed-doubles'} }}>Mixed Doubles Rankings</NavLink></div>
       </div>
     }
   },
@@ -160,23 +160,19 @@ const authenticatedRoutes = [
 
 
 const App = () => {
-  const getData = () => {
-      // example data getting method
-    // get(child(dbRef, 'TEST')).then((snapshot) => {
-    //   if (snapshot.exists()) {
-    //     setValue(snapshot.val())
-    //   } else {
-    //     console.log("No data available");
-    //   }
-    // }).catch((error) => {
-    //   console.error("error", error);
-    // });
-
-  }
+  const userData = JSON.parse(sessionStorage.getItem('userData')) || {} // TODO: replace with function that fetches data from firebase
+  const [loggedIn, setLoggedIn] = useState(false)
   
   useEffect(() => {
     window.scrollTo(0,0)
-    getData()
+
+    if (userData) {
+      setLoggedIn(true)
+    } else {
+      setLoggedIn(false)
+    }
+
+    console.log(123)
   }, [])
 
   return (
@@ -187,7 +183,15 @@ const App = () => {
           <div>Test translation: {t("Test")}</div> */}
           <Switch>
             <div className="body-wrapper">
-              {[...unauthenticatedNavbarRoutes, ...authenticatedNavbarRoutes, ...authenticatedRoutes, ...unauthenticatedRoutes, ...unauthenticatedNavbarRouteLast].map(({ path, exact, Component }) => (
+              {[...unauthenticatedNavbarRoutes, ...unauthenticatedRoutes].map(({ path, exact, Component }) => (
+                <Route key={path} exact={exact} path={path} component={Component}>
+                </Route>
+              ))}
+              {loggedIn && [...authenticatedNavbarRoutes, ...authenticatedRoutes].map(({ path, exact, Component }) => (
+                <Route key={path} exact={exact} path={path} component={Component}>
+                </Route>
+              ))}
+              {[...unauthenticatedNavbarRouteLast].map(({ path, exact, Component }) => (
                 <Route key={path} exact={exact} path={path} component={Component}>
                 </Route>
               ))}

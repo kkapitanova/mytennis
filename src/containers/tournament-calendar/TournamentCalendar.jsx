@@ -6,7 +6,7 @@ import { ageGroups, genderGroups, months, upcomingYears, previousYears, allYears
 // import { newMockTournamentData } from '../../data/dummyData';
 
 //firebase
-import { getDatabase, ref, child, get } from "firebase/database";
+import { getDatabase, ref, child, get, set, push, update} from "firebase/database";
 
 // material
 import TextField from '@mui/material/TextField';
@@ -19,6 +19,12 @@ import Button from '@mui/material/Button';
 import ClearIcon from '@mui/icons-material/Clear';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
+import CheckIcon from '@mui/icons-material/Check';
+
+// toast
+import { toast } from 'react-toastify';
 
 const database = getDatabase()
 const dbRef = ref(database);
@@ -28,7 +34,6 @@ const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: '90%',
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
@@ -45,26 +50,6 @@ const tableRowHeaders = [
     // 'Draw Types', 
     'Status'
 ]
-
-const initialTournamentData = {
-    tournamentName: '',
-    description: '',
-    city: '',
-    country: '',
-    street: '',
-    zipCode: '',
-    clubName: '',
-    startDate: '',
-    endDate: '',
-    tournamentDirector: '',
-    tournamentDirectorPhone: '',
-    genderGroup: '',
-    ageGroups: [],
-    drawType: '',
-    entryTax: '',
-    prizeMoney: '',
-    medicalTeamOnSite: ''
-}
 
 const TournamentCalendar = () => {
     const userData = JSON.parse(sessionStorage.getItem('userData')) || {} // TODO: replace with function that fetches data from firebase
@@ -87,6 +72,25 @@ const TournamentCalendar = () => {
     const [entryButtonText, setEntryButtonText] = useState("Enter")
     const [statusColor, setStatusColor] = useState()
     const [tournamentsDisplay, setTournamentsDisplay] = useState("upcoming") // toggle between archive and upcoming tournaments
+
+    const fetchTournaments = ( refresh = false ) => {
+        if (refresh) {
+            toast.info("The list has been refreshed.")
+        }
+
+        get(child(dbRef, 'tournaments')).then((snapshot) => {
+            if (snapshot.exists()) {
+              setAllData(objectToArrayConverter(snapshot.val()))
+            } else {
+              console.log("No data available");
+              setAllData([])
+              toast.info("There is no data available currently.")
+            }
+            }).catch((error) => {
+                console.error(error);
+                toast.error("An error has occured.")
+            });
+    }
 
     const handleClose = () => {
         setOpen(false)
@@ -196,7 +200,23 @@ const TournamentCalendar = () => {
         if (withdrawalButtonText === 'Withdraw') {
             setWithdrawalButtonText("Confirm Withdrawal")
         } else {
-            console.log("You have withdrawn from the tournament.")
+            const updates = {};
+            updates['tournaments/' + currentTournament.tournamentID + '/playersSignedUp/' + userData.userID + '/withdrawed'] = true;
+            updates['tournaments/' + currentTournament.tournamentID + '/playersSignedUp/' + userData.userID + '/withdrawalTime'] = new Date();
+
+            update(dbRef, updates)
+            .then(() => {
+                fetchTournaments()
+                toast.success("You have withdrawn from the tournament successfully.")
+                // toast.info("You can view tournaments you've signed up for in the 'My Tournaments' section.")
+            })
+            .catch((error) => {
+                console.log("Error: ", error)
+                toast.error('An error has occured. Please try again.')
+            })
+
+            setOpen(false)
+            setWithdrawalButtonText("Withdraw")
         }
     }
 
@@ -204,8 +224,33 @@ const TournamentCalendar = () => {
         if (entryButtonText === 'Enter') {
             setEntryButtonText("Confirm Entry")
         } else {
-            console.log("You have entered the tournament.")
+            const updates = {};
+            updates['tournaments/' + currentTournament.tournamentID + '/playersSignedUp/' + userData.userID] = {
+                name: `${userData.firstName}  ${userData.familyName}`,
+                signUpTime: new Date(), 
+                signedUp: true,
+                playerID: userData.userID, 
+            };
+
+            update(dbRef, updates)
+            .then(() => {
+                fetchTournaments()
+                toast.success("You have entered the tournament succesfully.")
+                toast.info("You can view tournaments you've signed up for in the 'My Tournaments' section.")
+            })
+            .catch((error) => {
+                console.log("Error: ", error)
+                toast.error('An error has occured. Please try again.')
+            })
+
+            setOpen(false)
+            setEntryButtonText("Enter")
+
         }
+    }
+
+    const refreshData = () => {
+        fetchTournaments(true)
     }
 
     useEffect(() => {
@@ -214,18 +259,7 @@ const TournamentCalendar = () => {
 
     useEffect(() => {
       window.scrollTo(0,0)
-
-      get(child(dbRef, 'tournaments')).then((snapshot) => {
-        if (snapshot.exists()) {
-          console.log(snapshot.val());
-          setAllData(objectToArrayConverter(snapshot.val()))
-        } else {
-          console.log("No data available");
-        }
-        }).catch((error) => {
-            console.error(error);
-        });
-
+      fetchTournaments()
     }, [])
 
     useEffect(() => {
@@ -365,8 +399,8 @@ const TournamentCalendar = () => {
                     {filterApplied() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} sx={{height: 40, minWidth: 180, margin: '0px !important'}} onClick={clearFilters}>Clear Search</Button>}
                 </div>
             </div>
-            {data && data.length > 0 && <Table tableData={data} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>}
-            {(!data || !data.length > 0) && <div>No Results Found</div>}
+            <Table tableData={data} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>
+            <Button variant="contained" sx={{height: 40, margin: '30px 10px 0px 0px !important'}} onClick={refreshData} endIcon={<RefreshIcon />}>Refresh Data</Button>
             <Modal
                 aria-labelledby="transition-modal-title"
                 aria-describedby="transition-modal-description"
@@ -383,7 +417,7 @@ const TournamentCalendar = () => {
                     <div className="flex-column justify-center align-center">
                         <div className='flex-column' style={{marginBottom: 30}}>
                             <div className="flex justify-between align-center">
-                                <h2 style={{fontWeight: '500'}}>{currentTournament?.tournamentName}</h2>
+                                <h2 className="accent-color" style={{fontWeight: '500'}}>{currentTournament?.tournamentName}</h2>
                                 <div className={`status-indicator ${statusColor}`}>{currentTournament?.status.toUpperCase()}</div> 
                             </div>
                             <div style={{marginBottom: 5}}>
@@ -391,30 +425,42 @@ const TournamentCalendar = () => {
                             </div>
                             <div style={{marginBottom: 5}}>{currentTournament?.clubName}</div>
                             <div style={{marginBottom: 5}}>{currentTournament?.city}, {currentTournament?.country}</div>
-                            <h3 style={{marginTop: 40}}>Terms of Play</h3>
+                            <h3 className="accent-color" style={{marginTop: 40}}>Terms of Play</h3>
                             <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
-                            <h3 style={{marginTop: 40}}>Section Title</h3>
+                            <h3 className="accent-color" style={{marginTop: 40}}>Section Title</h3>
                             <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
-                            <h3 style={{marginTop: 40}}>Section Title</h3>
+                            <h3 className="accent-color" style={{marginTop: 40}}>Section Title</h3>
                             <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
                         </div>
                         {userData.role === 'player' && <div className="flex">
-                            <Button 
-                                variant={entryButtonText === 'Enter' ? 'outlined' : 'contained'} 
-                                sx={{height: 40, margin: '0px 5px 0px 0px !important'}} 
-                                onClick={confirmSignUp}
-                            >
-                                {entryButtonText}
-                            </Button>
-                            <Button 
+                            {currentTournament?.playersSignedUp && 
+                            currentTournament?.playersSignedUp[userData.userID] && 
+                            currentTournament?.playersSignedUp[userData.userID].withdrawed !== true ? (<Button 
                                 className="red-button" 
                                 variant={withdrawalButtonText === 'Withdraw' ? 'outlined' : 'contained'} 
                                 sx={{height: 40, margin: '0px 0px 5px 0px !important'}} 
                                 onClick={confirmWithdrawal}
+                                endIcon={<LogoutOutlinedIcon />}
                             >
                                 {withdrawalButtonText}
-                            </Button>
+                            </Button>) : (
+                                <Button 
+                                    variant={entryButtonText === 'Enter' ? 'outlined' : 'contained'} 
+                                    sx={{height: 40, margin: '0px 5px 0px 0px !important'}} 
+                                    onClick={confirmSignUp}
+                                    disabled={
+                                        currentTournament?.playersSignedUp && 
+                                        currentTournament?.playersSignedUp[userData.userID] &&
+                                        currentTournament?.playersSignedUp[userData.userID].withdrawed === true
+                                    }
+                                    startIcon={<CheckIcon />}
+                                >{entryButtonText}</Button>
+                            )}
                         </div>}
+                        {currentTournament?.playersSignedUp && 
+                        currentTournament?.playersSignedUp[userData.userID] &&
+                        currentTournament?.playersSignedUp[userData.userID].withdrawed === true && 
+                        <div>You have already withdrawn from this tournament. You cannot enter again.</div>}
                         {entryButtonText === "Confirm Entry" && <div>Please keep in mind that you can enter a tournament only once. If you decide to withdraw, you will not be able to enter this tournament again.</div>}
                         {withdrawalButtonText === "Confirm Withdrawal" && <div>Please keep in mind that after withdrawing, you will not be able to sign up for the tournament again.</div>}
                     </div>

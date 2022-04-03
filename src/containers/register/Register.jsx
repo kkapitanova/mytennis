@@ -20,8 +20,7 @@ import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
 import { getDatabase, ref, set } from "firebase/database";
 
 // toast
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 
 const authentication = getAuth()
 const database = getDatabase()
@@ -167,6 +166,7 @@ const Register = () => {
                         <FormHelperText>You must agree to continue forward.</FormHelperText>
                     </FormControl>
             <Button variant="contained" sx={{margin: '10px !important'}} type="submit" onClick={handleRegister} disabled={!userData.email || !userData.password || !userData.confirmPassword}>Register</Button>
+            <div>Already a member? <span className="underlined pointer" onClick={() => history.push('/login')}>Login here.</span></div>
         </div>
     )
 }

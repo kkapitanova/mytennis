@@ -15,8 +15,6 @@ import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 import Button from '@mui/material/Button';
 import ClearIcon from '@mui/icons-material/Clear';
-import SearchIcon from '@mui/icons-material/Search';
-
 
 const style = {
     position: 'absolute',
@@ -31,14 +29,14 @@ const style = {
 };
 
 const tableRowHeaders = [
-    'Ranking', 
+    // 'Ranking', 
     'Name', 
     'Competes For', 
     'Age', 
     'Points Won'
 ]
 
-const Players = () => {
+const Rankings = () => {
 
     const location = useLocation()
     const [search, setSearch] = useState({
@@ -75,10 +73,14 @@ const Players = () => {
             }
         })
 
-        const sortedTableData = sortData(tableData, "pointsWon")
+        const sortedTableData = tableData.sort((a, b) => {
+            if(a.name < b.name) { return -1; }
+            if(a.name > b.bame) { return 1; }
+            return 0;
+        })
         const organizedTableData = sortedTableData.map((player, index) => {
             return {
-                ranking: index + 1,
+                // ranking: index + 1,
                 ...player
             }
         })
@@ -137,19 +139,14 @@ const Players = () => {
         setData(getData())
     }
 
-    // useEffect(() => {
-    //     getData()
-    //     setData(getData())
-    // }, [search.ageGroup, search.genderGroup])
+    useEffect(() => {
+        getData()
+        setData(getData())
+    }, [search.ageGroup, search.genderGroup])
 
     useEffect(() => {
       window.scrollTo(0,0)
     }, [])
-
-    const findPlayer = () => {
-        getData()
-        setData(getData())
-    }
 
     useEffect(() => {
 
@@ -165,10 +162,10 @@ const Players = () => {
     }, [location])
 
     return (
-        <div className="container">
-            <h3 className="accent-color" style={{textAlign: 'left'}}>Search Players</h3>
+        <div className='container'>
+            <h3 className="accent-color" style={{textAlign: 'left'}}>Search through Rankings</h3>
             <div className='flex wrap justify-between'>
-                <div className="flex wrap">
+                <div className="flex wrap" style={{minWidth: '250px', maxWidth: "60%"}}>
                     <TextField
                         name="name"
                         id="outlined-basic"
@@ -197,7 +194,7 @@ const Players = () => {
                         value={search.genderGroup}
                         onChange={(e) => handleSearchChange(e)}
                         size="small"
-                        style={{width: 150, margin: '0 5px 10px 0'}}
+                        sx={{width: 150, margin: '0 5px 10px 0'}}
                     >
                         {genderGroups.map((option, index) => (
                             <MenuItem key={index} value={option}>
@@ -213,7 +210,7 @@ const Players = () => {
                         value={search.ageGroup}
                         onChange={handleSearchChange}
                         size="small"
-                        style={{width: 150, marginBottom: 10}}
+                        sx={{width: 150, marginBottom: '10px !important'}}
                     >
                         {ageGroups.map((option, index) => (
                             <MenuItem key={index} value={option}>
@@ -222,11 +219,11 @@ const Players = () => {
                         ))}
                     </TextField>
                 </div>
-                <Button variant="contained" height={70} startIcon={<SearchIcon />} sx={{height: 40, margin: '0px !important'}} onClick={findPlayer}>Search for Player</Button>
-                {filterApplied() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} sx={{height: 40, margin: '0px !important'}} onClick={clearFilters}>Clear Filters</Button>}
+                <div clasName="flex align-start">
+                    {filterApplied() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} sx={{height: 40, margin: '0px !important'}} onClick={clearFilters}>Clear Search</Button>}
+                </div>
             </div>
-            {data && data.length > 0 && <Table tableData={data} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>}
-            {(!data || !data.length > 0) && <div>No Results Found</div>}
+            <Table tableData={data} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>
             <Modal
                 aria-labelledby="transition-modal-title"
                 aria-describedby="transition-modal-description"
@@ -253,4 +250,4 @@ const Players = () => {
     )
 }
 
-export default Players
+export default Rankings
