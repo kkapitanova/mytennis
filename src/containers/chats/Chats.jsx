@@ -68,7 +68,7 @@ const Chats = () => {
                     }
                 })
             } else {
-                toast.info('No data available.')
+                toast.info('There is no data available currently.')
             }
           }).catch((error) => {
             console.error(error);

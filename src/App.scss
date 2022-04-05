@@ -249,10 +249,10 @@ h3 {
 
 .full {
   &-height {
-    height: 100%;
+    height: 100% !important;
   }
   &-width {
-    width: 100%;
+    width: 100% !important;
   }
 }
 
@@ -287,6 +287,10 @@ h3 {
 }
 
 .left-align-text {
+  text-align: left;
+}
+
+.right-align-text {
   text-align: left;
 }
 
@@ -377,6 +381,9 @@ textarea {
   // -webkit-text-fill-color: transparent;
 }
 
+.bold {
+  font-weight: bold;
+}
 
 button {
   text-decoration: none;
@@ -472,6 +479,13 @@ button {
   background-size: cover !important;
 }
 
+.draws-wrapper {
+  margin: 0px 10px 30px 0px;
+
+  > div {
+      width: 210px;
+  }
+}
 
 // MATERIAL STYLES OVERRIDES
 
@@ -559,7 +573,7 @@ button {
 }
 
 .MuiBox-root {
-  overflow: scroll;
+  overflow: scroll !important;
   border-color: transparent !important;
   border-radius: 10px;
   max-width: 80vw;
@@ -608,14 +622,14 @@ button {
 @media only screen and (max-width: 500px) {
   .MuiBox-root.large-modal {
     width: 85vw !important;
-    height: 85vh !important;
+    max-height: 85vh !important;
   }
 }
 
 @media only screen and (min-width: 500px) and (max-width: 1024px) {
   .MuiBox-root.large-modal {
     width: 80vw !important;
-    height: 80vh !important;
+    max-height: 80vh !important;
   }
 }
 

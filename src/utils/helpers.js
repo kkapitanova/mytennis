@@ -51,6 +51,15 @@ export const getDateString = dateMillis => {
     return formattedDate
 }
 
+export const getDateTimeString = dateMillis => {
+    const UTCString = new Date(dateMillis).toString();
+    const options = { month: "long", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" };
+    const date = new Date(UTCString);
+    const formattedDate = new Intl.DateTimeFormat("en-GB", options).format(date);
+
+    return formattedDate
+}
+
 export const handleLogout = () => {
     sessionStorage.removeItem('Auth Token');
     sessionStorage.removeItem('userData');
@@ -119,4 +128,36 @@ export const alphabeticalSort = (arr, sortingParameter) => {
         
         return 0;
     })
+}
+
+export const getDraws = (ageGroups, genderGroup, drawType) => {
+
+    const drawDisplayName = drawType === 'singles' ? 'Singles' : drawType === 'doubles' ? 'Doubles' : 'Singles & Doubles'
+    const genderGroupDisplayName = genderGroup === "Female" ? "Women" : "Men"
+
+    return (
+        <div className="flex wrap">
+            {ageGroups && genderGroup && drawType && ageGroups.map(ag => {
+                return (
+                    <div className="flex-column draws-wrapper">
+                        <div>{ag}</div>
+                        {genderGroup === "Mixed" && drawType === 'singlesAndDoubles' ? (
+                            <div>
+                                <div>Women's {drawDisplayName}</div>
+                                <div>Men's {drawDisplayName}</div>
+                                <div>Mixed Doubles</div>
+                            </div>
+                        ) : genderGroup === "Mixed" && drawType !== 'singlesAndDoubles' ? (
+                            <div>
+                                <div>Women's {drawDisplayName}</div>
+                                <div>Men's {drawDisplayName}</div>
+                            </div>
+                        ) : (
+                            <div>{genderGroupDisplayName}'s {drawDisplayName}</div>
+                        )}
+                    </div>
+                )
+            })}
+        </div>
+    )
 }

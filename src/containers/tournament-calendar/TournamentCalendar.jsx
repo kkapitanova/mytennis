@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table } from '../../components';
-import { sortData, getDateString, objectToArrayConverter } from '../../utils/helpers'
+import { sortData, getDateString, objectToArrayConverter, getDraws, getDateTimeString } from '../../utils/helpers'
 import { useLocation } from 'react-router';
 import { ageGroups, genderGroups, months, upcomingYears, previousYears, allYears } from '../../data/constants';
 // import { newMockTournamentData } from '../../data/dummyData';
@@ -53,7 +53,7 @@ const tableRowHeaders = [
 
 const TournamentCalendar = () => {
     const userData = JSON.parse(sessionStorage.getItem('userData')) || {} // TODO: replace with function that fetches data from firebase
-    const [allData, setAllData] = useState({})
+    const [allData, setAllData] = useState({}) // all data fetched from DB
     const location = useLocation()
     const [search, setSearch] = useState({
         name: '',
@@ -64,18 +64,20 @@ const TournamentCalendar = () => {
         month: '',
         year: ''
     }) 
-    const [data, setData] = useState([])
-    const [dataByCategories, setDataByCategories] = useState([])
+    const [data, setData] = useState([]) // data displayed in the table
+    const [dataByCategories, setDataByCategories] = useState([]) // data filtered by categories (gender, age, etc.)
+    const [tournamentsDisplay, setTournamentsDisplay] = useState("upcoming") // toggle between archive and upcoming tournaments
+
     const [currentTournament, setCurrentTournament] = useState()
     const [open, setOpen] = useState(false)
+
     const [withdrawalButtonText, setWithdrawalButtonText] = useState("Withdraw")
     const [entryButtonText, setEntryButtonText] = useState("Enter")
     const [statusColor, setStatusColor] = useState()
-    const [tournamentsDisplay, setTournamentsDisplay] = useState("upcoming") // toggle between archive and upcoming tournaments
 
     const fetchTournaments = ( refresh = false ) => {
         if (refresh) {
-            toast.info("The list has been refreshed.")
+            toast.info("The list has been refreshed successfully.")
         }
 
         get(child(dbRef, 'tournaments')).then((snapshot) => {
@@ -413,9 +415,9 @@ const TournamentCalendar = () => {
                 }}
             >
                 <Fade in={open}>
-                <Box sx={style} className="large-modal">
+                <Box sx={style} className="large-modal full-width">
                     <div className="flex-column justify-center align-center">
-                        <div className='flex-column' style={{marginBottom: 30}}>
+                        <div className='flex-column full-width' style={{marginBottom: 30}}>
                             <div className="flex justify-between align-center">
                                 <h2 className="accent-color" style={{fontWeight: '500'}}>{currentTournament?.tournamentName}</h2>
                                 <div className={`status-indicator ${statusColor}`}>{currentTournament?.status.toUpperCase()}</div> 
@@ -424,15 +426,40 @@ const TournamentCalendar = () => {
                                 {currentTournament?.startDate && currentTournament?.endDate && <div>{getDateString(new Date (currentTournament?.startDate).getTime())} - {getDateString(new Date (currentTournament?.endDate).getTime())}</div>}
                             </div>
                             <div style={{marginBottom: 5}}>{currentTournament?.clubName}</div>
-                            <div style={{marginBottom: 5}}>{currentTournament?.city}, {currentTournament?.country}</div>
-                            <h3 className="accent-color" style={{marginTop: 40}}>Terms of Play</h3>
-                            <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
-                            <h3 className="accent-color" style={{marginTop: 40}}>Section Title</h3>
-                            <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
-                            <h3 className="accent-color" style={{marginTop: 40}}>Section Title</h3>
-                            <div>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</div>
+                            <div style={{marginBottom: 5}}>{currentTournament?.street}, {currentTournament?.city}, {currentTournament?.country} {currentTournament?.zipCode}</div>
+                            <h3 className="accent-color section-title">General Information</h3>
+                            <div className="flex-column">
+                                <div style={{marginBottom: 15}}>{currentTournament?.description}</div>
+                                {currentTournament?.onSiteSignupDeadline && <div style={{marginBottom: 5}}>On Site Signup Deadline: {getDateTimeString(new Date (currentTournament.onSiteSignupDeadline).getTime())}</div>}
+                                <div style={{marginBottom: 5}}>{!currentTournament?.qualification ? "There is no qualifying draw." : 
+                                    currentTournament?.qualification && currentTournament?.qualificationStartDate && currentTournament?.qualificationEndDate && 
+                                        `Qualification Dates: ${getDateString(new Date (currentTournament?.qualificationStartDate).getTime())} - ${getDateString(new Date (currentTournament?.qualificationEndDate).getTime())}`
+                                }</div>
+                            </div>
+                            <h3 className="accent-color section-title">Terms of Play</h3>
+                            <div className="flex-column">
+                                <div className="flex-column justify-start" style={{marginRight: 40}}> 
+                                    <div style={{marginBottom: 5}}>Draw(s):</div>
+                                    {getDraws(currentTournament?.ageGroups, currentTournament?.genderGroup, currentTournament?.drawType)}
+                                </div>
+                                <div className="flex-column justify-start" style={{marginBottom: 30}}> 
+                                    <div style={{marginBottom: 5}}>Draw size(s):</div>
+                                    {currentTournament?.drawType !== "doubles" && currentTournament?.mainDrawSize && <div>Main Draw: {currentTournament.mainDrawSize}</div>}
+                                    {currentTournament?.drawType !== "singles" && currentTournament?.doublesDrawSize && <div>Doubles Draw: {currentTournament.doublesDrawSize}</div>}
+                                    {currentTournament?.drawType !== "singles" && currentTournament?.genderGroup?.toLowerCase() === "mixed" && currentTournament?.mixedDoublesDrawSize && <div>Mixed Doubles Draw: {currentTournament.mixedDoublesDrawSize}</div>}
+                                </div>
+                                <div className="flex-column justify-start"> 
+                                    <div style={{marginBottom: 5}}>Entry Tax:</div>
+                                    <div style={{marginBottom: 30}}>{currentTournament?.entryTax > 0 ? `${currentTournament?.entryTax} EUR` : 'No entry tax.'}</div>
+                                </div>
+                                <div className="flex-column justify-start"> 
+                                    <div style={{marginBottom: 5}}>Prize Money:</div>
+                                    <div style={{marginBottom: 30}}>{currentTournament?.prizeMoney > 0 ? `${currentTournament?.prizeMoney} EUR` : 'No prize money.'}</div>
+                                </div>
+                                <div>{currentTournament?.medicalTeamOnSite ? 'There will be a medical team available on site.' : 'No medical team available on site.'}</div>
+                            </div>
                         </div>
-                        {userData.role === 'player' && <div className="flex">
+                        {userData.role === 'player' && currentTournament?.status === "Sign Up Open" && <div className="flex">
                             {currentTournament?.playersSignedUp && 
                             currentTournament?.playersSignedUp[userData.userID] && 
                             currentTournament?.playersSignedUp[userData.userID].withdrawed !== true ? (<Button 

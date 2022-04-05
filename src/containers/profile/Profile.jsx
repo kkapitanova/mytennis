@@ -238,9 +238,8 @@ const Profile = () => {
                     />
                     <div className='flex align-start justify-start' style={{width: '300px'}}>
                         <FormControl sx={{margin: "10px 0px 0px 0px"}}>
-                                    <FormLabel id="demo-radio-buttons-group-label" sx={{textAlign: "left"}} required disabled={data.gender ? true : false}>Gender</FormLabel>
+                                    <FormLabel id="gender-label" sx={{textAlign: "left"}} required disabled={data.gender ? true : false}>Gender</FormLabel>
                                     <RadioGroup
-                                        aria-labelledby="demo-radio-buttons-group-label"
                                         defaultValue="female"
                                         name="radio-buttons-group"
                                     >

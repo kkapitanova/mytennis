@@ -41,7 +41,7 @@ const Login = () => {
                         history.push('/profile')
                         toast.success("You have logged in successfully.")
                     } else {
-                      console.log("No data available");
+                      toast.info("There is no data available currently.")
                     }
                   }).catch((error) => {
                     console.error(error);

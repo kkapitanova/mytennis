@@ -40,3 +40,27 @@ export const months = [
     'November', 
     'December'
 ]
+
+export const tournamentSubmissionMinDate = () => {
+    const currentMonth = new Date ().getMonth()
+    const minDate = new Date().setMonth(currentMonth + 2)
+
+    return minDate
+}
+
+export const tournamentOnSiteSignupDeadline = (tournamentStartDate) => {
+
+    let minDate;
+
+    if (tournamentStartDate) {
+        const startDate =  new Date(tournamentStartDate).getDate()
+        minDate = new Date(tournamentStartDate).setDate(startDate - 3)
+    } else {
+        const currentDate =  new Date().getDate()
+        const currentMonth = new Date ().getMonth()
+        const minDateMonth = new Date().setMonth(currentMonth + 2)
+        minDate = new Date(minDateMonth).setDate(currentDate - 3)
+    }
+    return minDate
+
+}
