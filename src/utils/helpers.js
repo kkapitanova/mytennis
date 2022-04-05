@@ -51,6 +51,15 @@ export const getDateString = dateMillis => {
     return formattedDate
 }
 
+export const getDateTimeString = dateMillis => {
+    const UTCString = new Date(dateMillis).toString();
+    const options = { month: "long", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" };
+    const date = new Date(UTCString);
+    const formattedDate = new Intl.DateTimeFormat("en-GB", options).format(date);
+
+    return formattedDate
+}
+
 export const handleLogout = () => {
     sessionStorage.removeItem('Auth Token');
     sessionStorage.removeItem('userData');

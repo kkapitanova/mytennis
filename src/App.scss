@@ -249,10 +249,10 @@ h3 {
 
 .full {
   &-height {
-    height: 100%;
+    height: 100% !important;
   }
   &-width {
-    width: 100%;
+    width: 100% !important;
   }
 }
 
@@ -287,6 +287,10 @@ h3 {
 }
 
 .left-align-text {
+  text-align: left;
+}
+
+.right-align-text {
   text-align: left;
 }
 

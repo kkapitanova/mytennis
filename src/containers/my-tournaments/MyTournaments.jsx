@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Table } from '../../components';
 import { useLocation } from 'react-router';
 import { ageGroups, genderGroups, months, upcomingYears, previousYears, allYears } from '../../data/constants';
-import { sortData, getDateString, objectToArrayConverter, getDraws } from '../../utils/helpers'
+import { sortData, getDateString, objectToArrayConverter, getDraws, getDateTimeString } from '../../utils/helpers'
 
 // material
 import Backdrop from '@mui/material/Backdrop';
@@ -68,7 +68,7 @@ const withdrawedPlayersTableRowHeaders = [
 ]
 
 const MyTournaments = () => {
-    const [allData, setAllData] = useState({})
+    const [allData, setAllData] = useState({}) // all data fetched from db
     const userData = JSON.parse(sessionStorage.getItem('userData')) || {} // TODO: replace with function that fetches data from firebase
     const location = useLocation()
     const [search, setSearch] = useState({
@@ -83,15 +83,16 @@ const MyTournaments = () => {
 
     const [data, setData] = useState([]) // data displayed in the table
     const [dataByCategories, setDataByCategories] = useState([]) // all data filtered by categories (gender group, age group, dates)
-    const [currentTournament, setCurrentTournament] = useState() // current tournament clicked on for which the modal is opened
+    const [currentTournament, setCurrentTournament] = useState() // current tournament modal
     const [open, setOpen] = useState(false) // tournament info modal open state
     const [tournamentsTime, setTournamentsTime] = useState("upcoming") // toggle between archive and upcoming tournaments
     const [tournamentsDisplay, setTournamentsDisplay] = useState(userData.role === 'player' ? 'entered' : '') // toggle between enterd and withdrawn from tournaments for player view only
+    
     const [withdrawalButtonText, setWithdrawalButtonText] = useState("Withdraw")
-    const [tournamentApprovalText, setTournamentApprovalText] = useState("Approve")
-    const [tournamentCancellationText, setTournamentCancellationText] = useState("Decline")
-    const [approvalButtonVariant, setApprovalButtonVariant] = useState("outlined")
-    const [declineButtonVariant, setDeclineButtonVariant] = useState("outlined")
+    const [approvalText, setApprovalText] = useState("Approve")
+    const [cancellationText, setCancellationText] = useState("Decline")
+
+    const [signUpClosureText, setSignUpClosureText] = useState("Close Sign Up")
     const [statusColor, setStatusColor] = useState()
 
     //testing user roles
@@ -139,7 +140,6 @@ const MyTournaments = () => {
             if (snapshot.exists()) {
               setAllData(objectToArrayConverter(snapshot.val()))
             } else {
-              console.log("No data available");
               setAllData([])
               toast.info("There is no data available currently.")
             }
@@ -153,10 +153,9 @@ const MyTournaments = () => {
     const handleClose = () => {
         setOpen(false);
         setTimeout(() => {
-            setTournamentApprovalText("Approve")
-            setApprovalButtonVariant("outlined")
-            setTournamentCancellationText("Decline")
-            setDeclineButtonVariant("outlined")
+            setApprovalText("Approve")
+            setCancellationText("Decline")
+            setSignUpClosureText("Close Sign Up")
         }, 300)
     }
 
@@ -271,19 +270,16 @@ const MyTournaments = () => {
         return bool
     }
 
-    // tournament approval by admin
+    // ADMIN VIEW - tournament approval
     const confirmApproval = () => {
-        setApprovalButtonVariant("contained")
-        setTournamentApprovalText("Confirm Approval")
-
-        if (tournamentApprovalText === "Confirm Approval") {
+        if (approvalText === "Confirm Approval") {
             const updatedData = []
             
             data.forEach(item => {
                 if (item.id !== currentTournament.tournamentID) {
                     updatedData.push(item)
                 } else {
-                    item.status = "Open" //TODO: Replace with actual call that updates status
+                    item.status = "Sign Up Open"
                 }
             })
 
@@ -291,7 +287,7 @@ const MyTournaments = () => {
             handleClose()
 
             let updatedTournament = currentTournament;
-            updatedTournament.status = 'Open'
+            updatedTournament.status = 'Sign Up Open'
 
             const updates = {};
             updates['/tournaments/' + currentTournament.tournamentID] = updatedTournament;
@@ -306,20 +302,19 @@ const MyTournaments = () => {
                 console.log("Error: ", error)
                 toast.error('An error has occured. Please try again.')
             })
+        } else {
+            setApprovalText("Confirm Approval")
         }
     }
 
-    // tournament decline by admin
+    // ADMIN VIEW - tournament decline
     const confirmDecline = () => {
-        setDeclineButtonVariant("contained")
-        setTournamentCancellationText("Confirm Decline")
-
-        if (tournamentCancellationText === "Confirm Decline") {
+        if (cancellationText === "Confirm Decline") {
             const updatedData = []
             
             data.forEach(item => {
                 if (item.id === currentTournament.tournamentID) {
-                    item.status = "Declined" //TODO: Replace with actual call that updates status
+                    item.status = "Declined"
                 }
                 updatedData.push(item)
             })
@@ -343,14 +338,14 @@ const MyTournaments = () => {
                 console.log("Error: ", error)
                 toast.error('An error has occured. Please try again.')
             })
+        } else {
+            setCancellationText("Confirm Decline")
         }
     }
 
-    // player withdrawal from tournament
+    // PLAYER VIEW - withdrawal from tournament
     const confirmWithdrawal = () => {
-        if (withdrawalButtonText === 'Withdraw') {
-            setWithdrawalButtonText("Confirm Withdrawal")
-        } else {
+        if (withdrawalButtonText === 'Confirm Withdrawal') {
             const updates = {};
             updates['tournaments/' + currentTournament.tournamentID + '/playersSignedUp/' + userData.userID + '/withdrawed'] = true;
             updates['tournaments/' + currentTournament.tournamentID + '/playersSignedUp/' + userData.userID + '/withdrawalTime'] = new Date();
@@ -368,6 +363,45 @@ const MyTournaments = () => {
 
             setOpen(false)
             setWithdrawalButtonText("Withdraw")
+        } else {
+            setWithdrawalButtonText("Confirm Withdrawal")
+        }
+    }
+
+    // CLUB REP VIEW - Close sign up for tournaments
+    const confirmSignUpClosure = () => {
+        if (signUpClosureText === "Confirm Sign Up Closure") {
+            console.log("here")
+            const updatedData = []
+            
+            data.forEach(item => {
+                if (item.id === currentTournament.tournamentID) {
+                    item.status = "In Progress"
+                }
+                updatedData.push(item)
+            })
+
+            setData(updatedData)
+            handleClose()
+
+            let updatedTournament = currentTournament;
+            updatedTournament.status = 'In Progress'
+
+            const updates = {};
+            updates['/tournaments/' + currentTournament.tournamentID] = updatedTournament;
+
+            update(dbRef, updates)
+            .then(() => {
+                toast.success("You have closed the sign up for this tournament successfully.")
+                toast.info("The tournament is now considered 'In Progress'.")
+                console.log("submission confirmed")
+            })
+            .catch((error) => {
+                console.log("Error: ", error)
+                toast.error('An error has occured. Please try again.')
+            })
+        } else {
+            setSignUpClosureText("Confirm Sign Up Closure")
         }
     }
 
@@ -572,7 +606,7 @@ const MyTournaments = () => {
                 }}
             >
                 <Fade in={open}>
-                <Box sx={style} className="large-modal">
+                <Box sx={style} className="large-modal full-width">
                     <div className="flex-column justify-center align-center">
                         <div className="flex-column full-width">
                             <div className="flex justify-between align-center tournament-header">
@@ -585,12 +619,25 @@ const MyTournaments = () => {
                             <div style={{marginBottom: 5}}>{currentTournament?.clubName}</div>
                             <div style={{marginBottom: 5}}>{currentTournament?.street}, {currentTournament?.city}, {currentTournament?.country} {currentTournament?.zipCode}</div>
                             <h3 className="accent-color section-title">General Information</h3>
-                            <div>{currentTournament?.description}</div>
+                            <div className="flex-column">
+                                <div style={{marginBottom: 15}}>{currentTournament?.description}</div>
+                                {currentTournament?.onSiteSignupDeadline && <div style={{marginBottom: 5}}>On Site Signup Deadline: {getDateTimeString(new Date (currentTournament.onSiteSignupDeadline).getTime())}</div>}
+                                <div style={{marginBottom: 5}}>{!currentTournament?.qualification ? "There is no qualifying draw." : 
+                                    currentTournament?.qualification && currentTournament?.qualificationStartDate && currentTournament?.qualificationEndDate && 
+                                        `Qualification Dates: ${getDateString(new Date (currentTournament?.qualificationStartDate).getTime())} - ${getDateString(new Date (currentTournament?.qualificationEndDate).getTime())}`
+                                }</div>
+                            </div>
                             <h3 className="accent-color section-title">Terms of Play</h3>
                             <div className="flex-column">
                                 <div className="flex-column justify-start" style={{marginRight: 40}}> 
                                     <div style={{marginBottom: 5}}>Draw(s):</div>
                                     {getDraws(currentTournament?.ageGroups, currentTournament?.genderGroup, currentTournament?.drawType)}
+                                </div>
+                                <div className="flex-column justify-start" style={{marginBottom: 30}}> 
+                                    <div style={{marginBottom: 5}}>Draw size(s):</div>
+                                    {currentTournament?.drawType !== "doubles" && currentTournament?.mainDrawSize && <div>Main Draw: {currentTournament.mainDrawSize}</div>}
+                                    {currentTournament?.drawType !== "singles" && currentTournament?.doublesDrawSize && <div>Doubles Draw: {currentTournament.doublesDrawSize}</div>}
+                                    {currentTournament?.drawType !== "singles" && currentTournament?.genderGroup?.toLowerCase() === "mixed" && currentTournament?.mixedDoublesDrawSize && <div>Mixed Doubles Draw: {currentTournament.mixedDoublesDrawSize}</div>}
                                 </div>
                                 <div className="flex-column justify-start"> 
                                     <div style={{marginBottom: 5}}>Entry Tax:</div>
@@ -605,8 +652,8 @@ const MyTournaments = () => {
                         </div>
                         {userData?.role?.toLowerCase() === "admin" && currentTournament?.status?.toLowerCase() === 'waiting for approval' && (
                             <div className="flex">
-                                <Button variant={approvalButtonVariant} sx={{height: 40, margin: '30px 10px 0px 0px !important'}} onClick={() => confirmApproval()} startIcon={<CheckIcon />}>{tournamentApprovalText}</Button>
-                                <Button className="red-button" variant={declineButtonVariant} sx={{height: 40, margin: '30px 0px 0px 10px !important'}} onClick={() => confirmDecline()} endIcon={<CancelOutlinedIcon />}>{tournamentCancellationText}</Button>
+                                <Button variant={approvalText === "Confirm Approval" ? 'contained' : 'outlined'} sx={{height: 40, margin: '30px 10px 0px 0px !important'}} onClick={() => confirmApproval()} startIcon={<CheckIcon />}>{approvalText}</Button>
+                                <Button className="red-button" variant={cancellationText === "Confirm Decline" ? 'contained' : 'outlined'} sx={{height: 40, margin: '30px 0px 0px 10px !important'}} onClick={() => confirmDecline()} endIcon={<CancelOutlinedIcon />}>{cancellationText}</Button>
                             </div>
                         )}
                         {userData?.role?.toLowerCase() === 'player' && <div className="flex">
@@ -645,12 +692,19 @@ const MyTournaments = () => {
                                 <h3 className="accent-color section-title">Withdrawn Players</h3>
                                 <Table tableData={getSignedUpPlayers(currentTournament.playersSignedUp, true)} rowHeaders={withdrawedPlayersTableRowHeaders}/>
                             </div>
-                        </div>) : currentTournament?.status && currentTournament?.status?.toLowerCase() === 'open' ? 
+                        </div>) : currentTournament?.status && currentTournament?.status === 'Sign Up Open' ? 
                         (<div>
                             No people have signed up yet.
                         </div>) : (
                         <div></div>
                         ))}
+                        {userRole === 'clubRep' && currentTournament?.status === 'Sign Up Open' && <Button 
+                            variant={signUpClosureText === "Confirm Sign Up Closure" ? 'contained' : 'outlined'} 
+                            className="red-button"
+                            sx={{height: 40, marginTop: '30px !important'}} 
+                            onClick={confirmSignUpClosure}
+                            startIcon={<CancelOutlinedIcon />}
+                        >{signUpClosureText}</Button>}
                     </div>
                 </Box>
                 </Fade>
