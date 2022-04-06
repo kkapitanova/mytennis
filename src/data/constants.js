@@ -64,3 +64,9 @@ export const tournamentOnSiteSignupDeadline = (tournamentStartDate) => {
     return minDate
 
 }
+
+export const visibilityOptions = [
+    "Club Reps Only",
+    "Club Reps and Players",
+    "Public"
+]

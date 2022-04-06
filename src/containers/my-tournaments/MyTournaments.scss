@@ -13,7 +13,7 @@
 // material toggle button group
 .Mui-selected {
     color: $accent !important;
-    background-color: rgba(235, 255, 235, 1.5) !important;
+    background-color: $accent-bg !important;
 }
 
 .MuiToggleButton-root {

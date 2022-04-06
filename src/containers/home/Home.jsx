@@ -160,7 +160,7 @@ const Home = () => {
                     <Fade in={open}>
                     <Box sx={style} className="large-modal">
                         <div className="flex-column">
-                            <h2 style={{fontWeight: '500'}}>{currentPlayer?.firstName}&nbsp;{currentPlayer?.familyName}</h2>
+                            <h2 className="accent-color" style={{fontWeight: '500'}}>{currentPlayer?.firstName}&nbsp;{currentPlayer?.familyName}</h2>
                             <div style={{marginBottom: 5}}>Gender: {currentPlayer?.gender}</div>
                             <div style={{marginBottom: 5}}>Nation Competing For:&nbsp;{currentPlayer?.nationCompetingFor}</div>
                             <div style={{marginBottom: 5}}>Date of Birth:&nbsp;{moment(new Date(currentPlayer?.dateOfBirth)).format('D MMMM YYYY')}</div>
