@@ -73,7 +73,7 @@ const Profile = () => {
     const history = useHistory()
     const location = useLocation()
     const [sectionSelected, setSectionSelected] = useState('Personal Information')
-    const [playerHistoryLabel, setPlayerHistoryLabel] = useState("Player History")
+    const [playerHistoryLabel, setPlayerHistoryLabel] = useState("Match History")
 
     const dataUsageError = !(dataConfirmCheck && termsCheck)
 
@@ -229,7 +229,7 @@ const Profile = () => {
                             <div className={`profile-selection ${sectionSelected === "Privacy" && 'active'}`} onClick={() => setSectionSelected("Privacy")}>
                                 <div>Privacy</div>
                             </div>
-                            <div className="profile-selection coming-soon" onMouseEnter={() => setPlayerHistoryLabel("Coming Soon")} onMouseLeave={() => setPlayerHistoryLabel("Player History")}>
+                            <div className="profile-selection coming-soon" onMouseEnter={() => setPlayerHistoryLabel("Coming Soon")} onMouseLeave={() => setPlayerHistoryLabel("Match History")}>
                                 <div>{playerHistoryLabel}</div>
                             </div>
                         </div>
