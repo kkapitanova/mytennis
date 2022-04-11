@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Table } from '../../components';
-import { sortData, getDateString, objectToArrayConverter, getDraws, getDateTimeString } from '../../utils/helpers'
+import { sortData, getDateString, objectToArrayConverter, getDraws, getDateTimeString, getAge } from '../../utils/helpers'
 import { useLocation } from 'react-router';
 import { ageGroups, genderGroups, months, upcomingYears, previousYears, allYears } from '../../data/constants';
-// import { newMockTournamentData } from '../../data/dummyData';
 
 //firebase
-import { getDatabase, ref, child, get, set, push, update} from "firebase/database";
+import { getDatabase, ref, child, get, update} from "firebase/database";
 
 // material
 import TextField from '@mui/material/TextField';
@@ -51,6 +50,18 @@ const tableRowHeaders = [
     'Status'
 ]
 
+const enteredPlayersTableRowHeaders = [
+    'Name', 
+    'Entry Date',
+    'Status'
+]
+
+const withdrawedPlayersTableRowHeaders = [
+    'Name', 
+    'Withdrawal Date',
+    'Status'
+]
+
 const TournamentCalendar = () => {
     const userData = JSON.parse(sessionStorage.getItem('userData')) || {} // TODO: replace with function that fetches data from firebase
     const [allData, setAllData] = useState({}) // all data fetched from DB
@@ -74,6 +85,38 @@ const TournamentCalendar = () => {
     const [withdrawalButtonText, setWithdrawalButtonText] = useState("Withdraw")
     const [entryButtonText, setEntryButtonText] = useState("Enter")
     const [statusColor, setStatusColor] = useState()
+
+    // get the players signed up for the current tournament
+    const getSignedUpPlayers = (playersSignedUp, withdrawed = false) => {
+
+        const test = [{
+            name: "Kristina Kapitanova",
+            date: getDateString(new Date ().toString()),
+            status: "Entered"
+        }]    
+
+        const playersData = []
+    
+        Object.keys(playersSignedUp).map((key, index) => {
+            const player = playersSignedUp[key]
+
+            if (withdrawed && player.withdrawed && player.withdrawalTime) {
+                playersData.push({
+                    name: player.name,
+                    time: getDateString(player.withdrawalTime),
+                    status: 'Withdrawn'
+                })
+            } else if (!withdrawed && !player.withdrawed && !player.withdrawalTime) {
+                playersData.push({
+                    name: player.name,
+                    time: getDateString(player.signUpTime),
+                    status: 'Entered'
+                })
+            }
+        })
+    
+        return playersData
+    }
 
     const fetchTournaments = ( refresh = false ) => {
         if (refresh) {
@@ -146,8 +189,15 @@ const TournamentCalendar = () => {
     const handleRowClick = (tournamentData) => {
         const tournamentIndex = allData.findIndex(el => el.tournamentID === tournamentData.id)
         const current = allData[tournamentIndex]
-        const color = current?.status.toLowerCase() === 'waiting for approval' || current?.status.toLowerCase() === 'postponed' ? 'orange' : current?.status.toLowerCase() === 'declined' ? 'red' : 'green'
-
+        const color = current?.status.toLowerCase() === 'waiting for approval' || 
+                        current?.status.toLowerCase() === 'waiting for points distribution' || 
+                        current?.status.toLowerCase() === 'postponed' ? 
+                            'orange' : 
+                        current?.status.toLowerCase() === 'concluded' ?
+                            'blue' :
+                        current?.status.toLowerCase() === 'declined' || 
+                        current?.status.toLowerCase() === 'cancelled' ? 
+                            'red' : 'green'
         setStatusColor(color)
         setCurrentTournament(current)
         setOpen(true)
@@ -232,6 +282,8 @@ const TournamentCalendar = () => {
                 signUpTime: new Date(), 
                 signedUp: true,
                 playerID: userData.userID, 
+                ageGroup: getAge(userData.dateOfBirth) > 60 ? '60+' : getAge(userData.dateOfBirth) > 40 ? "U60" : 'U40',
+                genderGroup: userData.gender
             };
 
             update(dbRef, updates)
@@ -484,6 +536,22 @@ const TournamentCalendar = () => {
                                 >{entryButtonText}</Button>
                             )}
                         </div>}
+                        {currentTournament?.playersSignedUp ? 
+                        (<div className="flex-column full-width">
+                            <div>
+                                <h3 className="accent-color section-title">Signed Up Players</h3>
+                                <Table tableData={getSignedUpPlayers(currentTournament.playersSignedUp)} rowHeaders={enteredPlayersTableRowHeaders}/>
+                            </div>
+                            <div>
+                                <h3 className="accent-color section-title">Withdrawn Players</h3>
+                                <Table tableData={getSignedUpPlayers(currentTournament.playersSignedUp, true)} rowHeaders={withdrawedPlayersTableRowHeaders}/>
+                            </div>
+                        </div>) : currentTournament?.status && currentTournament?.status === 'Sign Up Open' ? 
+                        (<div>
+                            No people have signed up yet.
+                        </div>) : (
+                        <div></div>
+                        )}
                         {currentTournament?.playersSignedUp && 
                         currentTournament?.playersSignedUp[userData.userID] &&
                         currentTournament?.playersSignedUp[userData.userID].withdrawed === true && 

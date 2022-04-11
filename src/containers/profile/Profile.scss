@@ -1,1 +1,151 @@
 @import '../../styles/variables.scss';
+
+.profile-section-wrapper {
+    height: fit-content;
+    padding: 20px 0px;
+    width: 90vw;
+
+    &-left {
+        transition: width 1s;
+        padding: 0px 20px 15px 20px;
+        width: 260px;
+        border: 1px solid $accent;
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+    }
+
+    &-right {
+        max-width: 800px;
+        width: fit-content;
+        transition: width 1s;
+        border: 1px solid $accent;
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+        padding: 0px 20px 30px 20px;
+    }
+}
+
+.user-name {
+    border-bottom: 1px solid $accent;
+    padding: 20px 0px;
+    margin-bottom: 10px;
+
+    .name {
+        white-space: nowrap;
+        margin-left: 10px;
+    }
+}
+
+.selection-name {
+    border-bottom: 1px solid $accent;
+    padding: 20px 0px;
+    text-align: left;
+}
+
+.fields-wrapper {
+    margin: 20px 10px 0px 10px;
+}
+
+.gender-radio-group {
+    flex-direction: row !important;
+}
+
+.checks-wrapper {
+    padding: 10px;
+    margin-top: 50px;
+    text-align: left;
+}
+
+.clear-button.main-section {
+    display: none;
+}
+
+// @media screen and (max-width: 1100px) {
+//     .profile-section-wrapper {
+//         &-right {
+//             width: 350px !important;
+//         }
+//     }
+// }
+
+.profile-selection {
+    white-space: nowrap;
+    text-align: left;
+    padding: 20px;
+    margin: 5px 0px;
+
+    &.coming-soon {
+        &:hover {
+            cursor: default !important;
+            color: black !important;
+            background-color: rgb(228, 228, 228) !important;
+            border-radius: 10px;
+            transition: .3s background ease;
+        }
+    }
+
+    &:hover {
+        cursor: pointer !important;
+        color: $accent !important;
+        background-color: $accent-bg !important;
+        border-radius: 10px;
+        transition: .3s background ease;
+    }
+}
+
+@media screen and (min-width: 960px) {
+    .profile-selection.active {
+        cursor: pointer;
+        color: $accent;
+        background-color: $accent-bg;
+        border-radius: 10px;
+        transition: .3s background ease;
+    }
+}
+
+@media screen and (max-width: 960px) {
+    .clear-button.main-section {
+        display: block;
+    }
+    
+    .profile-selection.active {
+        cursor: pointer;
+        color: black;
+        background-color: transparent;
+        border: none;
+    }
+
+    .profile-section-wrapper {
+        &-left {
+            max-width: none;
+            width: 100%;
+            height: fit-content;
+            border-radius: 10px !important;
+
+            &.right-open {
+                width: 0px !important;
+                padding: 0;
+                overflow: hidden !important;
+                animation: fadeOut 1s;
+                border: none !important;
+            }
+        }
+
+        &-right {
+            width: 100%;
+            border-radius: 10px !important;
+
+            .fields-container {
+                justify-content: flex-start !important;
+            }
+
+            &.left-open {
+                width: 0px !important;
+                padding: 0;
+                overflow: hidden !important;
+                animation: fadeOut 1s;
+                border: none !important;
+            }
+        }
+    }
+}

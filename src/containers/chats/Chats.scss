@@ -61,7 +61,7 @@
                 flex-direction: row-reverse;
 
                 .message {
-                    background-color: rgba(235, 255, 235, 1.5);
+                    background-color: $accent-bg;
                 }
             }
         }
@@ -92,12 +92,9 @@
     text-align: left;
 
     &:hover {
-        background-color: rgba(235, 255, 235, 1.5);
+        color: $accent;
+        background-color: $accent-bg;
         cursor: pointer;
-
-        > svg {
-            color: $accent !important;
-        }
     }
 
     .summary {

@@ -204,11 +204,17 @@ h1 {
 h2 {
   font-size: $h2FontSize;
   text-transform: uppercase;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 h3 {
   font-size: 18px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+h4 {
+  font-size: 14px;
   text-transform: uppercase;
   font-weight: 600;
 }
@@ -316,6 +322,10 @@ textarea {
 
 .green {
   color: $accent !important;
+}
+
+.blue {
+  color: #0383ff !important;
 }
 
 .justify {
@@ -507,7 +517,7 @@ button {
   border: 1px solid $accent !important;
   
   &:hover {
-    background-color: rgba(0, 128, 96, 0.09) !important;
+    background-color: $accent-bg !important;
     // color: white !important;
   }
 
@@ -519,6 +529,10 @@ button {
       background-color: rgba(255, 0, 0, 0.082) !important;
     }
   }
+}
+
+.MuiInputBase-input {
+  text-align: left !important;
 }
 
 .MuiInputLabel-root.Mui-focused {
@@ -563,7 +577,7 @@ button {
 .MuiTableBody-root .MuiTableRow-root {
 
   &:hover {
-    background-color: rgba(235, 255, 235, 1.5);
+    background-color: $accent-bg;
     cursor: pointer;
 
     & > td {

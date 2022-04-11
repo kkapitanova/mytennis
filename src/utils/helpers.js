@@ -161,3 +161,84 @@ export const getDraws = (ageGroups, genderGroup, drawType) => {
         </div>
     )
 }
+
+export const getAvailableDraws = tournament => {
+    const draws = []
+    
+    tournament.ageGroups.forEach(ag => {
+
+        if (tournament.genderGroup === "Mixed" && tournament.drawType === "singlesAndDoubles") {
+            draws.push({
+                label: `${ag} Women's Singles`,
+                value: `${ag}FemaleSingles`
+            })
+
+            draws.push({
+                label: `${ag} Men's Singles`,
+                value: `${ag}MaleSingles`
+            })
+
+            draws.push({
+                label: `${ag} Women's Doubles`,
+                value: `${ag}FemaleDoubles`
+            })
+
+            draws.push({
+                label: `${ag} Men's Doubles`,
+                value: `${ag}MaleDoubles`
+            })
+
+            draws.push({
+                label: `${ag} Mixed Doubles`,
+                value: `${ag}MixedDoubles`
+            })
+
+        } else if (tournament.genderGroup === "Mixed" && tournament.drawType === "doubles") {
+            draws.push({
+                label: `${ag} Women's Doubles`,
+                value: `${ag}FemaleSingles`
+            })
+
+            draws.push({
+                label: `${ag} Women's Doubles`,
+                value: `${ag}FemaleSingles`
+            })
+
+            draws.push({
+                label: `${ag} Mixed Doubles`,
+                value: `${ag}MixedDoubles`
+            })
+        } else if (tournament.genderGroup === "Female"){
+            if (tournament.drawType !== 'doubles') {
+                draws.push({
+                    label: `${ag} Women's Singles`,
+                    value: `${ag}FemaleSingles`
+                })
+            }
+            
+            if (tournament.drawType !== 'singles') {
+                draws.push({
+                    label: `${ag} Women's Doubles`,
+                    value: `${ag}FemaleDoubles`
+                })
+            }
+        } else if (tournament.genderGroup === "Male"){
+            if (tournament.drawType !== 'doubles') {
+                draws.push({
+                    label: `${ag} Men's Singles`,
+                    value: `${ag}MaleSingles`
+                })
+            }
+            
+            if (tournament.drawType !== 'singles') {
+                draws.push({
+                    label: `${ag} Men's Doubles`,
+                    value: `${ag}MaleDoubles`
+                })
+            }
+        }
+        
+    }) 
+
+    return draws
+}
