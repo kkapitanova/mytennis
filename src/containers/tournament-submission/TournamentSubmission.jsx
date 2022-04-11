@@ -20,9 +20,9 @@ import FormLabel from '@mui/material/FormLabel';
 import SendIcon from '@mui/icons-material/Send';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
+// import InputLabel from '@mui/material/InputLabel';
+// import MenuItem from '@mui/material/MenuItem';
+// import Select from '@mui/material/Select';
 
 //modal material
 import Backdrop from '@mui/material/Backdrop';
@@ -32,7 +32,7 @@ import Fade from '@mui/material/Fade';
 import MuiPhoneNumber from "material-ui-phone-number";
 
 // firebase
-import { getDatabase, ref, child, get, push, update} from "firebase/database";
+import { getDatabase, ref, child, push, update} from "firebase/database";
 
 // toast
 import { toast } from 'react-toastify';
@@ -199,13 +199,6 @@ const TournamentSubmission = () => {
                 ageGroups: [...tournamentData.ageGroups, selectedOption]
             })
         }
-    }
-
-    const handleSelectChange = (e) => {
-        const name = e.target.name
-        const value = e.target.value
-
-        setTournamentData({...tournamentData, [name]: value})
     }
 
     const handleChange = (val, key) => {

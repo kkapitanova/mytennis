@@ -21,8 +21,6 @@ import Stack from '@mui/material/Stack';
 import FormGroup from '@mui/material/FormGroup';
 import Checkbox from '@mui/material/Checkbox';
 import FormHelperText from '@mui/material/FormHelperText';
-import EditIcon from '@mui/icons-material/Edit';
-import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import UpdateIcon from '@mui/icons-material/Update';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -442,7 +440,7 @@ const Profile = () => {
                                                         sx={{width: 250}}
                                                     >
                                                         <MenuItem value={"One-handed backhand"}>One-handed backhand</MenuItem>
-                                                        <MenuItem value={"wo-handed backhand"}>Two-handed backhand</MenuItem>
+                                                        <MenuItem value={"Two-handed backhand"}>Two-handed backhand</MenuItem>
                                                         <MenuItem value={"Two backhands"}>Two backhands</MenuItem>
                                                         <MenuItem value={"Two forehands"}>Two forehands</MenuItem>
                                                     </Select>

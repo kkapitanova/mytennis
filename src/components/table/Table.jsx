@@ -52,9 +52,10 @@ const BasicTable = ({ tableData, rowHeaders, onRowClick }) => {
                                                 align={`${index === rowHeaders.length - 1 ? "right" : 'left'}`} 
                                                 onClick={() => onRowClick(dataItem)} 
                                                 className={`${ typeof value === 'string' &&
-                                                    (value.toLowerCase() === 'waiting for approval' || value.toLowerCase() === 'postponed' ? 'orange' : 
-                                                    value.toLowerCase() === 'declined' || value.toLowerCase() === 'withdrawn' ? 'red' :
-                                                    value.toLowerCase() === 'sign up open' || value.toLowerCase() === 'concluded' || value.toLowerCase() === 'in progress' || value.toLowerCase() === 'entered' ? 'green' : '')
+                                                    (value.toLowerCase() === 'waiting for approval' || value.toLowerCase() === 'postponed' || value.toLowerCase() === 'waiting for points distribution' ? 'orange' : 
+                                                    value.toLowerCase() === 'declined' || value.toLowerCase() === 'withdrawn' || value.toLowerCase() === 'cancelled' ? 'red' :
+                                                    value.toLowerCase() === 'concluded' ? "blue" :
+                                                    value.toLowerCase() === 'sign up open' || value.toLowerCase() === 'in progress' || value.toLowerCase() === 'entered' ? 'green' : '')
                                                 }`}
                                             >
                                                 {value}

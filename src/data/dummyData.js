@@ -481,697 +481,103 @@ export const newMockTournamentData = [
     {"tournamentName":"Test Tournament Name","clubName":"Test Club Name","description":"This is the tournament description","city":"Sofia","country":"Bulgaria","street":"ul. 671-va 3A","zipCode":"1632","startDate":"2023-02-15T12:04:46.000Z","endDate":"2023-02-18T12:04:47.000Z","tournamentDirector":"Kristina Kapitanova","tournamentDirectorPhone":"+1 (233) 23","genderGroup":"mixed","ageGroups":["U60"],"drawType":"singlesAndDoubles","entryTax":"75","prizeMoney":"20000","medicalTeamOnSite":false,"status":"New","submittedBy":"WaN1Y7MKkfZ6MrAtM0f3ckCZgo52","submissionTime":"2022-03-24T18:34:47.294Z","tournamentID":"-MyxCQ8hEmzLQhgVZ3IR"}
 ]
 
-export const mockTournamentData = [
-    {
-        tournamentID: 1,
-        name: 'Santa Marina Cup',
-        site: 'Santa Marina, Sozopol',
-        location: {
-            city: 'Sozopol',
-            country: 'Bulgaria'
-        },
-        ageGroups: ['U40', 'U60', '60+'],
-        genderGroups: ['Female', 'Male'],
-        dates: {
-            startDate: 'November 13, 2022 03:24:00',
-            endDate: 'November 19, 2022 03:24:00'
-        },
-        status: 'Open',
-        surface: 'clay',
-        leadReferee : {
-            "name" : "Kristina Kapitanova"
-        },
-        prizeMoney : {
-            "amount" : 20000,
-            "currency" : "лв"
-        },
-        tournamentDirector : {
-            "name" : "Kristina Kapitanova",
-            "phoneNumber" : "+359885443822"
-        },
-        draws: ['Singles', 'Doubles', 'Mixed']
-    },
-    {
-        tournamentID: 2,
-        name: 'Plovdiv Cup',
-        site: 'TC Loko - 98',
-        location: {
-            city: 'Plovdiv',
-            country: 'Bulgaria'
-        },
-        ageGroups: ['U40', 'U60', '60+'],
-        genderGroups: ['Male'],
-        dates: {
-            startDate: 'October 13, 2022 03:24:00',
-            endDate: 'October 19, 2022 03:24:00'
-        },
-        organizerID: '12345',
-        status: 'Open',
-        surface: 'clay',
-        leadReferee : {
-            "name" : "Kristina Kapitanova"
-        },
-        prizeMoney : {
-            "amount" : 20000,
-            "currency" : "лв"
-        },
-        tournamentDirector : {
-            "name" : "Kristina Kapitanova",
-            "phoneNumber" : "+359885443822"
-        },
-        draws: ['Singles', 'Doubles', 'Mixed']
-    },
-    {
-        tournamentID: 3,
-        name: 'Dema Cup',
-        site: 'TC Dema',
-        location: {
-            city: 'Sofia',
-            country: 'Bulgaria'
-        },
-        ageGroups: ['U60'],
-        genderGroups: ['Male'],
-        dates: {
-            startDate: 'January 13, 2022 03:24:00',
-            endDate: 'January 19, 2022 03:24:00'
-        },
-        organizerID: '12345',
-        status: 'Open',
-        surface: 'clay',
-        leadReferee : {
-            "name" : "Kristina Kapitanova"
-        },
-        prizeMoney : {
-            "amount" : 20000,
-            "currency" : "лв"
-        },
-        tournamentDirector : {
-            "name" : "Kristina Kapitanova",
-            "phoneNumber" : "+359885443822"
-        },
-        draws: ['Singles', 'Doubles', 'Mixed']
-    },
-    {
-        tournamentID: 4,
-        name: 'NTC Open',
-        site: 'National Tennis Centre, Borisova Garden, Sofia',
-        location: {
-            city: 'Sofia',
-            country: 'Bulgaria'
-        },
-        ageGroups: ['U60'],
-        genderGroups: ['Female', 'Male'],
-        dates: {
-            startDate: 'February 13, 2022 03:24:00',
-            endDate: 'February 19, 2022 03:24:00'
-        },
-        status: 'Open',
-        surface: 'clay',
-        leadReferee : {
-            "name" : "Kristina Kapitanova"
-        },
-        prizeMoney : {
-            "amount" : 20000,
-            "currency" : "лв"
-        },
-        tournamentDirector : {
-            "name" : "Kristina Kapitanova",
-            "phoneNumber" : "+359885443822"
-        },
-        draws: ['Singles', 'Doubles', 'Mixed']
-    },
-    {
-        tournamentID: 5,
-        name: 'Test Tournament',
-        site: 'National Tennis Centre, Borisova Garden, Sofia',
-        location: {
-            city: 'Sofia',
-            country: 'Bulgaria'
-        },
-        ageGroups: ['U40'],
-        genderGroups: ['Female'],
-        dates: {
-            startDate: 'January 27, 2022 03:24:00',
-            endDate: 'February 2, 2022 03:24:00'
-        },
-        organizerID: '12345',
-        status: 'Declined',
-        surface: 'clay',
-        leadReferee : {
-            "name" : "Kristina Kapitanova"
-        },
-        prizeMoney : {
-            "amount" : 20000,
-            "currency" : "лв"
-        },
-        tournamentDirector : {
-            "name" : "Kristina Kapitanova",
-            "phoneNumber" : "+359885443822"
-        },
-        draws: ['Singles', 'Doubles', 'Mixed']
-    },
-    {
-        tournamentID: 6,
-        name: 'Test Tournament',
-        site: 'National Tennis Centre, Borisova Garden, Sofia',
-        location: {
-            city: 'Sofia',
-            country: 'Bulgaria'
-        },
-        ageGroups: ['U40'],
-        genderGroups: ['Female'],
-        dates: {
-            startDate: 'September 16, 2022 03:24:00',
-            endDate: 'September 19, 2022 03:24:00'
-        },
-        status: 'Open',
-        surface: 'clay',
-        leadReferee : {
-            "name" : "Kristina Kapitanova"
-        },
-        prizeMoney : {
-            "amount" : 20000,
-            "currency" : "лв"
-        },
-        tournamentDirector : {
-            "name" : "Kristina Kapitanova",
-            "phoneNumber" : "+359885443822"
-        },
-        draws: ['Singles', 'Doubles', 'Mixed']
-    },
-    {
-        tournamentID: 7,
-        name: 'Test Tournament',
-        site: 'National Tennis Centre, Borisova Garden, Sofia',
-        location: {
-            city: 'Sofia',
-            country: 'Bulgaria'
-        },
-        ageGroups: ['U40'],
-        genderGroups: ['Female', 'Male'],
-        dates: {
-            startDate: 'March 2, 2022 03:24:00',
-            endDate: 'March 9, 2022 03:24:00'
-        },
-        organizerID: '12345',
-        status: 'Postponed',
-        surface: 'clay',
-        leadReferee : {
-            "name" : "Kristina Kapitanova"
-        },
-        prizeMoney : {
-            "amount" : 20000,
-            "currency" : "лв"
-        },
-        tournamentDirector : {
-            "name" : "Kristina Kapitanova",
-            "phoneNumber" : "+359885443822"
-        },
-        draws: ['Singles', 'Doubles', 'Mixed']
-    },
-    {
-        tournamentID: 8,
-        name: 'Test Tournament',
-        site: 'National Tennis Centre, Borisova Garden, Sofia',
-        location: {
-            city: 'Sofia',
-            country: 'Bulgaria'
-        },
-        ageGroups: ['U40', 'U60', '60+'],
-        genderGroups: ['Female', 'Male'],
-        dates: {
-            startDate: 'June 20, 2022 03:24:00',
-            endDate: 'June 25, 2022 03:24:00'
-        },
-        status: 'Open',
-        surface: 'clay',
-        leadReferee : {
-            "name" : "Kristina Kapitanova"
-        },
-        prizeMoney : {
-            "amount" : 20000,
-            "currency" : "лв"
-        },
-        tournamentDirector : {
-            "name" : "Kristina Kapitanova",
-            "phoneNumber" : "+359885443822"
-        },
-        draws: ['Singles', 'Doubles', 'Mixed']
-    },
-    {
-        tournamentID: 9,
-        name: 'Test Tournament',
-        site: 'National Tennis Centre, Borisova Garden, Sofia',
-        location: {
-            city: 'Sofia',
-            country: 'Bulgaria'
-        },
-        ageGroups: ['U40', 'U60', '60+'],
-        genderGroups: ['Female', 'Male'],
-        dates: {
-            startDate: 'November 1, 2022 03:24:00',
-            endDate: 'November 8, 2022 03:24:00'
-        },
-        status: 'Postponed',
-        surface: 'clay',
-        leadReferee : {
-            "name" : "Kristina Kapitanova"
-        },
-        prizeMoney : {
-            "amount" : 20000,
-            "currency" : "лв"
-        },
-        tournamentDirector : {
-            "name" : "Kristina Kapitanova",
-            "phoneNumber" : "+359885443822"
-        },
-        draws: ['Singles', 'Doubles', 'Mixed']
-    },
-    {
-        tournamentID: 10,
-        name: 'Test Tournament',
-        site: 'National Tennis Centre, Borisova Garden, Sofia',
-        location: {
-            city: 'Sofia',
-            country: 'Bulgaria'
-        },
-        ageGroups: ['U40', 'U60', '60+'],
-        genderGroups: ['Female', 'Male'],
-        dates: {
-            startDate: 'July 7, 2022 03:24:00',
-            endDate: 'July 14, 2022 03:24:00'
-        },
-        status: 'Open',
-        surface: 'clay',
-        leadReferee : {
-            "name" : "Kristina Kapitanova"
-        },
-        prizeMoney : {
-            "amount" : 20000,
-            "currency" : "лв"
-        },
-        tournamentDirector : {
-            "name" : "Kristina Kapitanova",
-            "phoneNumber" : "+359885443822"
-        },
-        draws: ['Singles', 'Doubles', 'Mixed']
-    },
-    {
-        tournamentID: 11,
-        name: 'Test Tournament',
-        site: 'National Tennis Centre, Borisova Garden, Sofia',
-        location: {
-            city: 'Sofia',
-            country: 'Bulgaria'
-        },
-        ageGroups: ['U40', 'U60', '60+'],
-        genderGroups: ['Female', 'Male'],
-        dates: {
-            startDate: 'November 10, 2022 03:24:00',
-            endDate: 'November 19, 2022 03:24:00'
-        },
-        status: 'Declined',
-        surface: 'clay',
-        leadReferee : {
-            "name" : "Kristina Kapitanova"
-        },
-        prizeMoney : {
-            "amount" : 20000,
-            "currency" : "лв"
-        },
-        tournamentDirector : {
-            "name" : "Kristina Kapitanova",
-            "phoneNumber" : "+359885443822"
-        },
-        draws: ['Singles', 'Doubles', 'Mixed']
-    },
-    {
-        tournamentID: 12,
-        name: 'Test Tournament',
-        site: 'National Tennis Centre, Borisova Garden, Sofia',
-        location: {
-            city: 'Sofia',
-            country: 'Bulgaria'
-        },
-        ageGroups: ['U60', '60+'],
-        genderGroups: ['Female', 'Male'],
-        dates: {
-            startDate: 'November 13, 2022 03:24:00',
-            endDate: 'November 19, 2022 03:24:00'
-        },
-        status: 'Open',
-        surface: 'clay',
-        leadReferee : {
-            "name" : "Kristina Kapitanova"
-        },
-        prizeMoney : {
-            "amount" : 20000,
-            "currency" : "лв"
-        },
-        tournamentDirector : {
-            "name" : "Kristina Kapitanova",
-            "phoneNumber" : "+359885443822"
-        },
-        draws: ['Singles', 'Doubles', 'Mixed']
-    },
-    {
-        tournamentID: 13,
-        name: 'Test Tournament',
-        site: 'National Tennis Centre, Borisova Garden, Sofia',
-        location: {
-            city: 'Sofia',
-            country: 'Bulgaria'
-        },
-        ageGroups: ['U60', '60+'],
-        genderGroups: ['Female'],
-        dates: {
-            startDate: 'November 13, 2022 03:24:00',
-            endDate: 'November 19, 2022 03:24:00'
-        },
-        status: 'Declined',
-        surface: 'clay',
-        leadReferee : {
-            "name" : "Kristina Kapitanova"
-        },
-        prizeMoney : {
-            "amount" : 20000,
-            "currency" : "лв"
-        },
-        tournamentDirector : {
-            "name" : "Kristina Kapitanova",
-            "phoneNumber" : "+359885443822"
-        },
-        draws: ['Singles', 'Doubles', 'Mixed']
-    },
-    {
-        tournamentID: 14,
-        name: 'Test Tournament',
-        site: 'National Tennis Centre, Borisova Garden, Sofia',
-        location: {
-            city: 'Sofia',
-            country: 'Bulgaria'
-        },
-        ageGroups: ['U60', '60+'],
-        genderGroups: ['Female', 'Male'],
-        dates: {
-            startDate: 'November 13, 2022 03:24:00',
-            endDate: 'November 19, 2022 03:24:00'
-        },
-        status: 'Open',
-        surface: 'clay',
-        leadReferee : {
-            "name" : "Kristina Kapitanova"
-        },
-        prizeMoney : {
-            "amount" : 20000,
-            "currency" : "лв"
-        },
-        tournamentDirector : {
-            "name" : "Kristina Kapitanova",
-            "phoneNumber" : "+359885443822"
-        },
-        draws: ['Singles', 'Doubles', 'Mixed'],
-        playersSignedUp: ['99999'],
-    },
-    {
-        tournamentID: 15,
-        name: 'Test Tournament',
-        site: 'National Tennis Centre, Borisova Garden, Sofia',
-        location: {
-            city: 'Sofia',
-            country: 'Bulgaria'
-        },
-        ageGroups: ['U40', 'U60', '60+'],
-        genderGroups: ['Female'],
-        dates: {
-            startDate: 'November 13, 2022 03:24:00',
-            endDate: 'November 19, 2022 03:24:00'
-        },
-        status: 'Open',
-        surface: 'clay',
-        leadReferee : {
-            "name" : "Kristina Kapitanova"
-        },
-        prizeMoney : {
-            "amount" : 20000,
-            "currency" : "лв"
-        },
-        tournamentDirector : {
-            "name" : "Kristina Kapitanova",
-            "phoneNumber" : "+359885443822"
-        },
-        draws: ['Singles', 'Doubles', 'Mixed'],
-        playersSignedUp: ['99999'],
-    },
-    {
-        tournamentID: 16,
-        name: 'Test Tournament',
-        site: 'National Tennis Centre, Borisova Garden, Sofia',
-        location: {
-            city: 'Sofia',
-            country: 'Bulgaria'
-        },
-        ageGroups: ['U40', 'U60', '60+'],
-        genderGroups: ['Female'],
-        dates: {
-            startDate: 'November 13, 2022 03:24:00',
-            endDate: 'November 19, 2022 03:24:00'
-        },
-        status: 'Open',
-        surface: 'clay',
-        leadReferee : {
-            "name" : "Kristina Kapitanova"
-        },
-        prizeMoney : {
-            "amount" : 20000,
-            "currency" : "лв"
-        },
-        tournamentDirector : {
-            "name" : "Kristina Kapitanova",
-            "phoneNumber" : "+359885443822"
-        },
-        draws: ['Singles', 'Doubles', 'Mixed'],
-        playersSignedUp: ['99999'],
-    },
-    {
-        tournamentID: 17,
-        name: 'Test Tournament',
-        site: 'National Tennis Centre, Borisova Garden, Sofia',
-        location: {
-            city: 'Sofia',
-            country: 'Bulgaria'
-        },
-        ageGroups: ['U40', 'U60', '60+'],
-        genderGroups: ['Female', 'Male'],
-        dates: {
-            startDate: 'November 13, 2022 03:24:00',
-            endDate: 'November 19, 2022 03:24:00'
-        },
-        status: 'Open',
-        surface: 'clay',
-        leadReferee : {
-            "name" : "Kristina Kapitanova"
-        },
-        prizeMoney : {
-            "amount" : 20000,
-            "currency" : "лв"
-        },
-        tournamentDirector : {
-            "name" : "Kristina Kapitanova",
-            "phoneNumber" : "+359885443822"
-        },
-        draws: ['Singles', 'Doubles', 'Mixed'],
-        playersSignedUp: ['99999'],
-    },
-    {
-        tournamentID: 18,
-        name: 'Test Tournament',
-        site: 'National Tennis Centre, Borisova Garden, Sofia',
-        location: {
-            city: 'Sofia',
-            country: 'Bulgaria'
-        },
-        ageGroups: ['60+'],
-        genderGroups: ['Female', 'Male'],
-        dates: {
-            startDate: 'November 13, 2022 03:24:00',
-            endDate: 'November 19, 2022 03:24:00'
-        },
-        organizerID: '12345',
-        status: 'Waiting for Approval',
-        surface: 'clay',
-        leadReferee : {
-            "name" : "Kristina Kapitanova"
-        },
-        prizeMoney : {
-            "amount" : 20000,
-            "currency" : "лв"
-        },
-        tournamentDirector : {
-            "name" : "Kristina Kapitanova",
-            "phoneNumber" : "+359885443822"
-        },
-        draws: ['Singles', 'Doubles', 'Mixed']
-    },
-    {
-        tournamentID: 19,
-        name: 'Test Tournament',
-        site: 'National Tennis Centre, Borisova Garden, Sofia',
-        location: {
-            city: 'Sofia',
-            country: 'Bulgaria'
-        },
-        ageGroups: ['U60'],
-        genderGroups: ['Male'],
-        dates: {
-            startDate: 'November 13, 2022 03:24:00',
-            endDate: 'November 19, 2022 03:24:00'
-        },
-        status: 'Open',
-        surface: 'clay',
-        leadReferee : {
-            "name" : "Kristina Kapitanova"
-        },
-        prizeMoney : {
-            "amount" : 20000,
-            "currency" : "лв"
-        },
-        tournamentDirector : {
-            "name" : "Kristina Kapitanova",
-            "phoneNumber" : "+359885443822"
-        },
-        draws: ['Singles', 'Doubles'],
-        playersSignedUp: ['99999'],
-    },
-    {
-        tournamentID: 20,
-        name: 'Test Tournament',
-        site: 'National Tennis Centre, Borisova Garden, Sofia',
-        location: {
-            city: 'Sofia',
-            country: 'Bulgaria'
-        },
-        ageGroups: ['U60'],
-        genderGroups: ['Male'],
-        dates: {
-            startDate: 'November 13, 2022 03:24:00',
-            endDate: 'November 19, 2022 03:24:00'
-        },
-        organizerID: '12345',
-        status: 'Waiting for Approval',
-        surface: 'clay',
-        leadReferee : {
-            "name" : "Kristina Kapitanova"
-        },
-        prizeMoney : {
-            "amount" : 20000,
-            "currency" : "лв"
-        },
-        tournamentDirector : {
-            "name" : "Kristina Kapitanova",
-            "phoneNumber" : "+359885443822"
-        }, 
-        draws: ['Singles', 'Doubles']
-    } 
-]
-
-const testMessages = {
-    "1324fsds234": {
-        sent: new Date("03/20/2022 16:55:01").getTime(), //6
-        senderID: "12345",
-        receiverID: "99999",
-        message: "Tuesday at 8pm?",
-        id: 6,
-    },
-    "1324fdsf234": {
-        sent: new Date("03/20/2022 16:56:01").getTime(), //7
-        senderID: "12345",
-        receiverID: "99999",
-        message: "Is that convenient for you?",
-        id: 7,
-    },
-    "1fds32dfsf4234": {
-        sent: new Date("03/20/2022 16:57:01").getTime(), //8
-        senderID: "12345",
-        receiverID: "99999",
-        message: "Tuesday at 8pm?",
-        id: 8,
-    },
-    "1324fdsfsd234": {
-        sent: new Date("03/20/2022 16:57:01").getTime(), //9
-        senderID: "12345",
-        receiverID: "99999",
-        message: "Tuesday at 8pm?",
-        id: 9,
-    },
-    "1324234fdsfds": {
-        sent: new Date("03/20/2022 16:57:01").getTime(), //10
-        senderID: "12345",
-        receiverID: "99999",
-        message: "Tuesday at 8pm?",
-        id: 10,
-    },
-    "13fdsfds24234fdsf": {
-        sent: new Date("03/20/2022 16:57:01").getTime(), //10
-        senderID: "12345",
-        receiverID: "99999",
-        message: "Tuesday at 8pm?",
-        id: 11
-    },
-    "1fdsfsdfds324234": {
-        sent: new Date("03/20/2022 16:57:02").getTime(), //10
-        senderID: "12345",
-        receiverID: "99999",
-        message: "Tuesday at 8pm?",
-        id: 12
-    },
-    "1fsdfsdfs324234": {
-        sent: new Date("03/20/2022 16:57:03").getTime(), //10
-        senderID: "12345",
-        receiverID: "99999",
-        message: "Tuesday at 8pm?",
-        id: 13
-    },
-    "13fdsfsdf24234": {
-        sent: new Date("03/20/2022 16:57:04").getTime(), //10
-        senderID: "12345",
-        receiverID: "99999",
-        message: "Tuesday at 8pm?",
-        id: 14,
-    },
-    "132fsdfsdfs4234": {
-        sent: new Date('12/11/2021 16:55:01').getTime(), //2
-        senderID: "99999",
-        receiverID: "12345",
-        message: "Hi there!",
-        id: 1
-    },
-    "13fsdfsd24234": {
-        sent: new Date('12/11/2021 16:54:32').getTime(), //1
-        senderID: "12345",
-        receiverID: "99999",
-        message: "Hi",
-        id: 2
-    },
-    "1324fsfsd234": {
-        sent: new Date('12/11/2021 16:59:01').getTime(), //4
-        senderID: "99999",
-        receiverID: "12345",
-        message: "Yeah sure!",
-        id: 4
-    },
-    "fsdffsdf2444": {
-        sent: new Date('12/11/2021 16:55:58').getTime(), //3
-        senderID: "12345",
-        receiverID: "99999",
-        message: "Do you want to play?",
-        id: 3
-    },
-    "1323424csfds4234": {
-        sent: new Date('12/11/2021 16:59:13').getTime(), //5
-        senderID: "99999",
-        receiverID: "12345",
-        message: "When",
-        id: 5
-    },
-}
+// export const testMessages = {
+//     "1324fsds234": {
+//         sent: new Date("03/20/2022 16:55:01").getTime(), //6
+//         senderID: "12345",
+//         receiverID: "99999",
+//         message: "Tuesday at 8pm?",
+//         id: 6,
+//     },
+//     "1324fdsf234": {
+//         sent: new Date("03/20/2022 16:56:01").getTime(), //7
+//         senderID: "12345",
+//         receiverID: "99999",
+//         message: "Is that convenient for you?",
+//         id: 7,
+//     },
+//     "1fds32dfsf4234": {
+//         sent: new Date("03/20/2022 16:57:01").getTime(), //8
+//         senderID: "12345",
+//         receiverID: "99999",
+//         message: "Tuesday at 8pm?",
+//         id: 8,
+//     },
+//     "1324fdsfsd234": {
+//         sent: new Date("03/20/2022 16:57:01").getTime(), //9
+//         senderID: "12345",
+//         receiverID: "99999",
+//         message: "Tuesday at 8pm?",
+//         id: 9,
+//     },
+//     "1324234fdsfds": {
+//         sent: new Date("03/20/2022 16:57:01").getTime(), //10
+//         senderID: "12345",
+//         receiverID: "99999",
+//         message: "Tuesday at 8pm?",
+//         id: 10,
+//     },
+//     "13fdsfds24234fdsf": {
+//         sent: new Date("03/20/2022 16:57:01").getTime(), //10
+//         senderID: "12345",
+//         receiverID: "99999",
+//         message: "Tuesday at 8pm?",
+//         id: 11
+//     },
+//     "1fdsfsdfds324234": {
+//         sent: new Date("03/20/2022 16:57:02").getTime(), //10
+//         senderID: "12345",
+//         receiverID: "99999",
+//         message: "Tuesday at 8pm?",
+//         id: 12
+//     },
+//     "1fsdfsdfs324234": {
+//         sent: new Date("03/20/2022 16:57:03").getTime(), //10
+//         senderID: "12345",
+//         receiverID: "99999",
+//         message: "Tuesday at 8pm?",
+//         id: 13
+//     },
+//     "13fdsfsdf24234": {
+//         sent: new Date("03/20/2022 16:57:04").getTime(), //10
+//         senderID: "12345",
+//         receiverID: "99999",
+//         message: "Tuesday at 8pm?",
+//         id: 14,
+//     },
+//     "132fsdfsdfs4234": {
+//         sent: new Date('12/11/2021 16:55:01').getTime(), //2
+//         senderID: "99999",
+//         receiverID: "12345",
+//         message: "Hi there!",
+//         id: 1
+//     },
+//     "13fsdfsd24234": {
+//         sent: new Date('12/11/2021 16:54:32').getTime(), //1
+//         senderID: "12345",
+//         receiverID: "99999",
+//         message: "Hi",
+//         id: 2
+//     },
+//     "1324fsfsd234": {
+//         sent: new Date('12/11/2021 16:59:01').getTime(), //4
+//         senderID: "99999",
+//         receiverID: "12345",
+//         message: "Yeah sure!",
+//         id: 4
+//     },
+//     "fsdffsdf2444": {
+//         sent: new Date('12/11/2021 16:55:58').getTime(), //3
+//         senderID: "12345",
+//         receiverID: "99999",
+//         message: "Do you want to play?",
+//         id: 3
+//     },
+//     "1323424csfds4234": {
+//         sent: new Date('12/11/2021 16:59:13').getTime(), //5
+//         senderID: "99999",
+//         receiverID: "12345",
+//         message: "When",
+//         id: 5
+//     },
+// }

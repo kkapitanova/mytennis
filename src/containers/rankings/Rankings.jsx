@@ -4,7 +4,7 @@ import { sortData, getAge } from '../../utils/helpers'
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import { useLocation } from 'react-router';
-import { ageGroups, genderGroups } from '../../data/constants';
+import { ageGroups, genderGroups, draws } from '../../data/constants';
 import { mockPlayerData, mockRanking } from '../../data/dummyData';
 import moment from 'moment';
 
@@ -15,6 +15,15 @@ import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 import Button from '@mui/material/Button';
 import ClearIcon from '@mui/icons-material/Clear';
+
+//firebase
+import { getDatabase, ref, child, get, update} from "firebase/database";
+
+// toast
+import { toast } from 'react-toastify';
+
+const database = getDatabase()
+const dbRef = ref(database);
 
 const style = {
     position: 'absolute',
@@ -38,34 +47,76 @@ const Rankings = () => {
     const [search, setSearch] = useState({
         name: '',
         nationCompetingFor: '',
-        ageGroup: 'U40',
-        genderGroup: 'Male'
+        ageGroup: 'U60',
+        genderGroup: 'Male',
+        draw: 'Singles'
     }) 
     const [data, setData] = useState([])
+    const [rankingData, setRankingData] = useState({})
+    const [players, setPlayers] = useState([])
     const [categorizedData, setCategorizedData] = useState([])
     const [currentPlayer, setCurrentPlayer] = useState()
     const [open, setOpen] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
 
-    const handleClose = () => setOpen(false);
+    const fetchPlayers = (keys) => {
+        setIsLoading(true)
+
+        let newPlayersData = []
+
+        keys.forEach((key, index) => {
+            get(child(dbRef, 'players/' + key)).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const player = snapshot.val()
+                    newPlayersData.push(player)
+
+                    if (index === keys.length -1) {
+                        setIsLoading(false)
+                        setPlayers(newPlayersData)
+                    }
+                } else {
+                    console.log("No data available");
+                    setIsLoading(false)
+                }
+
+                }).catch((error) => {
+                    console.error(error);
+                    toast.error("An error has occured.")
+                    setIsLoading(false)
+                });   
+        })
+    }
+
+    const fetchRankings = (ageGroup, genderGroup, draw) => {
+        setIsLoading(true)
+
+        get(child(dbRef, `rankings/${ageGroup}${genderGroup}${draw}`)).then((snapshot) => {
+            if (snapshot.exists()) {
+                const rankings = snapshot.val()
+                setRankingData(rankings)
+                fetchPlayers(Object.keys(rankings))
+            } else {
+                console.log("No data available");
+                setPlayers([])
+                setIsLoading(false)
+            }
+            }).catch((error) => {
+                console.error(error);
+                toast.error("An error has occured.")
+                setIsLoading(false)
+            });
+    }
 
     const getData = () => {
-        let rankingData = []
-
-        mockRanking.forEach(r => {
-            if ((search.ageGroup ? r.ageGroup === search.ageGroup : true) && (search.genderGroup ? r.genderGroup.toLowerCase() === search.genderGroup.toLowerCase() : true)) {
-                rankingData = r.players
-            }
-        })
-
-        const tableData = rankingData.map(p => {
-            const currentPlayer = mockPlayerData.find(player => player.playerId === p.playerId)
+        const tableData = Object.keys(rankingData).map(p => {
+            const currentPlayer = players.find(player => player.userID === p)
         
             return {
                 name: `${currentPlayer?.firstName} ${currentPlayer?.familyName}`,
-                nationCompetingFor: currentPlayer?.nationCompetingFor,
+                nationCompetingFor: currentPlayer?.countryOfBirth,
                 age: getAge(currentPlayer?.dateOfBirth),
-                pointsWon: p.pointsWon,
-                id: currentPlayer.playerId
+                pointsWon: rankingData[p]?.pointsWon,
+                id: currentPlayer?.userID
             }
         })
 
@@ -83,9 +134,12 @@ const Rankings = () => {
     }
 
 
+    const handleClose = () => setOpen(false);
+
+
     const handleRowClick = (playerData) => {
-        const playerIndex =  mockPlayerData.findIndex(el => el.playerId === playerData.id)
-        const current = mockPlayerData[playerIndex]
+        const playerIndex =  players.findIndex(el => el.playerId === playerData.id)
+        const current = players[playerIndex]
 
         setCurrentPlayer(current)
         setOpen(true)
@@ -98,10 +152,18 @@ const Rankings = () => {
 
         let sortedAndFilteredData = []
 
-        setSearch({
-            ...search,
-            [name]: value
-        })
+        if (name === 'genderGroup' && value === 'Mixed') {
+            setSearch({
+                ...search,
+                [name]: value,
+                draw: 'Doubles'
+            })
+        } else {
+            setSearch({
+                ...search,
+                [name]: value
+            })
+        }
 
         if (name === "name") {
             sortedAndFilteredData = categorizedData.filter(player => player.name.toLowerCase().includes(value.toLowerCase())).filter(player => player.nationCompetingFor.toLowerCase().includes(search.nationCompetingFor.toLowerCase()));
@@ -132,9 +194,16 @@ const Rankings = () => {
     }
 
     useEffect(() => {
-        getData()
-        setData(getData())
-    }, [search.ageGroup, search.genderGroup])
+        fetchRankings(search.ageGroup, search.genderGroup, search.draw)
+    }, [search.ageGroup, search.genderGroup, search.draw])
+
+    useEffect(() => {
+        if (players && players.length && !isLoading) {
+            getData()
+            setData(getData())
+        }
+
+    }, [players, isLoading])
 
     useEffect(() => {
       window.scrollTo(0,0)
@@ -145,7 +214,10 @@ const Rankings = () => {
         const searchGenderGroup = location?.state?.rankings
 
         const rand = Math.floor(Math.random()*10)
-        const randomGenderGroup = rand % 2 === 0 ? 'Female' : 'Male'
+        // const randomGenderGroup = rand % 2 === 0 ? 'Female' : 'Male'
+
+        const randomGenderGroup = 'Male'
+
 
         setSearch({
             ...search,
@@ -180,9 +252,25 @@ const Rankings = () => {
                     />
                     <TextField
                         id="outlined-select-currency"
+                        name="ageGroup"
+                        select
+                        // label="Age Group"
+                        value={search.ageGroup}
+                        onChange={handleSearchChange}
+                        size="small"
+                        sx={{width: 150, margin: '0 5px 10px 0 !important'}}
+                    >
+                        {ageGroups.map((option, index) => (
+                            <MenuItem key={index} value={option}>
+                                {option}
+                            </MenuItem>
+                        ))}
+                    </TextField>
+                    <TextField
+                        id="outlined-select-currency"
                         name="genderGroup"
                         select
-                        label="Gender Group"
+                        // label="Gender Group"
                         value={search.genderGroup}
                         onChange={(e) => handleSearchChange(e)}
                         size="small"
@@ -196,15 +284,15 @@ const Rankings = () => {
                     </TextField>
                     <TextField
                         id="outlined-select-currency"
-                        name="ageGroup"
+                        name="draw"
                         select
-                        label="Age Group"
-                        value={search.ageGroup}
+                        // label="List"
+                        value={search.genderGroup !== 'Mixed' ? search.draw : 'Doubles'}
                         onChange={handleSearchChange}
                         size="small"
-                        sx={{width: 150, marginBottom: '10px !important'}}
+                        sx={{width: 200, margin: '0 5px 10px 0 !important'}}
                     >
-                        {ageGroups.map((option, index) => (
+                        {draws.map((option, index) => (
                             <MenuItem key={index} value={option}>
                                 {option}
                             </MenuItem>

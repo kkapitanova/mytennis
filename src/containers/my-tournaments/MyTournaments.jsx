@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Table } from '../../components';
 import { useLocation } from 'react-router';
 import { ageGroups, genderGroups, months, upcomingYears, previousYears, allYears } from '../../data/constants';
-import { sortData, getDateString, objectToArrayConverter, getDraws, getDateTimeString } from '../../utils/helpers'
+import { sortData, getDateString, objectToArrayConverter, getDraws, getDateTimeString } from '../../utils/helpers';
+import PointsDistribution from './PointsDistribution';
 
 // material
 import Backdrop from '@mui/material/Backdrop';
@@ -21,7 +22,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 
 //firebase
-import { getDatabase, ref, child, get, set, push, update} from "firebase/database";
+import { getDatabase, ref, child, get, update} from "firebase/database";
 
 // toast
 import { toast } from 'react-toastify';
@@ -90,14 +91,47 @@ const MyTournaments = () => {
     
     const [withdrawalButtonText, setWithdrawalButtonText] = useState("Withdraw")
     const [approvalText, setApprovalText] = useState("Approve")
-    const [cancellationText, setCancellationText] = useState("Decline")
-
+    const [declinatureText, setDeclinatureText] = useState("Decline")
+    const [conclusionText, setConclusionText] = useState("Conclude Tournament")
+    const [cancellationText, setCancellationText] = useState("Cancel Tournament")
+    const [pointsDistributionText, setPointsDistributionText] = useState("Distribute Points")
     const [signUpClosureText, setSignUpClosureText] = useState("Close Sign Up")
     const [statusColor, setStatusColor] = useState()
 
     //testing user roles
     const userRole = userData.role
     const userID = userData.userID
+
+
+    const updateCurrentPlayerPoints = (draw, id, pointsWon) => {
+        const updates = {}
+
+        get(child(dbRef, 'rankings/' + draw + '/' + id)).then((snapshot) => {
+            if (snapshot.exists()) {
+                const currentPlayerPoints = snapshot.val().pointsWon
+                updates['/rankings/' + `${draw}/` + id] = { playerID: id, pointsWon: parseInt(pointsWon) + currentPlayerPoints, updated: new Date() };
+
+            } else {
+                updates['/rankings/' + `${draw}/` + id] = { playerID: id, pointsWon: parseInt(pointsWon), updated: new Date()};
+                console.log("No data available");
+            }
+
+            update(dbRef, updates)
+                .then(() => {
+                    // toast.success("You have distributed the points successfully.")
+                    // toast.info("We thank you for this tournament!")
+                })
+                .catch((error) => {
+                    console.log("Error: ", error)
+                    toast.error('An error has occured. Please try again.')
+                })
+
+
+            }).catch((error) => {
+                console.error(error);
+                toast.error("An error has occured.")
+            });
+    }
 
     // get the players signed up for the current tournament
     const getSignedUpPlayers = (playersSignedUp, withdrawed = false) => {
@@ -131,7 +165,7 @@ const MyTournaments = () => {
         return playersData
     }
 
-    const fetchTournaments = ( refresh = false) => {
+    const fetchTournaments = (refresh = false) => {
         if (refresh) {
             toast.info("The list has been refreshed.")
         }
@@ -154,8 +188,10 @@ const MyTournaments = () => {
         setOpen(false);
         setTimeout(() => {
             setApprovalText("Approve")
-            setCancellationText("Decline")
+            setDeclinatureText("Decline")
             setSignUpClosureText("Close Sign Up")
+            setConclusionText("Conclude Tournament")
+            setCurrentTournament()
         }, 300)
     }
 
@@ -217,7 +253,15 @@ const MyTournaments = () => {
     const handleRowClick = (tournamentData) => {
         const tournamentIndex = allData.findIndex(el => el.tournamentID === tournamentData.id)
         const current = allData[tournamentIndex]
-        const color = current?.status?.toLowerCase() === 'waiting for approval' || current?.status?.toLowerCase() === 'postponed' ? 'orange' : current?.status?.toLowerCase() === 'declined' ? 'red' : 'green'
+        const color = current?.status.toLowerCase() === 'waiting for approval' || 
+                        current?.status.toLowerCase() === 'waiting for points distribution' || 
+                        current?.status.toLowerCase() === 'postponed' ? 
+                            'orange' : 
+                        current?.status.toLowerCase() === 'concluded' ?
+                            'blue' :
+                        current?.status.toLowerCase() === 'declined' || 
+                        current?.status.toLowerCase() === 'cancelled' ? 
+                            'red' : 'green'
 
         setStatusColor(color)
         setCurrentTournament(current)
@@ -309,7 +353,7 @@ const MyTournaments = () => {
 
     // ADMIN VIEW - tournament decline
     const confirmDecline = () => {
-        if (cancellationText === "Confirm Decline") {
+        if (declinatureText === "Confirm Decline") {
             const updatedData = []
             
             data.forEach(item => {
@@ -339,7 +383,7 @@ const MyTournaments = () => {
                 toast.error('An error has occured. Please try again.')
             })
         } else {
-            setCancellationText("Confirm Decline")
+            setDeclinatureText("Confirm Decline")
         }
     }
 
@@ -371,7 +415,6 @@ const MyTournaments = () => {
     // CLUB REP VIEW - Close sign up for tournaments
     const confirmSignUpClosure = () => {
         if (signUpClosureText === "Confirm Sign Up Closure") {
-            console.log("here")
             const updatedData = []
             
             data.forEach(item => {
@@ -405,6 +448,126 @@ const MyTournaments = () => {
         }
     }
 
+    // CLUB REP VIEW - Confirm tournament conclusion
+    const confirmConclusion = () => { // TODO: make updating functions more reusable
+        if (conclusionText === "Confirm Conclusion") {
+            const updatedData = []
+            
+            data.forEach(item => {
+                if (item.id === currentTournament.tournamentID) {
+                    item.status = "Waiting for Points Distribution"
+                }
+                updatedData.push(item)
+            })
+
+            setData(updatedData)
+            handleClose()
+
+            let updatedTournament = currentTournament;
+            updatedTournament.status = 'Waiting for Points Distribution'
+
+            const updates = {};
+            updates['/tournaments/' + currentTournament.tournamentID] = updatedTournament;
+
+            update(dbRef, updates)
+            .then(() => {
+                toast.success("You have concluded this tournament successfully.")
+                toast.info("You will now need to enter all of the points won by each player.")
+            })
+            .catch((error) => {
+                console.log("Error: ", error)
+                toast.error('An error has occured. Please try again.')
+            })
+        } else {
+            setConclusionText("Confirm Conclusion")
+        }
+    }
+
+    // CLUB REP & ADMIN VIEW - Cancel tournament
+    const confirmCancellation = () => {
+        if (cancellationText === "Confirm Cancellation") {
+            const updatedData = []
+            
+            data.forEach(item => {
+                if (item.id === currentTournament.tournamentID) {
+                    item.status = "Cancelled"
+                }
+                updatedData.push(item)
+            })
+
+            setData(updatedData)
+            handleClose()
+
+            let updatedTournament = currentTournament;
+            updatedTournament.status = 'Cancelled'
+
+            const updates = {};
+            updates['/tournaments/' + currentTournament.tournamentID] = updatedTournament;
+
+            update(dbRef, updates)
+            .then(() => {
+                toast.success("You have cancelled this tournament successfully.")
+                toast.info("We hope that you will have another opportunity to host a tournament!")
+            })
+            .catch((error) => {
+                console.log("Error: ", error)
+                toast.error('An error has occured. Please try again.')
+            })
+        } else {
+            setCancellationText("Confirm Cancellation")
+        }
+    }
+
+
+    // CLUB REP - Points distribution
+    const confirmPointsDistribution = (points) => {
+        if (pointsDistributionText === "Confirm Distribution") {            
+            const signedUpPlayers = { ...currentTournament.playersSignedUp }
+            const updates = {};
+
+            for (let key in signedUpPlayers) {
+                points.map(p => {
+                    if (key === p.playerID) {
+                        signedUpPlayers[key].pointsWon = p.pointsWon
+                        updateCurrentPlayerPoints(`${p.draw}`, p.playerID, p.pointsWon) // update ranking points in DB
+                    }
+                })
+            }
+
+            const updatedData = []
+            
+            data.forEach(item => {
+                if (item.id === currentTournament.tournamentID) {
+                    item.status = "Concluded"
+                }
+                updatedData.push(item)
+            })
+
+            setData(updatedData)
+            handleClose()
+
+            const updatedTournament = currentTournament
+            updatedTournament.status = 'Concluded'
+            updatedTournament.playersSignedUp = signedUpPlayers
+
+            // update points won within current tournament in DB
+            updates['/tournaments/' + currentTournament.tournamentID] = updatedTournament; 
+
+            update(dbRef, updates)
+            .then(() => {
+                toast.success("You have distributed the points successfully.")
+                toast.info("We thank you for this tournament!")
+            })
+            .catch((error) => {
+                console.log("Error: ", error)
+                toast.error('An error has occured. Please try again.')
+            })
+        } else {
+            setPointsDistributionText("Confirm Distribution")
+        }
+
+    }
+
     const refreshData = () => {
         fetchTournaments(true)
     }
@@ -429,26 +592,20 @@ const MyTournaments = () => {
         })
     }, [location])
 
-    useEffect(() => {
-        console.log("current", currentTournament)
-    }, [currentTournament])
-
     return (
         <div className="container">
             <h3 className="accent-color" style={{textAlign: 'left'}}>My Tournaments - {userRole === "clubRep" ? 'Club Representative' : userRole === 'player' ? 'Player' : 'Admin'} View</h3>
-            {userData?.role?.toLowerCase() === 'admin' && 
-                <div className="helper-text">
+            {userData?.role?.toLowerCase() === 'admin' ?
+                (<div className="helper-text">
                     Here you can preview the tournaments submitted for approval and update their status by either rejecting or approving them. 
                     Approved tournaments will be moved to the tournament calendar.
-                </div>
-            }
-            {userData?.role?.toLowerCase() === 'clubrep' && 
-                <div className="helper-text">
+                </div>) :
+            userData?.role?.toLowerCase() === 'clubrep' ? 
+                (<div className="helper-text">
                     Here you can preview all of the tournaments you have submitted and their status. 
                     'Waiting for Approval' means that the tournament is waiting to be approved by an admin. 'Declined' means that the request for a tournament has been rejected.
-                </div>
-            }
-            {userData?.role?.toLowerCase() === 'player' && 
+                </div>) :
+            userData?.role?.toLowerCase() === 'player' &&
                 <div className="helper-text">
                     Here you can preview the tournaments you have signed up for. 
                     You can withdraw from any tournament, but withdrawing meeans you will not be able to sign up for the tournament again.
@@ -653,7 +810,7 @@ const MyTournaments = () => {
                         {userData?.role?.toLowerCase() === "admin" && currentTournament?.status?.toLowerCase() === 'waiting for approval' && (
                             <div className="flex">
                                 <Button variant={approvalText === "Confirm Approval" ? 'contained' : 'outlined'} sx={{height: 40, margin: '30px 10px 0px 0px !important'}} onClick={() => confirmApproval()} startIcon={<CheckIcon />}>{approvalText}</Button>
-                                <Button className="red-button" variant={cancellationText === "Confirm Decline" ? 'contained' : 'outlined'} sx={{height: 40, margin: '30px 0px 0px 10px !important'}} onClick={() => confirmDecline()} endIcon={<CancelOutlinedIcon />}>{cancellationText}</Button>
+                                <Button className="red-button" variant={declinatureText === "Confirm Decline" ? 'contained' : 'outlined'} sx={{height: 40, margin: '30px 0px 0px 10px !important'}} onClick={() => confirmDecline()} endIcon={<CancelOutlinedIcon />}>{declinatureText}</Button>
                             </div>
                         )}
                         {userData?.role?.toLowerCase() === 'player' && <div className="flex">
@@ -682,7 +839,7 @@ const MyTournaments = () => {
                         currentTournament?.playersSignedUp[userData.userID].withdrawed === true && 
                         <div>You have already withdrawn from this tournament. You cannot enter again.</div>}
                         {withdrawalButtonText === "Confirm Withdrawal" && <div>Please keep in mind that after withdrawing, you will not be able to sign up for the tournament again.</div>}
-                        {userRole === 'clubRep' && (currentTournament?.playersSignedUp ? 
+                        {currentTournament?.playersSignedUp ? 
                         (<div className="flex-column full-width">
                             <div>
                                 <h3 className="accent-color section-title">Signed Up Players</h3>
@@ -697,14 +854,32 @@ const MyTournaments = () => {
                             No people have signed up yet.
                         </div>) : (
                         <div></div>
-                        ))}
-                        {userRole === 'clubRep' && currentTournament?.status === 'Sign Up Open' && <Button 
+                        )}
+                        {userRole === 'clubRep' && currentTournament?.status?.toLowerCase() === 'sign up open' && <Button 
                             variant={signUpClosureText === "Confirm Sign Up Closure" ? 'contained' : 'outlined'} 
                             className="red-button"
-                            sx={{height: 40, marginTop: '30px !important'}} 
+                            sx={{height: 40, margin: '30px 0px 0px 0px !important'}} 
                             onClick={confirmSignUpClosure}
                             startIcon={<CancelOutlinedIcon />}
                         >{signUpClosureText}</Button>}
+                        <div className="flex">
+                            {userRole === 'clubRep' && currentTournament?.status?.toLowerCase() === 'in progress' && <Button 
+                                variant={conclusionText === "Confirm Conclusion" ? 'contained' : 'outlined'} 
+                                sx={{height: 40, margin: '30px 10px 0px 0px !important'}} 
+                                onClick={confirmConclusion}
+                                startIcon={<CheckIcon />}
+                            >{conclusionText}</Button>}
+                            {(userRole === 'clubRep' || userRole === 'admin') && currentTournament?.status?.toLowerCase() === 'in progress' && <Button 
+                                variant={cancellationText === "Confirm Cancellation" ? 'contained' : 'outlined'} 
+                                sx={{height: 40, margin: '30px 0px 0px 10px !important'}} 
+                                className="red-button"
+                                onClick={confirmCancellation}
+                                startIcon={<CancelOutlinedIcon />}
+                            >{cancellationText}</Button>}
+                        </div>
+                        {userRole === 'clubRep' && currentTournament?.status?.toLowerCase() === 'waiting for points distribution' && 
+                            <PointsDistribution tournament={currentTournament} onConfirm={confirmPointsDistribution} text={pointsDistributionText}/>
+                        }
                     </div>
                 </Box>
                 </Fade>
