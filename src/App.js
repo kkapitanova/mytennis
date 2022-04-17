@@ -46,12 +46,6 @@ import './firebase-config';
 
 const unauthenticatedNavbarRoutes = [
   {
-    path: '/',
-    name: "Home",
-    exact: true,
-    Component: Home 
-  },
-  {
     path: '/tournament-calendar',
     name: "Tournament Calendar",
     Component: TournamentCalendar,
@@ -93,6 +87,12 @@ const unauthenticatedNavbarRouteLast = [
 ]
 
 const unauthenticatedRoutes = [
+  {
+    path: '/',
+    name: "Home",
+    exact: true,
+    Component: Home 
+  },
   { 
     path: '/login', 
     name: "Login", 
@@ -123,12 +123,12 @@ const authenticatedNavbarRoutes = [
     exact: true, 
     Component: MyTournaments 
   },
-  // {
-  //   path: '/chats',
-  //   name: "Chats",
-  //   exact: true, 
-  //   Component: Chats 
-  // },
+  {
+    path: '/chats',
+    name: "Chats",
+    exact: true, 
+    Component: Chats 
+  },
 ]
 
 const authenticatedRoutes = [
@@ -150,12 +150,6 @@ const authenticatedRoutes = [
     exact: true, 
     Component: Profile 
   },
-  {
-    path: '/chats',
-    name: "Chats",
-    exact: true, 
-    Component: Chats 
-  },
 ]
 
 
@@ -171,8 +165,6 @@ const App = () => {
     } else {
       setLoggedIn(false)
     }
-
-    console.log(123)
   }, [])
 
   return (

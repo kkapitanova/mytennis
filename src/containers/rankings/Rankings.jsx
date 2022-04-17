@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { Table } from '../../components';
 import { sortData, getAge } from '../../utils/helpers'
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import { useLocation } from 'react-router';
 import { ageGroups, genderGroups, draws } from '../../data/constants';
-import { mockPlayerData, mockRanking } from '../../data/dummyData';
 import moment from 'moment';
+import QueryString, { parse, stringify } from 'qs';
+
 
 // modal
 import Backdrop from '@mui/material/Backdrop';
@@ -15,6 +17,7 @@ import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 import Button from '@mui/material/Button';
 import ClearIcon from '@mui/icons-material/Clear';
+import PeopleOutlineOutlinedIcon from '@mui/icons-material/PeopleOutlined';
 
 //firebase
 import { getDatabase, ref, child, get, update} from "firebase/database";
@@ -41,14 +44,15 @@ const tableRowHeaders = [
     'Ranking', 'Name', 'Competes For', 'Age', 'Points Won'
 ]
 
-const Rankings = () => {
+const Rankings = ({ topTen = false }) => {
 
     const location = useLocation()
+    const history = useHistory()
     const [search, setSearch] = useState({
         name: '',
         nationCompetingFor: '',
-        ageGroup: 'U60',
-        genderGroup: 'Male',
+        ageGroup: '',
+        genderGroup: '',
         draw: 'Singles'
     }) 
     const [data, setData] = useState([])
@@ -210,24 +214,30 @@ const Rankings = () => {
     }, [])
 
     useEffect(() => {
-
-        const searchGenderGroup = location?.state?.rankings
+        const state = location?.state
 
         const rand = Math.floor(Math.random()*10)
-        // const randomGenderGroup = rand % 2 === 0 ? 'Female' : 'Male'
+        const randomGenderGroup = rand % 2 === 0 ? 'Female' : 'Male'
+        const randomAgeGroup = rand % 3 === 0 ? 'U40' : rand % 2 === 0 ? 'U60' : '60+'
 
-        const randomGenderGroup = 'Male'
-
-
-        setSearch({
-            ...search,
-            genderGroup: searchGenderGroup === "women" ? 'Female' : searchGenderGroup === "men" ? 'Male' : searchGenderGroup === "mixed-doubles" ? 'Mixed' : randomGenderGroup
-        })
+        // preserve filters from home page
+        if (state) {
+            setSearch({
+                ...search,
+                ...state
+            })
+        } else {
+            setSearch({
+                ...search,
+                genderGroup: randomGenderGroup,
+                ageGroup: randomAgeGroup
+            })
+        }
     }, [location])
 
     return (
         <div className='container'>
-            <h3 className="accent-color" style={{textAlign: 'left'}}>Search through Rankings</h3>
+            <h3 className="accent-color" style={{textAlign: 'left'}}>{topTen ? 'Top 10 Currently' : "Search through Rankings"}</h3>
             <div className='flex wrap justify-between'>
                 <div className="flex wrap" style={{minWidth: '250px', maxWidth: "60%"}}>
                     <TextField
@@ -303,7 +313,10 @@ const Rankings = () => {
                     {filterApplied() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} sx={{height: 40, margin: '0px !important'}} onClick={clearFilters}>Clear Search</Button>}
                 </div>
             </div>
-            <Table tableData={data} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>
+            <Table tableData={topTen ? data.slice(0,10) : data} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>
+            {topTen && <div className="flex justify-end" style={{marginTop: 10}}>
+                <Button variant="contained" onClick={() =>  history.replace({pathname: '/rankings', state: {genderGroup: search.genderGroup, ageGroup: search.ageGroup, draw: search.draw}})} sx={{height: 40, margin: '0px !important'}} endIcon={<PeopleOutlineOutlinedIcon />}>See All</Button>
+            </div>}
             <Modal
                 aria-labelledby="transition-modal-title"
                 aria-describedby="transition-modal-description"

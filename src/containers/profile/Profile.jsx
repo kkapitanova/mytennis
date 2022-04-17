@@ -64,8 +64,8 @@ const Profile = () => {
         userID: userData.userID,
         dataConfirmCheck:  dataConfirmCheck,
         termsCheck: termsCheck,
-        emailVisibility: userData.emailVisibility,
-        phoneNumberVisibility: userData.phoneNumberVisibility
+        emailVisibility: userData.emailVisibility || 'Club Reps Only',
+        phoneNumberVisibility: userData.phoneNumberVisibility || 'Club Reps Only'
     })
     const countryOptions = useMemo(() => countryList().getData(), [])    
     const history = useHistory()
@@ -384,12 +384,10 @@ const Profile = () => {
                                                     name="phoneNumber"
                                                     label="Phone Number" 
                                                     variant="outlined" 
-                                                    value={data.email}
+                                                    value={data.phoneNumber}
                                                     size="small"
                                                     sx={{width: 250, marginRight: '10px'}}
                                                     onChange={handleChange}
-                                                    disabled
-                                                    required
                                                 />
                                                 <FormControl sx={{minWidth: 120 }}>
                                                     <InputLabel id="phone-number-visibility-label">Phone Visible To</InputLabel>
@@ -412,7 +410,7 @@ const Profile = () => {
                                             </div>
                                         </div>
                                         <div>
-                                            <div className="flex wrap align-center" style={{marginTop: '20px'}}>
+                                            <div className="flex wrap align-center" style={{margin: '20px 0px 16px 0px'}}>
                                                 <FormControl sx={{minWidth: 120, marginRight: '10px' }}>
                                                     <InputLabel id="game-info-plays-label">You Play</InputLabel>
                                                     <Select

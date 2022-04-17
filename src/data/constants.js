@@ -10,6 +10,7 @@ export const draws = [
     'Singles', 'Doubles'
 ]
 
+// all draw combinations (age, gender, draw type)
 export const allDrawCombinations = [
     `U40 Women's Singles`,
     `U40 Women's Doubles`,
@@ -28,11 +29,14 @@ export const allDrawCombinations = [
     `60+ Mixed Doubles`
 ]
 
+// years options for the dropdown depending on the toggle button's value
+// 'UPCOMING' as value of the toggle for tournaments
 export const upcomingYears = [
     new Date().getFullYear(),
     new Date().getFullYear() + 1
 ]
 
+// 'PREVIOUS' as value of the toggle for tournaments
 export const previousYears = [
     new Date().getFullYear(),
     new Date().getFullYear() - 1,
@@ -40,6 +44,8 @@ export const previousYears = [
     new Date().getFullYear() - 3,
 ]
 
+
+// 'ALL' as value of the toggle for tournaments
 export const allYears = [
     new Date().getFullYear() + 1,
     new Date().getFullYear(),
@@ -63,32 +69,38 @@ export const months = [
     'December'
 ]
 
-export const tournamentSubmissionMinDate = () => {
-    const currentMonth = new Date ().getMonth()
-    const minDate = new Date().setMonth(currentMonth + 2)
-
-    return minDate
-}
-
-export const tournamentOnSiteSignupDeadline = (tournamentStartDate) => {
-
-    let minDate;
-
-    if (tournamentStartDate) {
-        const startDate =  new Date(tournamentStartDate).getDate()
-        minDate = new Date(tournamentStartDate).setDate(startDate - 3)
-    } else {
-        const currentDate =  new Date().getDate()
-        const currentMonth = new Date ().getMonth()
-        const minDateMonth = new Date().setMonth(currentMonth + 2)
-        minDate = new Date(minDateMonth).setDate(currentDate - 3)
-    }
-    return minDate
-
-}
-
+// profile settings visibility options
 export const visibilityOptions = [
     "Club Reps Only",
     "Club Reps and Players",
     "Public"
 ]
+
+// initial tournament state
+export const initialTournamentData = {
+    tournamentName: '',
+    description: '',
+    city: '',
+    country: '',
+    street: '',
+    zipCode: '',
+    clubName: '',
+    startDate: '',
+    endDate: '',
+    tournamentDirector: '',
+    tournamentDirectorPhone: '',
+    genderGroup: '',
+    ageGroups: [],
+    drawType: '',
+    entryTax: '',
+    prizeMoney: '',
+    medicalTeamOnSite: '',
+    onSiteSignupDeadline: '',
+    qualification: '',
+    qualificationStartDate: '',
+    qualificationEndDate: '',
+    singlesDrawSize: '',
+    qualifyingDrawSize: '',
+    doublesDrawSize: '',
+    mixedDoublesDrawSize: ''
+}
