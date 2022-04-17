@@ -65,7 +65,6 @@ const TournamentSubmission = () => {
     const userData = JSON.parse(sessionStorage.getItem('userData')) || {} // TODO: replace with function that fetches data from firebase
     const [tournamentData, setTournamentData] = useState(initialTournamentData)
     const [open, setOpen] = useState(false)
-    const [displayError, setDisplayError] = useState(false)
     const history = useHistory()
 
     const fillWithTestData = () => {
@@ -96,14 +95,7 @@ const TournamentSubmission = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        const valid = validateFields()
-
-        if (valid) {
-            setOpen(true)
-            setDisplayError(false)
-        } else {
-            setDisplayError(true)
-        }
+        setOpen(true)
     }
 
     const confirmSubmission = () => {
