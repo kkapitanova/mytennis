@@ -15,6 +15,14 @@
     height: 60px;
     overflow: visible;
 }
+
+.link {
+  cursor: pointer;
+  
+  &:hover > .link-wrapper {
+    color: $accent !important;
+  }
+}
   
 /* Style the links inside the navigation bar */
 .navbar a, .menu {
@@ -89,7 +97,7 @@
   display: none;
 }
 
-@media screen and (max-width: 900px) {
+@media screen and (max-width: 1200px) {
 
   .route-link-dropdown-content {
     display: none !important;
@@ -170,7 +178,7 @@
     display: block;
     z-index: 5;
     position: absolute;
-    top: 4px;
+    top: 0px;
     right: 15px;
   }
 }

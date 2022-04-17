@@ -70,8 +70,8 @@ const NavBar = ({ unauthRoutes, authRoutes, unauthRouteLast }) => {
     return (
         <>
             <div className="navbar" id="navbar">
-                <div className='logo-wrapper flex align-center'>
-                    <img src={logo} height={40} alt=""></img>
+                <div className='logo-wrapper flex align-center link'>
+                    <img src={logo} height={40} alt="" onClick={() => history.push('/')}></img>
                     <Link to={"/"} className="link-wrapper">MYTennis</Link>
                 </div>                
                 <div className="flex links-wrapper">
@@ -92,8 +92,9 @@ const NavBar = ({ unauthRoutes, authRoutes, unauthRouteLast }) => {
                             </NavLink>
                         </div>
                     ))}
-                    {/* {loggedIn && authRoutes && authRoutes.map((route, index) => {
-                        if (route.path === '/tournament-submission' && userData.role !== 'clubRep') {
+                    {loggedIn && authRoutes && authRoutes.map((route, index) => {
+                        if ((route.path === '/tournament-submission' && userData.role !== 'clubRep') ||
+                            (route.path === '/chats' && userData.role !== 'player')) {
                         } else {
                             return (
                                 <div className="flex-column" key={index}>
@@ -113,7 +114,7 @@ const NavBar = ({ unauthRoutes, authRoutes, unauthRouteLast }) => {
                                 </div>
                             )
                         }
-                    })} */}
+                    })}
                     {unauthRouteLast && unauthRouteLast.map((route, index) => (
                         <div className="flex-column" key={index}>
                             <NavLink

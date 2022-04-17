@@ -1,3 +1,30 @@
+export const testTournamentData = {
+    tournamentName: "Test Tournament Name", 
+    clubName: "Test Club Name", 
+    description: "Welcome to the annual Test Tournament hre in sunny Sofia! This is the biggest tournament in the history of amateur tennis tournaments here in Bulgaria hosted by your beloved Test Club Name. Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+    city: "Sofia",
+    country: "Bulgaria",
+    street: "Borisova Garden, NTC",
+    zipCode: "1632",
+    startDate: "2023-02-15T12:04:46.000Z",
+    endDate: "2023-02-18T12:04:47.000Z",
+    tournamentDirector: "Kristina Kapitanova",
+    tournamentDirectorPhone: "+1 (233) 23",
+    genderGroup: "Mixed",
+    ageGroups:["U60"],
+    drawType: "singlesAndDoubles","entryTax":"75",
+    prizeMoney: "20000",
+    medicalTeamOnSite: false,
+    onSiteSignupDeadline: "2023-02-14T12:04:46.000Z",
+    qualification: true,
+    qualificationStartDate: '2023-02-15T12:04:46.000Z',
+    qualificationEndDate: "2023-02-16T12:04:47.000Z",
+    singlesDrawSize: '64',
+    qualifyingDrawSize: '16',
+    doublesDrawSize: '32',
+    mixedDoublesDrawSize: '16'
+}
+
 export const mockRanking = [
     {
         ageGroup: 'U40',

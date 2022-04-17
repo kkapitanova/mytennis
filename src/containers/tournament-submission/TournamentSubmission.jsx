@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { getDateString, handleLogout, getDraws, getDateTimeString } from '../../utils/helpers';
-import { tournamentSubmissionMinDate, tournamentOnSiteSignupDeadline } from '../../data/constants';
+import {
+    getDateString, 
+    handleLogout, 
+    getDraws, 
+    getDateTimeString,
+    getTournamentSubmissionMinDate, 
+    getTournamentOnSiteSignupDeadline  
+} from '../../utils/helpers';
 import { useHistory } from 'react-router-dom';
+import { testTournamentData } from '../../data/dummyData';
+import { initialTournamentData } from '../../data/constants';
 
 // material imports
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
@@ -53,35 +61,6 @@ const style = {
     p: 4,
 };
 
-// initial tournament state
-const initialTournamentData = {
-    tournamentName: '',
-    description: '',
-    city: '',
-    country: '',
-    street: '',
-    zipCode: '',
-    clubName: '',
-    startDate: '',
-    endDate: '',
-    tournamentDirector: '',
-    tournamentDirectorPhone: '',
-    genderGroup: '',
-    ageGroups: [],
-    drawType: '',
-    entryTax: '',
-    prizeMoney: '',
-    medicalTeamOnSite: false,
-    onSiteSignupDeadline: '',
-    qualification: false,
-    qualificationStartDate: '',
-    qualificationEndDate: '',
-    mainDrawSize: '',
-    qualifyingDrawSize: '',
-    doublesDrawSize: '',
-    mixedDoublesDrawSize: ''
-}
-
 const TournamentSubmission = () => {
     const userData = JSON.parse(sessionStorage.getItem('userData')) || {} // TODO: replace with function that fetches data from firebase
     const [tournamentData, setTournamentData] = useState(initialTournamentData)
@@ -90,38 +69,24 @@ const TournamentSubmission = () => {
     const history = useHistory()
 
     const fillWithTestData = () => {
-        setTournamentData({
-            tournamentName: "Test Tournament Name", 
-            clubName: "Test Club Name", 
-            description: "Welcome to the annual Test Tournament hre in sunny Sofia! This is the biggest tournament in the history of amateur tennis tournaments here in Bulgaria hosted by your beloved Test Club Name. Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-            city: "Sofia",
-            country: "Bulgaria",
-            street: "Borisova Garden, NTC",
-            zipCode: "1632",
-            startDate: "2023-02-15T12:04:46.000Z",
-            endDate: "2023-02-18T12:04:47.000Z",
-            tournamentDirector: "Kristina Kapitanova",
-            tournamentDirectorPhone: "+1 (233) 23",
-            genderGroup: "Mixed",
-            ageGroups:["U60"],
-            drawType: "singlesAndDoubles","entryTax":"75",
-            prizeMoney: "20000",
-            medicalTeamOnSite: false,
-            onSiteSignupDeadline: "2023-02-14T12:04:46.000Z",
-            qualification: true,
-            qualificationStartDate: '2023-02-15T12:04:46.000Z',
-            qualificationEndDate: "2023-02-16T12:04:47.000Z",
-            mainDrawSize: '64',
-            qualifyingDrawSize: '16',
-            doublesDrawSize: '32',
-            mixedDoublesDrawSize: '16'
-        })
+        setTournamentData(testTournamentData)
     }
 
+    // check if all required fields are filled in based on tournament configurations
     const validateFields = () => {
         let bool = false
+
         for (const key in tournamentData) {
-            if (tournamentData[key] !== initialTournamentData[key]) {
+            if (((tournamentData.qualification === false ? key !== 'qualifyingDrawSize' &&
+                key !== 'qualificationStartDate' &&
+                key !== 'qualificationEndDate' : true) &&
+                (tournamentData.drawType === 'singles' ? 
+                key !== 'doublesDrawSize' && 
+                key !== 'mixedDoublesDrawSize' : tournamentData.drawType === 'doubles' ? 
+                key !== 'singlesDrawSize' : true) &&
+                (tournamentData.genderGroup !== 'Mixed' ? key !== 'mixedDoublesDrawSize' : true)) &&
+                tournamentData[key] === initialTournamentData[key]
+                ) {
                 bool = true
             }
         }
@@ -347,7 +312,8 @@ const TournamentSubmission = () => {
                                     <div className="flex wrap">
                                         <DateTimePicker
                                             label="Deadline"
-                                            minDate={tournamentOnSiteSignupDeadline(tournamentData.startDate)}
+                                            maxDate={tournamentData.startDate || null}
+                                            minDate={getTournamentOnSiteSignupDeadline(tournamentData.startDate)}
                                             value={tournamentData.onSiteSignupDeadline || null}
                                             onChange={val => handleChange(val, "onSiteSignupDeadline")}
                                             renderInput={(params) => <TextField {...params} sx={{margin: '0px 10px 10px 0px !important', width: 220}}/>}
@@ -363,14 +329,14 @@ const TournamentSubmission = () => {
                                     <div className="flex wrap">
                                         <DesktopDatePicker
                                             label="Start Date"
-                                            minDate={tournamentSubmissionMinDate()}
+                                            minDate={getTournamentSubmissionMinDate()}
                                             value={tournamentData.startDate || null}
                                             onChange={val => handleChange(val, "startDate")}
                                             renderInput={(params) => <TextField {...params} sx={{margin: '0px 10px 10px 0px !important', width: 200}}/>}
                                         />
                                         <DesktopDatePicker
                                             label="End Date"
-                                            minDate={tournamentData.startDate || tournamentSubmissionMinDate()}
+                                            minDate={tournamentData.startDate || getTournamentSubmissionMinDate()}
                                             value={tournamentData.endDate || null}
                                             onChange={val => handleChange(val, "endDate")}
                                             renderInput={(params) => <TextField {...params} sx={{width: 200}}/>}
@@ -400,15 +366,15 @@ const TournamentSubmission = () => {
                                     <div className="flex wrap">
                                         <DesktopDatePicker
                                             label="Start Date"
-                                            minDate={tournamentData.startDate || tournamentSubmissionMinDate()}
+                                            minDate={tournamentData.startDate || getTournamentSubmissionMinDate()}
                                             maxDate={tournamentData.endDate}
-                                            value={tournamentData.qualificationStartDate || tournamentData.startDate || null}
+                                            value={tournamentData.qualificationStartDate || null}
                                             onChange={val => handleChange(val, "qualificationStartDate")}
                                             renderInput={(params) => <TextField {...params} sx={{margin: '0px 10px 10px 0px !important', width: 200}}/>}
                                         />
                                         <DesktopDatePicker
                                             label="End Date"
-                                            minDate={tournamentData.qualificationStartDate || tournamentData.startDate || tournamentSubmissionMinDate()}
+                                            minDate={tournamentData.qualificationStartDate || tournamentData.startDate || getTournamentSubmissionMinDate()}
                                             maxDate={tournamentData.endDate}
                                             value={tournamentData.qualificationEndDate || null}
                                             onChange={val => handleChange(val, "qualificationEndDate")}
@@ -457,20 +423,20 @@ const TournamentSubmission = () => {
                             </FormControl>
                         </div>
                         <div className="flex wrap justify-start">
-                            <FormControl sx={{margin: "0 50px 20px 0"}}>
-                                <FormLabel id="main-draw-size-label" sx={{textAlign: "left"}} required>Main Draw Size</FormLabel>
+                            {tournamentData.drawType !== 'doubles' && <FormControl sx={{margin: "0 50px 20px 0"}}>
+                                <FormLabel id="main-draw-size-label" sx={{textAlign: "left"}} required>Singles Draw Size</FormLabel>
                                 <RadioGroup
                                     aria-labelledby="main-draw-size-label"
                                     defaultValue="female"
                                     name="radio-buttons-group"
                                 >
-                                    <FormControlLabel value="8" control={<Radio checked={tournamentData.mainDrawSize === "8"} onChange={(e) => handleRadioButtonChange(e, "mainDrawSize")}/>} label="8" />
-                                    <FormControlLabel value="16" control={<Radio checked={tournamentData.mainDrawSize === "16"} onChange={(e) => handleRadioButtonChange(e, "mainDrawSize")}/>} label="16" />
-                                    <FormControlLabel value="32" control={<Radio checked={tournamentData.mainDrawSize === "32"} onChange={(e) => handleRadioButtonChange(e, "mainDrawSize")}/>} label="32" />
-                                    <FormControlLabel value="64" control={<Radio checked={tournamentData.mainDrawSize === "64"} onChange={(e) => handleRadioButtonChange(e, "mainDrawSize")}/>} label="64" />
-                                    <FormControlLabel value="128" control={<Radio checked={tournamentData.mainDrawSize === "128"} onChange={(e) => handleRadioButtonChange(e, "mainDrawSize")}/>} label="128" />
+                                    <FormControlLabel value="8" control={<Radio checked={tournamentData.singlesDrawSize === "8"} onChange={(e) => handleRadioButtonChange(e, "singlesDrawSize")}/>} label="8" />
+                                    <FormControlLabel value="16" control={<Radio checked={tournamentData.singlesDrawSize === "16"} onChange={(e) => handleRadioButtonChange(e, "singlesDrawSize")}/>} label="16" />
+                                    <FormControlLabel value="32" control={<Radio checked={tournamentData.singlesDrawSize === "32"} onChange={(e) => handleRadioButtonChange(e, "singlesDrawSize")}/>} label="32" />
+                                    <FormControlLabel value="64" control={<Radio checked={tournamentData.singlesDrawSize === "64"} onChange={(e) => handleRadioButtonChange(e, "singlesDrawSize")}/>} label="64" />
+                                    <FormControlLabel value="128" control={<Radio checked={tournamentData.singlesDrawSize === "128"} onChange={(e) => handleRadioButtonChange(e, "singlesDrawSize")}/>} label="128" />
                                 </RadioGroup>
-                            </FormControl>
+                            </FormControl>}
                             {tournamentData.qualification && <FormControl sx={{margin: "0 50px 20px 0"}}>
                                 <FormLabel id="qualifying-draw-size-label" sx={{textAlign: "left"}} required>Qualifiying Draw Size</FormLabel>
                                 <RadioGroup
@@ -492,7 +458,7 @@ const TournamentSubmission = () => {
                                     defaultValue="female"
                                     name="radio-buttons-group"
                                 >
-                                    <FormControlLabel value="8" control={<Radio checked={tournamentData.doublesDrawSize === "16"} onChange={(e) => handleRadioButtonChange(e, "doublesDrawSize")}/>} label="8" />
+                                    <FormControlLabel value="8" control={<Radio checked={tournamentData.doublesDrawSize === "8"} onChange={(e) => handleRadioButtonChange(e, "doublesDrawSize")}/>} label="8" />
                                     <FormControlLabel value="16" control={<Radio checked={tournamentData.doublesDrawSize === "16"} onChange={(e) => handleRadioButtonChange(e, "doublesDrawSize")}/>} label="16" />
                                     <FormControlLabel value="32" control={<Radio checked={tournamentData.doublesDrawSize === "32"} onChange={(e) => handleRadioButtonChange(e, "doublesDrawSize")}/>} label="32" />
                                     <FormControlLabel value="64" control={<Radio checked={tournamentData.doublesDrawSize === "64"} onChange={(e) => handleRadioButtonChange(e, "doublesDrawSize")}/>} label="64" />
@@ -519,9 +485,9 @@ const TournamentSubmission = () => {
                                 <FormControl>
                                     <InputLabel id="main-draw-size-label" required>Main Draw Size</InputLabel>
                                     <Select
-                                        name='mainDrawSize'
+                                        name='singlesDrawSize'
                                         id="main-draw-size"
-                                        value={tournamentData.mainDrawSize}
+                                        value={tournamentData.singlesDrawSize}
                                         label="Main Draw Size"
                                         sx={{width: 200, margin: '0px 10px 10px 0px'}}
                                         onChange={handleSelectChange}
@@ -632,12 +598,12 @@ const TournamentSubmission = () => {
                         </div>
                         <div className="flex wrap">
                             {/* <button className='button action-button' type="submit" style={{marginRight: 10}} disabled={validateFields()}>Submit</button> */}
-                            <Button variant="contained" sx={{height: 40, margin: '0px 10px 10px 0px !important'}} type="submit" endIcon={<SendIcon />}>Submit</Button> 
+                            <Button variant="contained" sx={{height: 40, margin: '0px 10px 10px 0px !important'}} type="submit" disabled={validateFields()} endIcon={<SendIcon />}>Submit</Button> 
                             {/* //TODO: disabled state when not all data fields are entered*/}
                             <Button variant="contained" sx={{height: 40, margin: '0px 10px 10px 0px !important'}} onClick={fillWithTestData}>FILL WITH TEST DATA</Button>
                             {checkIfInfoIsFilledIn() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} sx={{height: 40, margin: '0px 10px 0px 0px !important'}} onClick={clearFields}>Clear Fields</Button>}
                         </div>
-                        {displayError && <div className="error">Please fill in all of the fields above.</div>}
+                        {validateFields() && <div className="error">Please fill in all of the fields above.</div>}
                         <Modal
                             aria-labelledby="transition-modal-title"
                             aria-describedby="transition-modal-description"
@@ -678,7 +644,7 @@ const TournamentSubmission = () => {
                                             </div>
                                             <div className="flex-column justify-start" style={{marginBottom: 30}}> 
                                                 <div style={{marginBottom: 5}}>Draw size(s):</div>
-                                                {tournamentData.drawType !== "doubles" && tournamentData.mainDrawSize && <div>Main Draw: {tournamentData.mainDrawSize}</div>}
+                                                {tournamentData.drawType !== "doubles" && tournamentData.singlesDrawSize && <div>Main Draw: {tournamentData.singlesDrawSize}</div>}
                                                 {tournamentData.drawType !== "singles" && tournamentData.doublesDrawSize && <div>Doubles Draw: {tournamentData.doublesDrawSize}</div>}
                                                 {tournamentData.drawType !== "singles" && tournamentData.genderGroup?.toLowerCase() === "mixed" && tournamentData.mixedDoublesDrawSize && <div>Mixed Doubles Draw: {tournamentData.mixedDoublesDrawSize}</div>}
                                             </div>
