@@ -50,7 +50,7 @@ const Rankings = ({ topTen = false }) => {
     const history = useHistory()
     const [search, setSearch] = useState({
         name: '',
-        nationCompetingFor: '',
+        countryOfBirth: '',
         ageGroup: '',
         genderGroup: '',
         draw: 'Singles'
@@ -117,7 +117,7 @@ const Rankings = ({ topTen = false }) => {
         
             return {
                 name: `${currentPlayer?.firstName} ${currentPlayer?.familyName}`,
-                nationCompetingFor: currentPlayer?.countryOfBirth,
+                countryOfBirth: currentPlayer?.countryOfBirth,
                 age: getAge(currentPlayer?.dateOfBirth),
                 pointsWon: rankingData[p]?.pointsWon,
                 id: currentPlayer?.userID
@@ -142,7 +142,9 @@ const Rankings = ({ topTen = false }) => {
 
 
     const handleRowClick = (playerData) => {
-        const playerIndex =  players.findIndex(el => el.playerId === playerData.id)
+        console.log(playerData)
+        console.log(players)
+        const playerIndex = players.findIndex(el => el.userID === playerData.id)
         const current = players[playerIndex]
 
         setCurrentPlayer(current)
@@ -170,11 +172,11 @@ const Rankings = ({ topTen = false }) => {
         }
 
         if (name === "name") {
-            sortedAndFilteredData = categorizedData.filter(player => player.name.toLowerCase().includes(value.toLowerCase())).filter(player => player.nationCompetingFor.toLowerCase().includes(search.nationCompetingFor.toLowerCase()));
+            sortedAndFilteredData = categorizedData.filter(player => player.name.toLowerCase().includes(value.toLowerCase())).filter(player => player.countryOfBirth.toLowerCase().includes(search.countryOfBirth.toLowerCase()));
         }
 
-        if (name === "nationCompetingFor") {
-            sortedAndFilteredData = categorizedData.filter(player => player.name.toLowerCase().includes(search.name.toLowerCase())).filter(player => player.nationCompetingFor.toLowerCase().includes(value.toLowerCase()));
+        if (name === "countryOfBirth") {
+            sortedAndFilteredData = categorizedData.filter(player => player.name.toLowerCase().includes(search.name.toLowerCase())).filter(player => player.countryOfBirth.toLowerCase().includes(value.toLowerCase()));
         }
 
         setData(sortedAndFilteredData)
@@ -184,7 +186,7 @@ const Rankings = ({ topTen = false }) => {
         let bool = false
 
         for (const key in search) {
-            if (search.name || search.nationCompetingFor) {
+            if (search.name || search.countryOfBirth) {
                 bool = true
             }
         }
@@ -193,7 +195,7 @@ const Rankings = ({ topTen = false }) => {
     }
 
     const clearFilters = () => {
-        setSearch({...search, name: '', nationCompetingFor: ''})
+        setSearch({...search, name: '', countryOfBirth: ''})
         setData(getData())
     }
 
@@ -235,6 +237,10 @@ const Rankings = ({ topTen = false }) => {
         }
     }, [location])
 
+    useEffect(() => {
+        console.log(currentPlayer)
+    }, [currentPlayer])
+
     return (
         <div className='container'>
             <h3 className="accent-color" style={{textAlign: 'left'}}>{topTen ? 'Top 10 Currently' : "Search through Rankings"}</h3>
@@ -251,12 +257,12 @@ const Rankings = ({ topTen = false }) => {
                         style={{minWidth: 200, margin: '0 5px 10px 0'}}
                     />
                     <TextField
-                        name="nationCompetingFor"
+                        name="countryOfBirth"
                         id="outlined-basic"
                         label="Search by nation"
                         variant="outlined"
                         size="small"
-                        value={search.nationCompetingFor}
+                        value={search.countryOfBirth}
                         onChange={handleSearchChange}
                         style={{minWidth: 200, margin: '0 5px 10px 0'}}
                     />
@@ -333,7 +339,7 @@ const Rankings = ({ topTen = false }) => {
                     <div className="flex-column">
                         <h2 className="accent-color" style={{fontWeight: '500'}}>{currentPlayer?.firstName}&nbsp;{currentPlayer?.familyName}</h2>
                         <div style={{marginBottom: 5}}>Gender: {currentPlayer?.gender}</div>
-                        <div style={{marginBottom: 5}}>Nation Competing For:&nbsp;{currentPlayer?.nationCompetingFor}</div>
+                        <div style={{marginBottom: 5}}>Nation Competing For:&nbsp;{currentPlayer?.countryOfBirth}</div>
                         <div style={{marginBottom: 5}}>Date of Birth:&nbsp;{moment(new Date(currentPlayer?.dateOfBirth)).format('D MMMM YYYY')}</div>
                     </div>
                 </Box>
