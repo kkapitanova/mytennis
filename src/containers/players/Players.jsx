@@ -36,12 +36,10 @@ const style = {
 };
 
 const tableRowHeaders = [
-    // 'Ranking', 
     'Name', 
     'Competes For', 
-    'Gender',
     'Age', 
-    // 'Points Won'
+    'Gender',
 ]
 
 const checkAgeGroupMatch = (age, ageGroup) => {
@@ -208,7 +206,7 @@ const Rankings = () => {
 
     return (
         <div className='container'>
-            <h3 className="accent-color" style={{textAlign: 'left'}}>Search through Rankings</h3>
+            <h3 className="accent-color" style={{textAlign: 'left'}}>Search through Players</h3>
             <div className='flex wrap justify-between'>
                 <div className="flex wrap" style={{minWidth: '250px', maxWidth: "60%"}}>
                     <TextField

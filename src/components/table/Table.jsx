@@ -1,4 +1,6 @@
 import * as React from 'react';
+
+// material imports
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -6,6 +8,9 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+
+// styles
+import './Table.scss'
 
 const BasicTable = ({ tableData, rowHeaders, onRowClick }) => {
 
@@ -90,7 +95,7 @@ const BasicTable = ({ tableData, rowHeaders, onRowClick }) => {
             </TableContainer>
         );
     } else {
-        return <div>No data available.</div>
+        return <div className="no-data-message full-width">No data available.</div>
     }
 }
 

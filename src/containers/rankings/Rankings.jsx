@@ -262,75 +262,79 @@ const Rankings = ({ topTen = false }) => {
         <div className='container'>
             <h3 className="accent-color" style={{textAlign: 'left'}}>{topTen ? 'Top 10 Currently' : "Search through Rankings"}</h3>
             <div className='flex wrap justify-between'>
-                <div className="flex wrap" style={{minWidth: '250px', maxWidth: "60%"}}>
-                    <TextField
-                        name="name"
-                        id="outlined-basic"
-                        label="Search by name"
-                        variant="outlined"
-                        size="small"
-                        value={search.name}
-                        onChange={handleSearchChange}
-                        style={{minWidth: 200, margin: '0 5px 10px 0'}}
-                    />
-                    <TextField
-                        name="countryOfBirth"
-                        id="outlined-basic"
-                        label="Search by nation"
-                        variant="outlined"
-                        size="small"
-                        value={search.countryOfBirth}
-                        onChange={handleSearchChange}
-                        style={{minWidth: 200, margin: '0 5px 10px 0'}}
-                    />
-                    <TextField
-                        id="outlined-select-currency"
-                        name="ageGroup"
-                        select
-                        // label="Age Group"
-                        value={search.ageGroup}
-                        onChange={handleSearchChange}
-                        size="small"
-                        sx={{width: 150, margin: '0 5px 10px 0 !important'}}
-                    >
-                        {ageGroups.map((option, index) => (
-                            <MenuItem key={index} value={option}>
-                                {option}
-                            </MenuItem>
-                        ))}
-                    </TextField>
-                    <TextField
-                        id="outlined-select-currency"
-                        name="genderGroup"
-                        select
-                        // label="Gender Group"
-                        value={search.genderGroup}
-                        onChange={(e) => handleSearchChange(e)}
-                        size="small"
-                        sx={{width: 150, margin: '0 5px 10px 0'}}
-                    >
-                        {genderGroups.map((option, index) => (
-                            <MenuItem key={index} value={option}>
-                                {option}
-                            </MenuItem>
-                        ))}
-                    </TextField>
-                    <TextField
-                        id="outlined-select-currency"
-                        name="draw"
-                        select
-                        // label="List"
-                        value={search.genderGroup !== 'Mixed' ? search.draw : 'Doubles'}
-                        onChange={handleSearchChange}
-                        size="small"
-                        sx={{width: 200, margin: '0 5px 10px 0 !important'}}
-                    >
-                        {draws.map((option, index) => (
-                            <MenuItem key={index} value={option}>
-                                {option}
-                            </MenuItem>
-                        ))}
-                    </TextField>
+                <div className="flex-column wrap" style={{minWidth: '250px', maxWidth: "60%"}}>
+                    <div className="flex wrap">
+                        <TextField
+                            name="name"
+                            id="outlined-basic"
+                            label="Search by name"
+                            variant="outlined"
+                            size="small"
+                            value={search.name}
+                            onChange={handleSearchChange}
+                            style={{minWidth: 200, margin: '0 5px 10px 0'}}
+                        />
+                        <TextField
+                            name="countryOfBirth"
+                            id="outlined-basic"
+                            label="Search by nation"
+                            variant="outlined"
+                            size="small"
+                            value={search.countryOfBirth}
+                            onChange={handleSearchChange}
+                            style={{minWidth: 200, margin: '0 5px 10px 0'}}
+                        />
+                    </div>
+                    <div className="flex wrap">
+                        <TextField
+                            id="outlined-select-currency"
+                            name="ageGroup"
+                            select
+                            // label="Age Group"
+                            value={search.ageGroup}
+                            onChange={handleSearchChange}
+                            size="small"
+                            sx={{width: 150, margin: '0 5px 10px 0 !important'}}
+                        >
+                            {ageGroups.map((option, index) => (
+                                <MenuItem key={index} value={option}>
+                                    {option}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+                        <TextField
+                            id="outlined-select-currency"
+                            name="genderGroup"
+                            select
+                            // label="Gender Group"
+                            value={search.genderGroup}
+                            onChange={(e) => handleSearchChange(e)}
+                            size="small"
+                            sx={{width: 150, margin: '0 5px 10px 0'}}
+                        >
+                            {genderGroups.map((option, index) => (
+                                <MenuItem key={index} value={option}>
+                                    {option}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+                        <TextField
+                            id="outlined-select-currency"
+                            name="draw"
+                            select
+                            // label="List"
+                            value={search.genderGroup !== 'Mixed' ? search.draw : 'Doubles'}
+                            onChange={handleSearchChange}
+                            size="small"
+                            sx={{width: 200, margin: '0 5px 10px 0 !important'}}
+                        >
+                            {draws.map((option, index) => (
+                                <MenuItem key={index} value={option}>
+                                    {option}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+                    </div>
                 </div>
                 <div clasName="flex align-start">
                     {filterApplied() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} sx={{height: 40, margin: '0px !important'}} onClick={clearFilters}>Clear Search</Button>}
