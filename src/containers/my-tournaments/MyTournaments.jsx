@@ -106,13 +106,13 @@ const MyTournaments = () => {
     const updateCurrentPlayerPoints = (draw, id, pointsWon) => {
         const updates = {}
 
-        get(child(dbRef, 'rankings/' + draw + '/' + id)).then((snapshot) => {
+        get(child(dbRef, `rankings/${draw}/${id}`)).then((snapshot) => {
             if (snapshot.exists()) {
                 const currentPlayerPoints = snapshot.val().pointsWon
-                updates['/rankings/' + `${draw}/` + id] = { playerID: id, pointsWon: parseInt(pointsWon) + currentPlayerPoints, updated: new Date() };
+                updates[`/rankings/${draw}/${id}`] = { playerID: id, pointsWon: parseInt(pointsWon) + currentPlayerPoints, updated: new Date() };
 
             } else {
-                updates['/rankings/' + `${draw}/` + id] = { playerID: id, pointsWon: parseInt(pointsWon), updated: new Date()};
+                updates[`/rankings/${draw}/${id}`] = { playerID: id, pointsWon: parseInt(pointsWon), updated: new Date()};
                 console.log("No data available");
             }
 

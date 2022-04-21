@@ -159,7 +159,7 @@ const Profile = () => {
         .then(() => {
             sessionStorage.setItem('userData', JSON.stringify(updatedData))
             toast.success("You have updated your profile successfully.")
-            setIsCompleteProfile(false)
+            setIsCompleteProfile(true)
         })
         .catch((error) => {
             console.log("error: ", error)
@@ -200,9 +200,9 @@ const Profile = () => {
 
     useEffect(() => {
         if (!userData.firstName) {
-            setIsCompleteProfile(true)
-        } else {
             setIsCompleteProfile(false)
+        } else {
+            setIsCompleteProfile(true)
         }
     }, [location.pathname, history])
 
