@@ -124,16 +124,10 @@ const Rankings = () => {
 
             return 0;
         })
-        const organizedTableData = sortedTableData.map((player, index) => {
-            return {
-                // ranking: index + 1,
-                ...player
-            }
-        })
 
-        setCategorizedData([...organizedTableData])
+        setCategorizedData([...sortedTableData])
 
-        return organizedTableData
+        return sortedTableData
     }
 
 

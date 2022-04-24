@@ -53,7 +53,18 @@ const PointsDistribution = ({
                 // setIsLoading(false)
             }
 
-            setPlayers(playersArr)
+            // sort players alphabetically
+            setPlayers(playersArr.sort((a, b) => {
+                if (a.name < b.name) { 
+                    return -1; 
+                }
+    
+                if (a.name > b.bame) { 
+                    return 1; 
+                }
+    
+                return 0;
+            }))
 
             }).catch((error) => {
                 console.error(error);
