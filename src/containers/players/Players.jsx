@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table } from '../../components';
-import { getAge } from '../../utils/helpers'
+import { getAge, checkAgeGroupMatch } from '../../utils/helpers'
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import { ageGroups, genderGroups } from '../../data/constants';
@@ -41,20 +41,6 @@ const tableRowHeaders = [
     'Age', 
     'Gender',
 ]
-
-const checkAgeGroupMatch = (age, ageGroup) => {
-    switch (ageGroup) {
-        case 'U40':
-            return age <= 40
-        case 'U60':
-            return age <= 60
-        case '60+':
-            return age > 60
-        default:
-            return true
-    }
-
-}
 
 const Rankings = () => {
     const [search, setSearch] = useState({
@@ -101,7 +87,7 @@ const Rankings = () => {
         // display only the players which match the filters
         const tableData = players.map(player => {
             if ((search.genderGroup === 'All' || player.gender.toLowerCase() === search.genderGroup.toLowerCase()) &&
-                checkAgeGroupMatch(getAge(player?.dateOfBirth), search.ageGroup)) {
+                checkAgeGroupMatch(search.ageGroup, getAge(player?.dateOfBirth))) {
                 return {
                     name: `${player?.firstName} ${player?.familyName}`,
                     countryOfBirth: player?.countryOfBirth,

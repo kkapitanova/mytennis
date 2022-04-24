@@ -26,7 +26,6 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ClearIcon from '@mui/icons-material/Clear';
 
 // country dropdown
-// import Select from 'react-select'
 import countryList from 'react-select-country-list'
 
 // toast
@@ -36,9 +35,6 @@ import { toast } from 'react-toastify';
 import { getDatabase, ref, set } from "firebase/database";
 
 const database = getDatabase();
-
-// trim trailing and leading spaces
-// replace(/^\s+|\s+$/gm,'')
 
 const Profile = () => {
 
@@ -75,6 +71,7 @@ const Profile = () => {
 
     const dataUsageError = !(dataConfirmCheck && termsCheck)
 
+    // input validation
     const isDisabled = () => {
         const { 
             firstName, 
@@ -110,6 +107,7 @@ const Profile = () => {
             }
     }
 
+    // update DB
     const handleDataUpdate = () => {
         const {
             firstName, 
@@ -153,8 +151,6 @@ const Profile = () => {
         setData(updatedData)
         setUserData(updatedData)
 
-        console.log("updatedData", updatedData)
-
         set(ref(database, 'users/' + userID), updatedData)
         .then(() => {
             sessionStorage.setItem('userData', JSON.stringify(updatedData))
@@ -191,16 +187,12 @@ const Profile = () => {
     }
 
     useEffect(() => {
-        window.scrollTo(0,0)
+        window.scrollTo(0,0) // avoid scroll preservation
     }, [])
 
     useEffect(() => {
-        console.log(sectionSelected)
-    }, [sectionSelected])
-
-    useEffect(() => {
         if (!userData.firstName) {
-            setIsCompleteProfile(false)
+            setIsCompleteProfile(false) // complete profile indicator
         } else {
             setIsCompleteProfile(true)
         }

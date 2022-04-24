@@ -5,6 +5,7 @@ export const testTournamentData = {
     city: "Sofia",
     country: "Bulgaria",
     courtSurface: 'Indoor Clay',
+    courtsNumber: 24,
     street: "Borisova Garden, NTC",
     zipCode: "1632",
     startDate: "2023-02-15T12:04:46.000Z",

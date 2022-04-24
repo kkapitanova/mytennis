@@ -1,8 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Table } from '../../components';
-import { sortData, getDateString, objectToArrayConverter, getDraws, getDateTimeString, getAge } from '../../utils/helpers'
+import { 
+    sortData, 
+    getDateString, 
+    objectToArrayConverter, 
+    getDraws, 
+    getDateTimeString, 
+    getAge, 
+    checkAgeGroupEligibility 
+} from '../../utils/helpers'
 import { useLocation } from 'react-router';
-import { ageGroups, genderGroups, months, upcomingYears, previousYears, allYears } from '../../data/constants';
+import { 
+    ageGroups, 
+    genderGroups, 
+    months, 
+    upcomingYears, 
+    previousYears, 
+    allYears 
+} from '../../data/constants';
 
 //firebase
 import { getDatabase, ref, child, get, update} from "firebase/database";
@@ -24,6 +39,8 @@ import CheckIcon from '@mui/icons-material/Check';
 
 // toast
 import { toast } from 'react-toastify';
+
+import './TournamentCalendar.scss';
 
 const database = getDatabase()
 const dbRef = ref(database);
@@ -52,12 +69,16 @@ const tableRowHeaders = [
 
 const enteredPlayersTableRowHeaders = [
     'Name', 
+    'Age', 
+    'Gender',
     'Entry Date',
     'Status'
 ]
 
 const withdrawedPlayersTableRowHeaders = [
     'Name', 
+    'Age', 
+    'Gender',
     'Withdrawal Date',
     'Status'
 ]
@@ -77,7 +98,7 @@ const TournamentCalendar = () => {
     }) 
     const [data, setData] = useState([]) // data displayed in the table
     const [dataByCategories, setDataByCategories] = useState([]) // data filtered by categories (gender, age, etc.)
-    const [tournamentsDisplay, setTournamentsDisplay] = useState("upcoming") // toggle between archive and upcoming tournaments
+    const [tournamentsDisplay, setTournamentsDisplay] = useState("upcoming") // toggle between past and upcoming tournaments
 
     const [currentTournament, setCurrentTournament] = useState()
     const [open, setOpen] = useState(false)
@@ -88,13 +109,6 @@ const TournamentCalendar = () => {
 
     // get the players signed up for the current tournament
     const getSignedUpPlayers = (playersSignedUp, withdrawed = false) => {
-
-        const test = [{
-            name: "Kristina Kapitanova",
-            date: getDateString(new Date ().toString()),
-            status: "Entered"
-        }]    
-
         const playersData = []
     
         Object.keys(playersSignedUp).map((key, index) => {
@@ -103,14 +117,20 @@ const TournamentCalendar = () => {
             if (withdrawed && player.withdrawed && player.withdrawalTime) {
                 playersData.push({
                     name: player.name,
+                    age: player.age,
+                    gender: player.gender,
                     time: getDateString(player.withdrawalTime),
-                    status: 'Withdrawn'
+                    status: 'Withdrawn',
+                    id: player.playerID,
                 })
             } else if (!withdrawed && !player.withdrawed && !player.withdrawalTime) {
                 playersData.push({
                     name: player.name,
+                    age: player.age,
+                    gender: player.gender,
                     time: getDateString(player.signUpTime),
-                    status: 'Entered'
+                    status: 'Entered',
+                    id: player.playerID,
                 })
             }
         })
@@ -158,8 +178,8 @@ const TournamentCalendar = () => {
                 (t.startDate + t.endDate).includes(search.year) && 
                 t.status.toLowerCase() !== 'waiting for approval' && t.status.toLowerCase() !== 'declined' &&
                 
-                // UPCOMING TOURNAMENTS VS ARCHIVED TOURNAMENTS VS ALL TOURNAMENTS
-                (tournamentsDisplay === 'upcoming' ? new Date (t.endDate).getTime() > new Date ().getTime() : tournamentsDisplay === 'archive' ? new Date (t.endDate).getTime() < new Date ().getTime() : true)
+                // UPCOMING TOURNAMENTS VS pastD TOURNAMENTS VS ALL TOURNAMENTS
+                (tournamentsDisplay === 'upcoming' ? new Date (t.endDate).getTime() > new Date ().getTime() : tournamentsDisplay === 'past' ? new Date (t.endDate).getTime() < new Date ().getTime() : true)
             ) {
                 tournamentData.push({
                     location: `${t.city}, ${t.country}`,
@@ -186,6 +206,7 @@ const TournamentCalendar = () => {
         return organizedTableData
     }
 
+    // open modal with tournament info
     const handleRowClick = (tournamentData) => {
         const tournamentIndex = allData.findIndex(el => el.tournamentID === tournamentData.id)
         const current = allData[tournamentIndex]
@@ -248,6 +269,40 @@ const TournamentCalendar = () => {
         return bool
     }
 
+    // PLAYER ROLE - confirm sign up for tournament
+    const confirmSignUp = () => {
+        if (entryButtonText === 'Enter') {
+            setEntryButtonText("Confirm Entry")
+        } else {
+            const updates = {};
+            updates['tournaments/' + currentTournament.tournamentID + '/playersSignedUp/' + userData.userID] = {
+                name: `${userData.firstName}\xa0${userData.middleName}\xa0${userData.familyName}`,
+                countryOfBirth: userData.countryOfBirth,
+                signUpTime: new Date(), 
+                signedUp: true,
+                playerID: userData.userID, 
+                age: getAge(userData.dateOfBirth),
+                gender: userData.gender
+            };
+
+            update(dbRef, updates)
+            .then(() => {
+                fetchTournaments()
+                toast.success("You have entered the tournament succesfully.")
+                toast.info("You can view tournaments you've signed up for in the 'My Tournaments' section.")
+            })
+            .catch((error) => {
+                console.log("Error: ", error)
+                toast.error('An error has occured. Please try again.')
+            })
+
+            setOpen(false)
+            setEntryButtonText("Enter")
+
+        }
+    }
+
+    // PLAYER ROLE - confirm withdrawal from tournament
     const confirmWithdrawal = () => {
         if (withdrawalButtonText === 'Withdraw') {
             setWithdrawalButtonText("Confirm Withdrawal")
@@ -272,40 +327,19 @@ const TournamentCalendar = () => {
         }
     }
 
-    const confirmSignUp = () => {
-        if (entryButtonText === 'Enter') {
-            setEntryButtonText("Confirm Entry")
-        } else {
-            const updates = {};
-            updates['tournaments/' + currentTournament.tournamentID + '/playersSignedUp/' + userData.userID] = {
-                name: `${userData.firstName}\xa0${userData.middleName}\xa0${userData.familyName}`,
-                countryOfBirth: userData.countryOfBirth,
-                signUpTime: new Date(), 
-                signedUp: true,
-                playerID: userData.userID, 
-                ageGroup: getAge(userData.dateOfBirth) > 60 ? '60+' : getAge(userData.dateOfBirth) > 40 ? "U60" : 'U40',
-                genderGroup: userData.gender
-            };
-
-            update(dbRef, updates)
-            .then(() => {
-                fetchTournaments()
-                toast.success("You have entered the tournament succesfully.")
-                toast.info("You can view tournaments you've signed up for in the 'My Tournaments' section.")
-            })
-            .catch((error) => {
-                console.log("Error: ", error)
-                toast.error('An error has occured. Please try again.')
-            })
-
-            setOpen(false)
-            setEntryButtonText("Enter")
-
-        }
-    }
-
     const refreshData = () => {
         fetchTournaments(true)
+    }
+
+    const isDisabled = () => {
+        if ((currentTournament?.genderGroup?.toLowerCase() !== 'mixed' ? 
+            currentTournament?.genderGroup?.toLowerCase() !== userData?.gender?.toLowerCase() : false) ||
+            !checkAgeGroupEligibility(currentTournament?.ageGroups, getAge(userData?.dateOfBirth))
+        ) {
+            return true
+        }
+
+        return false
     }
 
     useEffect(() => {
@@ -340,11 +374,11 @@ const TournamentCalendar = () => {
                             setTournamentsDisplay(e.target.value)
                         }}
                         >
-                        <ToggleButton value={"archive"}>Archive</ToggleButton>
+                        <ToggleButton value={"past"}>past</ToggleButton>
                         <ToggleButton value={"all"}>All</ToggleButton>
                         <ToggleButton value={"upcoming"}>Upcoming</ToggleButton>
                     </ToggleButtonGroup>
-                    {/* <div style={{color: "rgba(0, 0, 0, 0.5)"}}>{tournamentsDisplay === "archive" ? 'Only past tournaments will be shown.' : tournamentsDisplay === "upcoming" ? 'Only upcoming tournaments will be shown.' : "All tournaments will be shown."}</div> */}
+                    {/* <div style={{color: "rgba(0, 0, 0, 0.5)"}}>{tournamentsDisplay === "past" ? 'Only past tournaments will be shown.' : tournamentsDisplay === "upcoming" ? 'Only upcoming tournaments will be shown.' : "All tournaments will be shown."}</div> */}
                 </div>
             <div className='flex wrap justify-between'>
                 <div className="flex wrap" style={{minWidth: '250px', maxWidth: "60%"}}>
@@ -401,7 +435,7 @@ const TournamentCalendar = () => {
                                 </MenuItem>
                             ))
                         }
-                        {tournamentsDisplay === 'archive' &&
+                        {tournamentsDisplay === 'past' &&
                             previousYears.map((option, index) => (
                                 <MenuItem key={index} value={option}>
                                     {option}
@@ -494,13 +528,17 @@ const TournamentCalendar = () => {
                             </div>
                             <h3 className="accent-color section-title">Terms of Play</h3>
                             <div className="flex-column">
+                                {currentTournament?.courtsNumber && currentTournament?.courtSurface && <div className="flex-column justify-start" style={{marginBottom: 30}}>
+                                    <div style={{marginBottom: 5}}>Courts Available:</div>
+                                    <div>{currentTournament?.courtsNumber} {currentTournament?.courtSurface} Courts</div>
+                                </div>}
                                 <div className="flex-column justify-start" style={{marginRight: 40}}> 
                                     <div style={{marginBottom: 5}}>Draw(s):</div>
                                     {getDraws(currentTournament?.ageGroups, currentTournament?.genderGroup, currentTournament?.drawType)}
                                 </div>
                                 <div className="flex-column justify-start" style={{marginBottom: 30}}> 
                                     <div style={{marginBottom: 5}}>Draw size(s):</div>
-                                    {currentTournament?.drawType !== "doubles" && currentTournament?.mainDrawSize && <div>Main Draw: {currentTournament.mainDrawSize}</div>}
+                                    {currentTournament?.drawType !== "doubles" && currentTournament?.singlesDrawSize && <div>Singles Draw: {currentTournament.singlesDrawSize}</div>}
                                     {currentTournament?.drawType !== "singles" && currentTournament?.doublesDrawSize && <div>Doubles Draw: {currentTournament.doublesDrawSize}</div>}
                                     {currentTournament?.drawType !== "singles" && currentTournament?.genderGroup?.toLowerCase() === "mixed" && currentTournament?.mixedDoublesDrawSize && <div>Mixed Doubles Draw: {currentTournament.mixedDoublesDrawSize}</div>}
                                 </div>
@@ -532,32 +570,34 @@ const TournamentCalendar = () => {
                                     sx={{height: 40, margin: '0px 5px 0px 0px !important'}} 
                                     onClick={confirmSignUp}
                                     disabled={
-                                        currentTournament?.playersSignedUp && 
+                                        (currentTournament?.playersSignedUp && 
                                         currentTournament?.playersSignedUp[userData.userID] &&
-                                        currentTournament?.playersSignedUp[userData.userID].withdrawed === true
+                                        currentTournament?.playersSignedUp[userData.userID].withdrawed === true) ||
+                                        isDisabled()
                                     }
                                     startIcon={<CheckIcon />}
                                 >{entryButtonText}</Button>
                             )}
                         </div>}
+                        {isDisabled() && <div className="info-message">You are not eligible to sign up for this tournament.</div>}
                         {currentTournament?.playersSignedUp && 
                         currentTournament?.playersSignedUp[userData.userID] &&
                         currentTournament?.playersSignedUp[userData.userID].withdrawed === true && 
-                        <div>You have already withdrawn from this tournament. You cannot enter again.</div>}
-                        {entryButtonText === "Confirm Entry" && <div>Please keep in mind that you can enter a tournament only once. If you decide to withdraw, you will not be able to enter this tournament again.</div>}
-                        {withdrawalButtonText === "Confirm Withdrawal" && <div>Please keep in mind that after withdrawing, you will not be able to sign up for the tournament again.</div>}
+                        <div className="info-message">You have already withdrawn from this tournament. You cannot enter again.</div>}
+                        {entryButtonText === "Confirm Entry" && <div className="info-message">Please keep in mind that you can enter a tournament only once. If you decide to withdraw, you will not be able to enter this tournament again.</div>}
+                        {withdrawalButtonText === "Confirm Withdrawal" && <div className="info-message">Please keep in mind that after withdrawing, you will not be able to sign up for the tournament again.</div>}
                         {currentTournament?.playersSignedUp ? 
                         (<div className="flex-column full-width">
                             <div>
                                 <h3 className="accent-color section-title">Signed Up Players</h3>
-                                <Table tableData={getSignedUpPlayers(currentTournament.playersSignedUp)} rowHeaders={enteredPlayersTableRowHeaders}/>
+                                <Table tableData={getSignedUpPlayers(currentTournament.playersSignedUp)} rowHeaders={enteredPlayersTableRowHeaders} onRowClick={(e) => console.log(e)}/>
                             </div>
                             <div>
                                 <h3 className="accent-color section-title">Withdrawn Players</h3>
-                                <Table tableData={getSignedUpPlayers(currentTournament.playersSignedUp, true)} rowHeaders={withdrawedPlayersTableRowHeaders}/>
+                                <Table tableData={getSignedUpPlayers(currentTournament.playersSignedUp, true)} rowHeaders={withdrawedPlayersTableRowHeaders} onRowClick={(e) => console.log(e)}/>
                             </div>
                         </div>) : currentTournament?.status && currentTournament?.status === 'Sign Up Open' ? 
-                        (<div>
+                        (<div className="info-message">
                             No people have signed up yet.
                         </div>) : (
                         <div></div>

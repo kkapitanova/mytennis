@@ -86,7 +86,7 @@ const MyTournaments = () => {
     const [dataByCategories, setDataByCategories] = useState([]) // all data filtered by categories (gender group, age group, dates)
     const [currentTournament, setCurrentTournament] = useState() // current tournament modal
     const [open, setOpen] = useState(false) // tournament info modal open state
-    const [tournamentsTime, setTournamentsTime] = useState("upcoming") // toggle between archive and upcoming tournaments
+    const [tournamentsTime, setTournamentsTime] = useState("upcoming") // toggle between past and upcoming tournaments
     const [tournamentsDisplay, setTournamentsDisplay] = useState(userData.role === 'player' ? 'entered' : '') // toggle between enterd and withdrawn from tournaments for player view only
     
     const [withdrawalButtonText, setWithdrawalButtonText] = useState("Withdraw")
@@ -208,8 +208,8 @@ const MyTournaments = () => {
                 (t.startDate + t.endDate).includes(search.year) && 
                 // (t.status.toLowerCase() === 'waiting for approval' || t.status.toLowerCase() === 'declined') &&
                 
-                /// UPCOMING TOURNAMENTS VS ARCHIVED TOURNAMENTS VS ALL TOURNAMENTS
-                (tournamentsTime === 'upcoming' ? new Date (t.endDate).getTime() > new Date ().getTime() : tournamentsTime === 'archive' ? new Date (t.endDate).getTime() < new Date ().getTime() : true) &&
+                /// UPCOMING TOURNAMENTS VS PAST TOURNAMENTS VS ALL TOURNAMENTS
+                (tournamentsTime === 'upcoming' ? new Date (t.endDate).getTime() > new Date ().getTime() : tournamentsTime === 'past' ? new Date (t.endDate).getTime() < new Date ().getTime() : true) &&
 
                 // ADMIN VIEW
                 (((userRole && userRole.toLowerCase() === 'admin') ? (t.status?.toLowerCase() === "waiting for approval" || t.status?.toLowerCase() === 'declined') : false) ||
@@ -375,7 +375,7 @@ const MyTournaments = () => {
             update(dbRef, updates)
             .then(() => {
                 toast.success("You have declined a tournament successfully.")
-                toast.info("The tournament will stay archived only for you and the club representative to see.")
+                toast.info("The tournament will stay pastd only for you and the club representative to see.")
                 console.log("submission confirmed")
             })
             .catch((error) => {
@@ -624,7 +624,7 @@ const MyTournaments = () => {
                     <ToggleButton value={"withdrawn"} className="red-option">Withdrawn from</ToggleButton>
                     <ToggleButton value={"entered"}>Entered</ToggleButton>
                 </ToggleButtonGroup>
-                {/* <div style={{color: "rgba(0, 0, 0, 0.5)"}}>{tournamentsDisplay === "archive" ? 'Only past tournaments will be shown.' : tournamentsDisplay === "upcoming" ? 'Only upcoming tournaments will be shown.' : "All tournaments will be shown."}</div> */}
+                {/* <div style={{color: "rgba(0, 0, 0, 0.5)"}}>{tournamentsDisplay === "past" ? 'Only past tournaments will be shown.' : tournamentsDisplay === "upcoming" ? 'Only upcoming tournaments will be shown.' : "All tournaments will be shown."}</div> */}
             </div>}
             <div className="flex wrap align-center">
                 <ToggleButtonGroup
@@ -636,11 +636,11 @@ const MyTournaments = () => {
                         setTournamentsTime(e.target.value)
                     }}
                     >
-                    <ToggleButton value={"archive"}>Archive</ToggleButton>
+                    <ToggleButton value={"past"}>past</ToggleButton>
                     <ToggleButton value={"all"}>All</ToggleButton>
                     <ToggleButton value={"upcoming"}>Upcoming</ToggleButton>
                 </ToggleButtonGroup>
-                {/* <div style={{color: "rgba(0, 0, 0, 0.5)"}}>{tournamentsDisplay === "archive" ? 'Only past tournaments will be shown.' : tournamentsDisplay === "upcoming" ? 'Only upcoming tournaments will be shown.' : "All tournaments will be shown."}</div> */}
+                {/* <div style={{color: "rgba(0, 0, 0, 0.5)"}}>{tournamentsDisplay === "past" ? 'Only past tournaments will be shown.' : tournamentsDisplay === "upcoming" ? 'Only upcoming tournaments will be shown.' : "All tournaments will be shown."}</div> */}
             </div>
             <div className='flex wrap justify-between'>
                 <div className="flex wrap" style={{minWidth: '250px', maxWidth: "60%"}}>
@@ -697,7 +697,7 @@ const MyTournaments = () => {
                                 </MenuItem>
                             ))
                         }
-                        {tournamentsTime === 'archive' &&
+                        {tournamentsTime === 'past' &&
                             previousYears.map((option, index) => (
                                 <MenuItem key={index} value={option}>
                                     {option}
@@ -789,13 +789,17 @@ const MyTournaments = () => {
                             </div>
                             <h3 className="accent-color section-title">Terms of Play</h3>
                             <div className="flex-column">
+                                {currentTournament?.courtsNumber && currentTournament?.courtSurface && <div className="flex-column justify-start" style={{marginBottom: 30}}>
+                                    <div style={{marginBottom: 5}}>Courts Available:</div>
+                                    <div>{currentTournament?.courtsNumber} {currentTournament?.courtSurface} Courts</div>
+                                </div>}
                                 <div className="flex-column justify-start" style={{marginRight: 40}}> 
                                     <div style={{marginBottom: 5}}>Draw(s):</div>
                                     {getDraws(currentTournament?.ageGroups, currentTournament?.genderGroup, currentTournament?.drawType)}
                                 </div>
                                 <div className="flex-column justify-start" style={{marginBottom: 30}}> 
                                     <div style={{marginBottom: 5}}>Draw size(s):</div>
-                                    {currentTournament?.drawType !== "doubles" && currentTournament?.mainDrawSize && <div>Main Draw: {currentTournament.mainDrawSize}</div>}
+                                    {currentTournament?.drawType !== "doubles" && currentTournament?.singlesDrawSize && <div>Singles Draw: {currentTournament.singlesDrawSize}</div>}
                                     {currentTournament?.drawType !== "singles" && currentTournament?.doublesDrawSize && <div>Doubles Draw: {currentTournament.doublesDrawSize}</div>}
                                     {currentTournament?.drawType !== "singles" && currentTournament?.genderGroup?.toLowerCase() === "mixed" && currentTournament?.mixedDoublesDrawSize && <div>Mixed Doubles Draw: {currentTournament.mixedDoublesDrawSize}</div>}
                                 </div>

@@ -104,6 +104,7 @@ export const initialTournamentData = {
     city: '',
     country: '',
     courtSurface: '',
+    courtsNumber: '',
     street: '',
     zipCode: '',
     clubName: '',

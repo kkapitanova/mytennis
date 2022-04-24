@@ -592,10 +592,10 @@ const TournamentSubmission = () => {
                                         </div>
                                         <h3 className="accent-color section-title">Terms of Play</h3>
                                         <div className="flex-column">
-                                            <div className="flex-column justify-start" style={{marginBottom: 30}}>
-                                                <div style={{marginBottom: 5}}>Court surface:</div>
-                                                <div>{tournamentData?.courtSurface}</div>
-                                            </div>
+                                            {tournamentData?.courtsNumber && tournamentData?.courtSurface && <div className="flex-column justify-start" style={{marginBottom: 30}}>
+                                                <div style={{marginBottom: 5}}>Courts Available:</div>
+                                                <div>{tournamentData?.courtsNumber} {tournamentData?.courtSurface} Courts</div>
+                                            </div>}
                                             <div className="flex-column justify-start"> 
                                                 <div style={{marginBottom: 5}}>Draw(s):</div>
                                                 {getDraws(tournamentData?.ageGroups, tournamentData?.genderGroup, tournamentData?.drawType)}
