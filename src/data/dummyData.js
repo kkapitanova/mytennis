@@ -4,6 +4,7 @@ export const testTournamentData = {
     description: "Welcome to the annual Test Tournament hre in sunny Sofia! This is the biggest tournament in the history of amateur tennis tournaments here in Bulgaria hosted by your beloved Test Club Name. Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
     city: "Sofia",
     country: "Bulgaria",
+    courtSurface: 'Indoor Clay',
     street: "Borisova Garden, NTC",
     zipCode: "1632",
     startDate: "2023-02-15T12:04:46.000Z",

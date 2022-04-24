@@ -9,7 +9,7 @@ import {
 } from '../../utils/helpers';
 import { useHistory } from 'react-router-dom';
 import { testTournamentData } from '../../data/dummyData';
-import { initialTournamentData } from '../../data/constants';
+import { courtSurfaces, initialTournamentData } from '../../data/constants';
 
 // material imports
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
@@ -28,9 +28,6 @@ import FormLabel from '@mui/material/FormLabel';
 import SendIcon from '@mui/icons-material/Send';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
-// import InputLabel from '@mui/material/InputLabel';
-// import MenuItem from '@mui/material/MenuItem';
-// import Select from '@mui/material/Select';
 
 //modal material
 import Backdrop from '@mui/material/Backdrop';
@@ -129,7 +126,7 @@ const TournamentSubmission = () => {
     }
 
     const handleRadioButtonChange = (e, key) => {
-        if (typeof e === "boolean") {
+        if (typeof e === "boolean" || key === 'courtSurface') {
             setTournamentData({
                 ...tournamentData,
                 [key]: e
@@ -244,7 +241,7 @@ const TournamentSubmission = () => {
                             </div>
                         </div>
                         <div className='flex-column align-start' style={{marginBottom: 10}}>
-                            <div style={{marginBottom: 10}}>Location*</div>
+                            <div style={{marginBottom: 10}}>Venue*</div>
                             <div className='flex-column align-start'>
                                 <TextField 
                                     type="text" 
@@ -305,6 +302,35 @@ const TournamentSubmission = () => {
                                     style={{marginRight: 10, marginBottom: 10, minWidth: 200}}
                                 />
                             </div>
+                            <div className='flex-column align-start wrap'>
+                                <TextField 
+                                    type="number" 
+                                    name="courtsNumber"
+                                    inputProps={{min: 1}}
+                                    label="Number of Courts"
+                                    variant="outlined" 
+                                    required
+                                    // size="small"
+                                    value={tournamentData.courtsNumber}
+                                    onChange={handleTextFieldChange}
+                                    sx={{width: 200, marginBottom: '20px', marginRight: '10px'}}
+                                />
+                            </div>
+                            <div className='flex-column wrap align-start'>
+                                <FormControl   sx={{margin: "0 50px 20px 0"}}>
+                                    <FormLabel id="surface-label" sx={{textAlign: "left"}} required>Court Surface</FormLabel>
+                                    <RadioGroup
+                                        aria-labelledby="surface-label"
+                                        name="radio-buttons-group"
+                                    >
+                                        {courtSurfaces.map(surface => {
+                                            return (
+                                                <FormControlLabel value={surface} control={<Radio checked={tournamentData.courtSurface === surface} onChange={() => handleRadioButtonChange(surface, "courtSurface")}/>} label={surface} />
+                                            )
+                                        })}
+                                    </RadioGroup>
+                                </FormControl>
+                            </div>
                         </div>
                         <div className='flex-column align-start' style={{marginBottom: 10}}>
                             <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -332,7 +358,7 @@ const TournamentSubmission = () => {
                         <div className='flex-column align-start' style={{marginBottom: 10}}>
                             <LocalizationProvider dateAdapter={AdapterDateFns}>
                                 <Stack spacing={2}>
-                                    <div style={{textAlign: "left"}}>On Site Sign Up Deadline*&nbsp;<span className="grey">Must be between 1-3 days before tournament start date</span></div>
+                                    <div style={{textAlign: "left"}}>On Site Sign Up Deadline*&nbsp;<span className="grey">Must be between 1-3 days before the start date</span></div>
                                     <div className="flex wrap">
                                         <DateTimePicker
                                             label="Deadline"
@@ -345,13 +371,12 @@ const TournamentSubmission = () => {
                                     </div>
                                 </Stack>
                             </LocalizationProvider>
-                        </div>
+                        </div>                        
                         <div className='flex-column wrap align-start'>
                             <FormControl   sx={{margin: "0 50px 20px 0"}}>
                                 <FormLabel id="qualification-label" sx={{textAlign: "left"}} required>Qualification</FormLabel>
                                 <RadioGroup
                                     aria-labelledby="qualification-label"
-                                    defaultValue="female"
                                     name="radio-buttons-group"
                                 >
                                     <FormControlLabel value="yes" control={<Radio checked={tournamentData.qualification ? true : false} onChange={() => handleRadioButtonChange(true, "qualification")}/>} label="Yes" />
@@ -567,6 +592,10 @@ const TournamentSubmission = () => {
                                         </div>
                                         <h3 className="accent-color section-title">Terms of Play</h3>
                                         <div className="flex-column">
+                                            <div className="flex-column justify-start" style={{marginBottom: 30}}>
+                                                <div style={{marginBottom: 5}}>Court surface:</div>
+                                                <div>{tournamentData?.courtSurface}</div>
+                                            </div>
                                             <div className="flex-column justify-start"> 
                                                 <div style={{marginBottom: 5}}>Draw(s):</div>
                                                 {getDraws(tournamentData?.ageGroups, tournamentData?.genderGroup, tournamentData?.drawType)}

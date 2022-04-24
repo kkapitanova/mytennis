@@ -23,6 +23,14 @@ export const draws = [
     'Singles', 'Doubles'
 ]
 
+export const courtSurfaces = [
+    'Indoor Clay',
+    'Outdoor Clay',
+    'Indoor Hard', 
+    'Outdoor Hard',
+    'Outdoor Grass',
+]
+
 // all draw combinations (age, gender, draw type)
 export const allDrawCombinations = [
     `U40 Women's Singles`,
@@ -95,6 +103,7 @@ export const initialTournamentData = {
     description: '',
     city: '',
     country: '',
+    courtSurface: '',
     street: '',
     zipCode: '',
     clubName: '',
