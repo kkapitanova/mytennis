@@ -98,6 +98,7 @@ const Rankings = () => {
     }
 
     const getData = () => {
+        // display only the players which match the filters
         const tableData = players.map(player => {
             if ((search.genderGroup === 'All' || player.gender.toLowerCase() === search.genderGroup.toLowerCase()) &&
                 checkAgeGroupMatch(getAge(player?.dateOfBirth), search.ageGroup)) {
@@ -111,6 +112,7 @@ const Rankings = () => {
             }
         })
 
+        // sort table by player name
         const sortedTableData = tableData.sort((a, b) => {
             if (a.name < b.name) { 
                 return -1; 
@@ -143,6 +145,7 @@ const Rankings = () => {
         setOpen(true)
     }
 
+    // display the players that match the search
     const handleSearchChange = (e) => {
         const name = e.target.name
         const value = e.target.value
@@ -188,9 +191,10 @@ const Rankings = () => {
     }, [search.ageGroup, search.genderGroup, players])
 
     useEffect(() => {
-      window.scrollTo(0,0)
+      window.scrollTo(0,0) // avoid scroll preservation because of react router
       fetchPlayers()
 
+      // listen for changes to the database and display them live
       const playersRef = ref(database, 'players');
       onValue(playersRef, (snapshot) => {
           const playersArr = []

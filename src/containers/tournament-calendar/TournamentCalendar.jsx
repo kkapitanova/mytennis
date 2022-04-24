@@ -278,7 +278,8 @@ const TournamentCalendar = () => {
         } else {
             const updates = {};
             updates['tournaments/' + currentTournament.tournamentID + '/playersSignedUp/' + userData.userID] = {
-                name: `${userData.firstName}  ${userData.familyName}`,
+                name: `${userData.firstName}\xa0${userData.middleName}\xa0${userData.familyName}`,
+                countryOfBirth: userData.countryOfBirth,
                 signUpTime: new Date(), 
                 signedUp: true,
                 playerID: userData.userID, 
