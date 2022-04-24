@@ -113,59 +113,55 @@ const Register = () => {
                 <ToggleButton value="clubRep">Club Rep</ToggleButton>
                 <ToggleButton value="player">Player</ToggleButton>
             </ToggleButtonGroup>
-            <Box
-                    component="form"
-                    sx={{
-                        '& > :not(style)': { m: 1, width: '30ch' },
-                    }}
-                    noValidate
-                    autoComplete="off"
-                    className="flex-column"
-                >
-                <TextField 
-                    id="email" 
-                    name="email"
-                    label="Email*" 
-                    variant="outlined" 
-                    value={userData.email}
-                    size="small"
-                    onChange={handleChange}
-                />
-                <TextField 
-                    id="password" 
-                    name="password"
-                    type="password"
-                    label="Password*" 
-                    variant="outlined" 
-                    value={userData.password}
-                    size="small"
-                    onChange={handleChange}
-                />
-                <TextField 
-                    id="confirmPassword"
-                    name="confirmPassword" 
-                    type="password"
-                    label="Confirm password*" 
-                    variant="outlined" 
-                    value={userData.confirmPassword}
-                    size="small"
-                    onChange={handleChange}
-                />
-            </Box>
+            <TextField 
+                id="email" 
+                name="email"
+                label="Email*" 
+                variant="outlined" 
+                value={userData.email}
+                size="small"
+                onChange={handleChange}
+                sx={{marginTop: '20px', width: 250}}
+            />
+            <TextField 
+                id="password" 
+                name="password"
+                type="password"
+                label="Password*" 
+                variant="outlined" 
+                value={userData.password}
+                size="small"
+                onChange={handleChange}
+                sx={{marginTop: '20px', width: 250}}
+            />
+            <TextField 
+                id="confirmPassword"
+                name="confirmPassword" 
+                type="password"
+                label="Confirm password*" 
+                variant="outlined" 
+                value={userData.confirmPassword}
+                size="small"
+                onChange={handleChange}
+                sx={{marginTop: '20px', width: 250}}
+            />
             <FormControl sx={{ m: 1 }} component="fieldset" variant="standard" error={!checked}>
-                        {/* <FormLabel component="legend">Assign responsibility</FormLabel> */}
-                        <FormGroup>
-                        <FormControlLabel
-                            control={
-                            <Checkbox checked={checked} onChange={(e) => {setChecked(e.target.checked)}} name="gilad" />
-                            }
-                            label="By registering, I confirm that I agree to the T&Cs of My Tennis."
-                        />
-                        </FormGroup>
-                        <FormHelperText>You must agree to continue forward.</FormHelperText>
-                    </FormControl>
+                {/* <FormLabel component="legend">Assign responsibility</FormLabel> */}
+                <FormGroup>
+                <FormControlLabel
+                    control={
+                    <Checkbox checked={checked} onChange={(e) => {setChecked(e.target.checked)}} name="gilad" />
+                    }
+                    label="By registering, I confirm that I agree to the T&Cs of My Tennis."
+                />
+                </FormGroup>
+                <FormHelperText>You must agree to continue forward.</FormHelperText>
+            </FormControl>
             <Button variant="contained" sx={{margin: '10px !important'}} type="submit" onClick={handleRegister} disabled={!userData.email || !userData.password || !userData.confirmPassword}>Register</Button>
-            <div>Already a member? <span className="underlined pointer" onClick={() => history.push('/login')}>Login here.</span></div>
+            <div className="flex-column">
+                <div>Already a member?</div>
+                <div className="underlined pointer" onClick={() => history.push('/login')}>Login here.</div>
+            </div>
         </div>
     )
 }

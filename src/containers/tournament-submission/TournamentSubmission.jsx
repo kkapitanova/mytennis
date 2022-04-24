@@ -198,6 +198,7 @@ const TournamentSubmission = () => {
                                 name="tournamentName"
                                 label="Tournament Name"
                                 variant="outlined"
+                                required
                                 // // size="small"
                                 value={tournamentData.tournamentName}
                                 onChange={handleTextFieldChange}
@@ -208,6 +209,7 @@ const TournamentSubmission = () => {
                                 name="description"
                                 label="Tournament Description"
                                 variant="outlined"
+                                required
                                 // size="small"
                                 multiline
                                 minRows={3}
@@ -221,6 +223,7 @@ const TournamentSubmission = () => {
                                     type="text" 
                                     name="tournamentDirector"
                                     label="Tournament Director"
+                                    required
                                     // size="small"
                                     variant="outlined"
                                     value={tournamentData.tournamentDirector}
@@ -231,6 +234,7 @@ const TournamentSubmission = () => {
                                     name="phone"
                                     label="Phone Number"
                                     data-cy="user-phone"
+                                    required
                                     // size="small"
                                     defaultCountry={"us"}
                                     value={tournamentData.tournamentDirectorPhone}
@@ -246,6 +250,7 @@ const TournamentSubmission = () => {
                                     type="text" 
                                     name="clubName"
                                     label="Club Name"
+                                    required
                                     // size="small"
                                     variant="outlined" 
                                     value={tournamentData.clubName}
@@ -258,6 +263,7 @@ const TournamentSubmission = () => {
                                     type="text"
                                     label="City" 
                                     variant="outlined"
+                                    required
                                     // size="small"
                                     name="city"
                                     value={tournamentData.city}
@@ -270,6 +276,7 @@ const TournamentSubmission = () => {
                                     label="Country"
                                     variant="outlined" 
                                     name="country"
+                                    required
                                     // size="small"
                                     value={tournamentData.country}
                                     onChange={handleTextFieldChange}
@@ -280,6 +287,7 @@ const TournamentSubmission = () => {
                                     label="Street"
                                     variant="outlined" 
                                     name="street"
+                                    required
                                     // size="small"
                                     value={tournamentData.street}
                                     onChange={handleTextFieldChange}
@@ -290,6 +298,7 @@ const TournamentSubmission = () => {
                                     label="Zip Code"
                                     variant="outlined" 
                                     name="zipCode"
+                                    required
                                     // size="small"
                                     value={tournamentData.zipCode}
                                     onChange={handleTextFieldChange}
@@ -300,15 +309,21 @@ const TournamentSubmission = () => {
                         <div className='flex-column align-start' style={{marginBottom: 10}}>
                             <LocalizationProvider dateAdapter={AdapterDateFns}>
                                 <Stack spacing={2}>
-                                    <div style={{textAlign: "left"}}>On Site Sign Up Deadline*</div>
+                                    <div style={{textAlign: "left"}}>Tournament Play Dates*&nbsp;<span className="grey">Must start at least 2 months from now</span></div>
                                     <div className="flex wrap">
-                                        <DateTimePicker
-                                            label="Deadline"
-                                            maxDate={tournamentData.startDate || null}
-                                            minDate={getTournamentOnSiteSignupDeadline(tournamentData.startDate)}
-                                            value={tournamentData.onSiteSignupDeadline || null}
-                                            onChange={val => handleChange(val, "onSiteSignupDeadline")}
-                                            renderInput={(params) => <TextField {...params} sx={{margin: '0px 10px 10px 0px !important', width: 220}}/>}
+                                        <DesktopDatePicker
+                                            label="Start Date"
+                                            minDate={getTournamentSubmissionMinDate()}
+                                            value={tournamentData.startDate || null}
+                                            onChange={val => handleChange(val, "startDate")}
+                                            renderInput={(params) => <TextField {...params} sx={{margin: '0px 10px 10px 0px !important', width: 200}} required/>}
+                                        />
+                                        <DesktopDatePicker
+                                            label="End Date"
+                                            minDate={tournamentData.startDate || getTournamentSubmissionMinDate()}
+                                            value={tournamentData.endDate || null}
+                                            onChange={val => handleChange(val, "endDate")}
+                                            renderInput={(params) => <TextField {...params} sx={{width: 200}} required/>}
                                         />
                                     </div>
                                 </Stack>
@@ -317,21 +332,15 @@ const TournamentSubmission = () => {
                         <div className='flex-column align-start' style={{marginBottom: 10}}>
                             <LocalizationProvider dateAdapter={AdapterDateFns}>
                                 <Stack spacing={2}>
-                                    <div style={{textAlign: "left"}}>Tournament Play Dates*</div>
+                                    <div style={{textAlign: "left"}}>On Site Sign Up Deadline*&nbsp;<span className="grey">Must be between 1-3 days before tournament start date</span></div>
                                     <div className="flex wrap">
-                                        <DesktopDatePicker
-                                            label="Start Date"
-                                            minDate={getTournamentSubmissionMinDate()}
-                                            value={tournamentData.startDate || null}
-                                            onChange={val => handleChange(val, "startDate")}
-                                            renderInput={(params) => <TextField {...params} sx={{margin: '0px 10px 10px 0px !important', width: 200}}/>}
-                                        />
-                                        <DesktopDatePicker
-                                            label="End Date"
-                                            minDate={tournamentData.startDate || getTournamentSubmissionMinDate()}
-                                            value={tournamentData.endDate || null}
-                                            onChange={val => handleChange(val, "endDate")}
-                                            renderInput={(params) => <TextField {...params} sx={{width: 200}}/>}
+                                        <DateTimePicker
+                                            label="Deadline"
+                                            maxDate={tournamentData.startDate ? getTournamentOnSiteSignupDeadline(tournamentData.startDate, "max") : null}
+                                            minDate={tournamentData.startDate ? getTournamentOnSiteSignupDeadline(tournamentData.startDate, "min") : getTournamentOnSiteSignupDeadline(getTournamentSubmissionMinDate(), "min")}
+                                            value={tournamentData.onSiteSignupDeadline || null}
+                                            onChange={val => handleChange(val, "onSiteSignupDeadline")}
+                                            renderInput={(params) => <TextField {...params} sx={{margin: '0px 10px 10px 0px !important', width: 220}} required/>}
                                         />
                                     </div>
                                 </Stack>
@@ -362,7 +371,7 @@ const TournamentSubmission = () => {
                                             maxDate={tournamentData.endDate}
                                             value={tournamentData.qualificationStartDate || null}
                                             onChange={val => handleChange(val, "qualificationStartDate")}
-                                            renderInput={(params) => <TextField {...params} sx={{margin: '0px 10px 10px 0px !important', width: 200}}/>}
+                                            renderInput={(params) => <TextField {...params} sx={{margin: '0px 10px 10px 0px !important', width: 200}} required/>}
                                         />
                                         <DesktopDatePicker
                                             label="End Date"
@@ -370,7 +379,7 @@ const TournamentSubmission = () => {
                                             maxDate={tournamentData.endDate}
                                             value={tournamentData.qualificationEndDate || null}
                                             onChange={val => handleChange(val, "qualificationEndDate")}
-                                            renderInput={(params) => <TextField {...params} sx={{width: 200}}/>}
+                                            renderInput={(params) => <TextField {...params} sx={{width: 200}} required/>}
                                         />
                                     </div>
                                 </Stack>
@@ -472,80 +481,6 @@ const TournamentSubmission = () => {
                                 </RadioGroup>
                             </FormControl>}
                         </div>
-                        {/* <div className="flex-column">
-                            <div className="flex"> 
-                                <FormControl>
-                                    <InputLabel id="main-draw-size-label" required>Main Draw Size</InputLabel>
-                                    <Select
-                                        name='singlesDrawSize'
-                                        id="main-draw-size"
-                                        value={tournamentData.singlesDrawSize}
-                                        label="Main Draw Size"
-                                        sx={{width: 200, margin: '0px 10px 10px 0px'}}
-                                        onChange={handleSelectChange}
-                                    >
-                                        <MenuItem value={8}>8</MenuItem>
-                                        <MenuItem value={16}>16</MenuItem>
-                                        <MenuItem value={32}>32</MenuItem>
-                                        <MenuItem value={64}>64</MenuItem>
-                                        <MenuItem value={64}>128</MenuItem>
-                                    </Select>
-                                </FormControl>
-                                {tournamentData.qualification && <FormControl>
-                                    <InputLabel id="main-draw-size-label" required>Qualifying Draw Size</InputLabel>
-                                    <Select
-                                        name='qualifyingDrawSize'
-                                        id="qualifying-draw-size"
-                                        value={tournamentData.qualifyingDrawSize}
-                                        label="Main Draw Size"
-                                        sx={{width: 200, margin: '0px 10px 10px 0px'}}
-                                        onChange={handleSelectChange}
-                                    >
-                                        <MenuItem value={8}>8</MenuItem>
-                                        <MenuItem value={16}>16</MenuItem>
-                                        <MenuItem value={32}>32</MenuItem>
-                                        <MenuItem value={64}>64</MenuItem>
-                                        <MenuItem value={64}>128</MenuItem>
-                                    </Select>
-                                </FormControl>}
-                            </div>
-                            <div className="flex"> 
-                                {tournamentData.drawType && tournamentData.drawType !== "singles" && <FormControl>
-                                    <InputLabel id="doubles-draw-size-label" required>Doubles Draw Size</InputLabel>
-                                    <Select
-                                        name='doublesDrawSize'
-                                        id="doubles-draw-size"
-                                        value={tournamentData.doublesDrawSize}
-                                        label="Doubles Draw Size"
-                                        sx={{width: 200, margin: '0px 10px 10px 0px'}}
-                                        onChange={handleSelectChange}
-                                    >
-                                        <MenuItem value={8}>8</MenuItem>
-                                        <MenuItem value={16}>16</MenuItem>
-                                        <MenuItem value={32}>32</MenuItem>
-                                        <MenuItem value={64}>64</MenuItem>
-                                        <MenuItem value={64}>128</MenuItem>
-                                    </Select>
-                                </FormControl>}
-                                {tournamentData.genderGroup === "Mixed" && tournamentData.drawType && tournamentData.drawType !== "singles" && <FormControl>
-                                    <InputLabel id="mixed-doubles-draw-size-label" required>Mixed Doubles Draw Size</InputLabel>
-                                    <Select
-                                        name='mixedDoublesDrawSize'
-                                        id="mixed-doubles-draw-size"
-                                        value={tournamentData.mixedDoublesDrawSize}
-                                        label="Mixed Doubles Draw Size"
-                                        sx={{width: 200, margin: '0px 10px 10px 0px'}}
-                                        onChange={handleSelectChange}
-                                    >
-                                        <MenuItem value={8}>8</MenuItem>
-                                        <MenuItem value={16}>16</MenuItem>
-                                        <MenuItem value={32}>32</MenuItem>
-                                        <MenuItem value={64}>64</MenuItem>
-                                        <MenuItem value={64}>128</MenuItem>
-                                    </Select>
-                                </FormControl>}
-                            </div>
-                        </div> */}
                         <div className='flex-column align-start wrap'>
                             <div style={{marginBottom: 10}}>Entry Tax*</div>
                             <TextField 
@@ -554,6 +489,7 @@ const TournamentSubmission = () => {
                                 inputProps={{min: 0}}
                                 label="Amount (€)"
                                 variant="outlined" 
+                                required
                                 // size="small"
                                 value={tournamentData.entryTax}
                                 onChange={handleTextFieldChange}
@@ -568,6 +504,7 @@ const TournamentSubmission = () => {
                                 inputProps={{min: 0}}
                                 label="Amount (€)"
                                 variant="outlined" 
+                                required
                                 // size="small"
                                 value={tournamentData.prizeMoney}
                                 onChange={handleTextFieldChange}

@@ -32,30 +32,12 @@ import {
 import './firebase-config';
 
 
-// const dbRef = ref(getDatabase(app));
-
-// const firebaseui = require('firebaseui');
-// const ui = new firebaseui.auth.AuthUI(firebase.auth());
-
-// ui.start('#firebaseui-auth-container', {
-//   signInOptions: [
-//     firebase.auth.EmailAuthProvider.PROVIDER_ID
-//   ],
-//   // Other config options...
-// });
-
 const unauthenticatedNavbarRoutes = [
   {
     path: '/tournament-calendar',
     name: "Tournament Calendar",
     Component: TournamentCalendar,
     exact: false,
-    dropdown: {
-      content: <div className="flex-column slide-in-left">
-        <div><NavLink className="dropdown-option" to={{ pathname: '/tournament-calendar/women', state: { tournamentCalendar: 'women'} }}>Women's Calendar</NavLink></div>
-        <div><NavLink className="dropdown-option" to={{ pathname: '/tournament-calendar/men', state: { tournamentCalendar: 'men'} }}>Men's Calendar</NavLink></div>
-      </div>
-    } 
   },
   {
     path: '/players',
@@ -68,13 +50,13 @@ const unauthenticatedNavbarRoutes = [
     name: "Rankings",
     Component: Rankings,
     exact: false,
-    dropdown: {
-      content: <div className="flex-column slide-in-left">
-        <div><NavLink className="dropdown-option" to={{ pathname: '/rankings/women', state: { rankings: 'women'} }}>Women's Rankings</NavLink></div>
-        <div><NavLink className="dropdown-option" to={{ pathname: '/rankings/men', state: { rankings: 'men'} }}>Men's Rankings</NavLink></div>
-        <div><NavLink className="dropdown-option" to={{ pathname: '/rankings/mixed-doubles', state: { rankings: 'mixed-doubles'} }}>Mixed Doubles Rankings</NavLink></div>
-      </div>
-    }
+    // dropdown: {
+    //   content: <div className="flex-column slide-in-left">
+    //     <div><NavLink className="dropdown-option" to={{ pathname: '/rankings/women', state: { rankings: 'women'} }}>Women's Rankings</NavLink></div>
+    //     <div><NavLink className="dropdown-option" to={{ pathname: '/rankings/men', state: { rankings: 'men'} }}>Men's Rankings</NavLink></div>
+    //     <div><NavLink className="dropdown-option" to={{ pathname: '/rankings/mixed-doubles', state: { rankings: 'mixed-doubles'} }}>Mixed Doubles Rankings</NavLink></div>
+    //   </div>
+    // }
   },
 ]
 
@@ -132,18 +114,6 @@ const authenticatedNavbarRoutes = [
 ]
 
 const authenticatedRoutes = [
-  // {
-  //   path: '/tournament-submission',
-  //   name: "Tournament Submission",
-  //   exact: true, 
-  //   Component: TournamentSubmission 
-  // },
-  // {
-  //   path: '/my-tournaments',
-  //   name: "My Tournaments",
-  //   exact: true, 
-  //   Component: MyTournaments 
-  // },
   {
     path: '/profile',
     name: "Profile",
@@ -171,8 +141,6 @@ const App = () => {
     <div className="App">
       <Router>
           <NavBar unauthRoutes={unauthenticatedNavbarRoutes} unauthRouteLast={unauthenticatedNavbarRouteLast} authRoutes={authenticatedNavbarRoutes}/>
-          {/* <div>TEST DATA FROM FIREBASE: {JSON.stringify(value)}</div>
-          <div>Test translation: {t("Test")}</div> */}
           <Switch>
             <div className="body-wrapper">
               {[...unauthenticatedNavbarRoutes, ...unauthenticatedRoutes].map(({ path, exact, Component }) => (

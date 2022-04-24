@@ -80,12 +80,17 @@ const PointsDistribution = ({
 
         if (updatedItemIndex !== -1) {
             const updatedItem = updatedPoints[updatedItemIndex]
-            updatedItem[name] = e.target.value
+
+            if (name === 'playerName') {
+                updatedItem[name] = players?.[e.target.dataset.optionIndex]?.label
+            } else {
+                updatedItem[name] = e.target.value
+            }
 
             if (name !== 'playerID' && id) {
                 updatedItem['playerID'] = id
             } else if (name === 'playerName' && !updatedItem[name]) {
-                updatedItem['playerID'] = ''
+                updatedItem['playerID'] = '' // clear id if player name is cleared too
             }
 
             setPoints(updatedPoints)
@@ -95,6 +100,8 @@ const PointsDistribution = ({
     // disable confirm button if not all fields are filled in
     useEffect(() => {
         let bool = false
+
+        console.log(points)
 
         points.forEach(p => {
             for (let key in p) {
@@ -186,6 +193,7 @@ const PointsDistribution = ({
                         ...points,
                         {
                             playerID: '',
+                            playerName: '',
                             pointsWon: '',
                             draw: '',
                             key: new Date().getTime()

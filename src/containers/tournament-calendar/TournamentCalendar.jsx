@@ -471,11 +471,14 @@ const TournamentCalendar = () => {
                 <Box sx={style} className="large-modal full-width">
                     <div className="flex-column justify-center align-center">
                         <div className='flex-column full-width' style={{marginBottom: 30}}>
-                            <div className="flex justify-between align-center">
-                                <h2 className="accent-color" style={{fontWeight: '500'}}>{currentTournament?.tournamentName}</h2>
-                                <div className={`status-indicator ${statusColor}`}>{currentTournament?.status.toUpperCase()}</div> 
+                        <div className="flex justify-between align-center">
+                                <div className="flex-column align-start tournament-header">
+                                    <h2 className="accent-color" style={{fontWeight: '500'}}>{currentTournament?.tournamentName}</h2>
+                                    <div className={`status-indicator ${statusColor}`}>{currentTournament?.status.toUpperCase()}</div> 
+                                </div>
+                                <ClearIcon className="pointer accent-color" onClick={handleClose}/>
                             </div>
-                            <div style={{marginBottom: 5}}>
+                            <div style={{margin: '10px 0px 5px 0px'}}>
                                 {currentTournament?.startDate && currentTournament?.endDate && <div>{getDateString(new Date (currentTournament?.startDate).getTime())} - {getDateString(new Date (currentTournament?.endDate).getTime())}</div>}
                             </div>
                             <div style={{marginBottom: 5}}>{currentTournament?.clubName}</div>
@@ -537,6 +540,12 @@ const TournamentCalendar = () => {
                                 >{entryButtonText}</Button>
                             )}
                         </div>}
+                        {currentTournament?.playersSignedUp && 
+                        currentTournament?.playersSignedUp[userData.userID] &&
+                        currentTournament?.playersSignedUp[userData.userID].withdrawed === true && 
+                        <div>You have already withdrawn from this tournament. You cannot enter again.</div>}
+                        {entryButtonText === "Confirm Entry" && <div>Please keep in mind that you can enter a tournament only once. If you decide to withdraw, you will not be able to enter this tournament again.</div>}
+                        {withdrawalButtonText === "Confirm Withdrawal" && <div>Please keep in mind that after withdrawing, you will not be able to sign up for the tournament again.</div>}
                         {currentTournament?.playersSignedUp ? 
                         (<div className="flex-column full-width">
                             <div>
@@ -553,12 +562,6 @@ const TournamentCalendar = () => {
                         </div>) : (
                         <div></div>
                         )}
-                        {currentTournament?.playersSignedUp && 
-                        currentTournament?.playersSignedUp[userData.userID] &&
-                        currentTournament?.playersSignedUp[userData.userID].withdrawed === true && 
-                        <div>You have already withdrawn from this tournament. You cannot enter again.</div>}
-                        {entryButtonText === "Confirm Entry" && <div>Please keep in mind that you can enter a tournament only once. If you decide to withdraw, you will not be able to enter this tournament again.</div>}
-                        {withdrawalButtonText === "Confirm Withdrawal" && <div>Please keep in mind that after withdrawing, you will not be able to sign up for the tournament again.</div>}
                     </div>
                 </Box>
                 </Fade>

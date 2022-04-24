@@ -3,7 +3,7 @@ import { Table } from '../../components';
 import { getAge } from '../../utils/helpers'
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
-import { ageGroups } from '../../data/constants';
+import { ageGroups, genderGroups } from '../../data/constants';
 import moment from 'moment';
 
 // modal
@@ -60,7 +60,7 @@ const Rankings = () => {
     const [search, setSearch] = useState({
         name: '',
         countryOfBirth: '',
-        ageGroup: 'All',
+        ageGroup: 'All Ages',
         genderGroup: 'All'
     }) 
     const [data, setData] = useState([])
@@ -253,7 +253,7 @@ const Rankings = () => {
                         size="small"
                         sx={{width: 150, marginBottom: '10px !important'}}
                     >
-                        {[...ageGroups, 'All'].map((option, index) => (
+                        {[...ageGroups, 'All Ages'].map((option, index) => (
                             <MenuItem key={index} value={option}>
                                 {option}
                             </MenuItem>

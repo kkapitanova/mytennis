@@ -313,8 +313,8 @@ const Rankings = ({ topTen = false }) => {
                             sx={{width: 150, margin: '0 5px 10px 0'}}
                         >
                             {genderGroups.map((option, index) => (
-                                <MenuItem key={index} value={option}>
-                                    {option}
+                                <MenuItem key={index} value={option.value}>
+                                    {option.label}
                                 </MenuItem>
                             ))}
                         </TextField>
@@ -328,11 +328,15 @@ const Rankings = ({ topTen = false }) => {
                             size="small"
                             sx={{width: 200, margin: '0 5px 10px 0 !important'}}
                         >
-                            {draws.map((option, index) => (
+                            {search.genderGroup !== 'Mixed' ? draws.map((option, index) => (
                                 <MenuItem key={index} value={option}>
                                     {option}
                                 </MenuItem>
-                            ))}
+                            )) : 
+                                <MenuItem value={'Doubles'}>
+                                    Doubles
+                                </MenuItem>
+                            }
                         </TextField>
                     </div>
                 </div>

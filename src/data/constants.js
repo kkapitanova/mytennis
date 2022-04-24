@@ -1,9 +1,22 @@
+import { getTournamentSubmissionMinDate } from "../utils/helpers"
+
 export const ageGroups = [
     'U40', 'U60', '60+'
 ]
 
 export const genderGroups = [
-    'Female', 'Male', 'Mixed'
+    {
+        label: `Women's`,
+        value: 'Female'
+    },
+    {
+        label: `Men's`,
+        value: 'Male'
+    },
+    {
+        label: 'Mixed',
+        value: 'Mixed'
+    }
 ]
 
 export const draws = [

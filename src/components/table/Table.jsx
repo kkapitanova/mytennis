@@ -17,7 +17,7 @@ const BasicTable = ({ tableData, rowHeaders, onRowClick }) => {
     if (tableData && tableData.length) {
         return (
             <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <Table sx={{ minWidth: 650 }} stickyHeader aria-label="sticky table">
                     <TableHead>
                         <TableRow>
                             {rowHeaders.map((header, index) => (
@@ -36,7 +36,7 @@ const BasicTable = ({ tableData, rowHeaders, onRowClick }) => {
                                 key={index}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
-                                {Object.keys(dataItem).map((key, index) => { 
+                                {dataItem && Object.keys(dataItem).map((key, index) => { 
 
                                     let value = dataItem[key]
 

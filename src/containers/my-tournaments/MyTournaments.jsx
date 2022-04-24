@@ -766,11 +766,14 @@ const MyTournaments = () => {
                 <Box sx={style} className="large-modal full-width">
                     <div className="flex-column justify-center align-center">
                         <div className="flex-column full-width">
-                            <div className="flex justify-between align-center tournament-header">
-                                <h2 className="accent-color" style={{fontWeight: '500'}}>{currentTournament?.tournamentName}</h2>
-                                <div className={`status-indicator ${statusColor}`}>{currentTournament?.status.toUpperCase()}</div> 
+                            <div className="flex justify-between align-center">
+                                <div className="flex-column align-start tournament-header">
+                                    <h2 className="accent-color" style={{fontWeight: '500'}}>{currentTournament?.tournamentName}</h2>
+                                    <div className={`status-indicator ${statusColor}`}>{currentTournament?.status.toUpperCase()}</div> 
+                                </div>
+                                <ClearIcon className="pointer accent-color" onClick={handleClose}/>
                             </div>
-                            <div style={{marginBottom: 5}}>
+                            <div style={{margin: '10px 0px 5px 0px'}}>
                                 {currentTournament?.startDate && currentTournament?.endDate && <div>{getDateString(new Date (currentTournament?.startDate).getTime())} - {getDateString(new Date (currentTournament?.endDate).getTime())}</div>}
                             </div>
                             <div style={{marginBottom: 5}}>{currentTournament?.clubName}</div>

@@ -250,19 +250,20 @@ export const getTournamentSubmissionMinDate = () => {
     return minDate
 }
 
-export const getTournamentOnSiteSignupDeadline = (tournamentStartDate) => {
+export const getTournamentOnSiteSignupDeadline = (tournamentStartDate, type) => {
+    let date;
+    const startDate = new Date(tournamentStartDate).getDate()
 
-    let minDate;
-
-    if (tournamentStartDate) {
-        const startDate =  new Date(tournamentStartDate).getDate()
-        minDate = new Date(tournamentStartDate).setDate(startDate - 3)
-    } else {
+    if (tournamentStartDate && type === "min") {
+        date = new Date(tournamentStartDate).setDate(startDate - 3)
+    } else if (type === "min") {
         const currentDate =  new Date().getDate()
         const currentMonth = new Date ().getMonth()
         const minDateMonth = new Date().setMonth(currentMonth + 2)
-        minDate = new Date(minDateMonth).setDate(currentDate - 3)
+        date = new Date(minDateMonth).setDate(currentDate - 3)
+    } else {
+        date = new Date(tournamentStartDate).setDate(startDate - 1)
     }
-    return minDate
+    return date
 
 }
