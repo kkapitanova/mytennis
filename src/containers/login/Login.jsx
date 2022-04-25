@@ -80,7 +80,7 @@ const Login = () => {
     }, [])
 
     return (
-        <div className="flex-column justify-center align-center container">
+        <div className="flex-column justify-center align-center container login">
             {!loggedIn ? (<div className="flex-column justify-center align-center">
                 <h3 className="accent-color">Login Form</h3>
                 <TextField 

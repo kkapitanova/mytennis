@@ -98,7 +98,7 @@ const Register = () => {
     }, [])
 
     return (
-        <div className="flex-column justify-center align-center container">
+        <div className="flex-column justify-center align-center container register">
             <h3 className="accent-color">Register Form</h3>
             <div>I want to register as a:</div>
             <ToggleButtonGroup
