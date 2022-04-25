@@ -260,7 +260,7 @@ const MyTournaments = () => {
                         current?.status.toLowerCase() === 'concluded' ?
                             'blue' :
                         current?.status.toLowerCase() === 'declined' || 
-                        current?.status.toLowerCase() === 'cancelled' ? 
+                        current?.status.toLowerCase() === 'canceled' ? 
                             'red' : 'green'
 
         setStatusColor(color)
@@ -490,7 +490,7 @@ const MyTournaments = () => {
             
             data.forEach(item => {
                 if (item.id === currentTournament.tournamentID) {
-                    item.status = "Cancelled"
+                    item.status = "Canceled"
                 }
                 updatedData.push(item)
             })
@@ -499,14 +499,14 @@ const MyTournaments = () => {
             handleClose()
 
             let updatedTournament = currentTournament;
-            updatedTournament.status = 'Cancelled'
+            updatedTournament.status = 'Canceled'
 
             const updates = {};
             updates['/tournaments/' + currentTournament.tournamentID] = updatedTournament;
 
             update(dbRef, updates)
             .then(() => {
-                toast.success("You have cancelled this tournament successfully.")
+                toast.success("You have canceled this tournament successfully.")
                 toast.info("We hope that you will have another opportunity to host a tournament!")
             })
             .catch((error) => {
