@@ -829,6 +829,7 @@ const MyTournaments = () => {
                                 variant={withdrawalButtonText === 'Withdraw' ? 'outlined' : 'contained'} 
                                 sx={{height: 40, marginTop: '30px !important'}} 
                                 onClick={confirmWithdrawal}
+                                disabled={currentTournament?.status.toLowerCase() !== 'sign up open'}
                                 endIcon={<LogoutOutlinedIcon />}
                             >
                                 {withdrawalButtonText}
@@ -845,6 +846,11 @@ const MyTournaments = () => {
                         currentTournament?.playersSignedUp[userData.userID] &&
                         currentTournament?.playersSignedUp[userData.userID].withdrawed === true && 
                         <div>You have already withdrawn from this tournament. You cannot enter again.</div>}
+                        {currentTournament?.status?.toLowerCase() !== 'sign up open' && 
+                        currentTournament?.playersSignedUp && 
+                        currentTournament?.playersSignedUp[userData.userID] &&
+                        currentTournament?.playersSignedUp[userData.userID].withdrawed !== true && 
+                        <div>You cannot withdraw from this tournament because the deadline has passed.</div>}
                         {withdrawalButtonText === "Confirm Withdrawal" && <div>Please keep in mind that after withdrawing, you will not be able to sign up for the tournament again.</div>}
                         {currentTournament?.playersSignedUp ? 
                         (<div className="flex-column full-width">
