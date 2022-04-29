@@ -602,12 +602,12 @@ const MyTournaments = () => {
                 </div>) :
             userData?.role?.toLowerCase() === 'clubrep' ? 
                 (<div className="helper-text">
-                    Here you can preview all of the tournaments you have submitted and their status. 
+                    Here you can preview all of the tournaments you have submitted. 
                     'Waiting for Approval' means that the tournament is waiting to be approved by an admin. 'Declined' means that the request for a tournament has been rejected.
                 </div>) :
             userData?.role?.toLowerCase() === 'player' &&
                 <div className="helper-text">
-                    Here you can preview the tournaments you have signed up for. 
+                    Here you can preview the tournaments you have signed up for/withdrawn from. 
                     You can withdraw from any tournament, but withdrawing meeans you will not be able to sign up for the tournament again.
                 </div>
             }

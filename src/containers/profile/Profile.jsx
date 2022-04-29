@@ -270,6 +270,18 @@ const Profile = () => {
                                             required
                                             disabled={userData.familyName ? true : false}
                                         />
+                                        <TextField 
+                                            id="role" 
+                                            name="role"
+                                            label="User Role" 
+                                            variant="outlined" 
+                                            value={data.role === 'clubRep' ? 'Club Representative' : data.role === 'player' ? 'Player' : 'Admin'}
+                                            size="small"
+                                            sx={{marginTop: '20px', width: 250}}
+                                            onChange={handleChange}
+                                            required
+                                            disabled={true}
+                                        />
                                         <LocalizationProvider dateAdapter={AdapterDateFns}>
                                             <Stack spacing={1}>
                                                 <DesktopDatePicker
@@ -475,6 +487,7 @@ const Profile = () => {
                                 <div className="flex wrap align-center justify-center" style={{marginTop: 10}}>
                                     <Button variant="contained" sx={{margin: '10px 5px 0px 5px !important'}} type="submit" onClick={handleDataUpdate} disabled={isDisabled()} startIcon={<UpdateIcon />}>Update Profile</Button>
                                 </div>
+                                <div className="personal-id text-left grey">Note: Your unique personal ID is {data.userID}.</div>
                             </div>}
                         </div>
                     </div>

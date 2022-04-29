@@ -23,7 +23,7 @@ import {
   Footer,
   MyTournaments,
   About,
-  Chats,
+  // Chats,
   LogoutSuccess,
   Profile
 } from './containers'
@@ -105,12 +105,12 @@ const authenticatedNavbarRoutes = [
     exact: true, 
     Component: MyTournaments 
   },
-  {
-    path: '/chats',
-    name: "Chats",
-    exact: true, 
-    Component: Chats 
-  },
+  // { // uncomment when chats feature is ready
+  //   path: '/chats',
+  //   name: "Chats",
+  //   exact: true, 
+  //   Component: Chats 
+  // }, 
 ]
 
 const authenticatedRoutes = [

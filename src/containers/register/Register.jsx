@@ -47,9 +47,13 @@ const Register = () => {
 
         if (!userData.password || !userData.email || !userData.confirmPassword) {
             toast.error('Please fill out all of the fields.')
-        } else if (!checked) {
-            toast.error('Please read and agree to the T&Cs.')
-        } else if (userData.password !== userData.confirmPassword) {
+        } 
+
+        // else if (!checked) { //uncomment if you decide to add the T&C's checkmark here instead of in the profile
+        //     toast.error('Please read and agree to the T&Cs.')
+        // } 
+
+        else if (userData.password !== userData.confirmPassword) {
             toast.error('Passwords do not match.')
         } else {
             createUserWithEmailAndPassword(authentication, userData.email, userData.password)
@@ -145,8 +149,7 @@ const Register = () => {
                 onChange={handleChange}
                 sx={{marginTop: '20px', width: 250}}
             />
-            <FormControl sx={{ m: 1 }} component="fieldset" variant="standard" error={!checked}>
-                {/* <FormLabel component="legend">Assign responsibility</FormLabel> */}
+            {/* <FormControl sx={{ m: 1 }} component="fieldset" variant="standard" error={!checked}>
                 <FormGroup>
                 <FormControlLabel
                     control={
@@ -156,8 +159,8 @@ const Register = () => {
                 />
                 </FormGroup>
                 <FormHelperText>You must agree to continue forward.</FormHelperText>
-            </FormControl>
-            <Button variant="contained" sx={{margin: '10px !important'}} type="submit" onClick={handleRegister} disabled={!userData.email || !userData.password || !userData.confirmPassword}>Register</Button>
+            </FormControl> */}
+            <Button variant="contained" sx={{margin: '20px 0px 10px 0px!important'}} type="submit" onClick={handleRegister} disabled={!userData.email || !userData.password || !userData.confirmPassword}>Register</Button>
             <div className="flex-column">
                 <div>Already a member?</div>
                 <div className="underlined pointer" onClick={() => history.push('/login')}>Login here.</div>
