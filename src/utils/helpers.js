@@ -42,6 +42,31 @@ export const getAge = (dateOfBirth) => {
     return age;
 }
 
+export const checkAgeGroupMatch = (ageGroup, age) => {
+    switch (ageGroup) {
+        case 'U40':
+            return age <= 40
+        case 'U60':
+            return age <= 60
+        case '60+':
+            return age > 60
+        default:
+            return true
+    }
+}
+
+export const checkAgeGroupEligibility = (ageGroups, age) => {
+    let bool = false
+
+    ageGroups?.length && ageGroups.forEach(ag => {
+        if (checkAgeGroupMatch(ag, age)) {
+            bool = true
+        }
+    })
+
+    return bool
+}
+
 export const getDateString = dateMillis => {
     const UTCString = new Date(dateMillis).toString();
     const options = { month: "long", day: "numeric", year: "numeric" };
@@ -250,19 +275,20 @@ export const getTournamentSubmissionMinDate = () => {
     return minDate
 }
 
-export const getTournamentOnSiteSignupDeadline = (tournamentStartDate) => {
+export const getTournamentOnSiteSignupDeadline = (tournamentStartDate, type) => {
+    let date;
+    const startDate = new Date(tournamentStartDate).getDate()
 
-    let minDate;
-
-    if (tournamentStartDate) {
-        const startDate =  new Date(tournamentStartDate).getDate()
-        minDate = new Date(tournamentStartDate).setDate(startDate - 3)
-    } else {
+    if (tournamentStartDate && type === "min") {
+        date = new Date(tournamentStartDate).setDate(startDate - 3)
+    } else if (type === "min") {
         const currentDate =  new Date().getDate()
         const currentMonth = new Date ().getMonth()
         const minDateMonth = new Date().setMonth(currentMonth + 2)
-        minDate = new Date(minDateMonth).setDate(currentDate - 3)
+        date = new Date(minDateMonth).setDate(currentDate - 3)
+    } else {
+        date = new Date(tournamentStartDate).setDate(startDate - 1)
     }
-    return minDate
+    return date
 
 }

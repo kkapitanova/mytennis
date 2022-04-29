@@ -7,8 +7,6 @@ import MenuItem from '@mui/material/MenuItem';
 import { useLocation } from 'react-router';
 import { ageGroups, genderGroups, draws } from '../../data/constants';
 import moment from 'moment';
-import QueryString, { parse, stringify } from 'qs';
-
 
 // modal
 import Backdrop from '@mui/material/Backdrop';
@@ -20,7 +18,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import PeopleOutlineOutlinedIcon from '@mui/icons-material/PeopleOutlined';
 
 //firebase
-import { getDatabase, ref, child, get, update} from "firebase/database";
+import { getDatabase, ref, child, get, onValue} from "firebase/database";
 
 // toast
 import { toast } from 'react-toastify';
@@ -62,7 +60,9 @@ const Rankings = ({ topTen = false }) => {
     const [currentPlayer, setCurrentPlayer] = useState()
     const [open, setOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
+    const [initialLoad, setInitialLoad] = useState(true)
 
+    // fetch the data for the players in the current ranking list
     const fetchPlayers = (keys) => {
         setIsLoading(true)
 
@@ -91,6 +91,7 @@ const Rankings = ({ topTen = false }) => {
         })
     }
 
+    // fetch rankings for the current age-gender-draw combination
     const fetchRankings = (ageGroup, genderGroup, draw) => {
         setIsLoading(true)
 
@@ -98,7 +99,6 @@ const Rankings = ({ topTen = false }) => {
             if (snapshot.exists()) {
                 const rankings = snapshot.val()
                 setRankingData(rankings)
-                fetchPlayers(Object.keys(rankings))
             } else {
                 console.log("No data available");
                 setPlayers([])
@@ -111,17 +111,20 @@ const Rankings = ({ topTen = false }) => {
             });
     }
 
+    // get the full player + ranking data sorted by number of points won
     const getData = () => {
-        const tableData = Object.keys(rankingData).map(p => {
+        const tableData = []
+        
+        rankingData && Object.keys(rankingData).length && Object.keys(rankingData).map(p => {
             const currentPlayer = players.find(player => player.userID === p)
         
-            return {
+            tableData.push({
                 name: `${currentPlayer?.firstName} ${currentPlayer?.familyName}`,
                 countryOfBirth: currentPlayer?.countryOfBirth,
                 age: getAge(currentPlayer?.dateOfBirth),
                 pointsWon: rankingData[p]?.pointsWon,
                 id: currentPlayer?.userID
-            }
+            })
         })
 
         const sortedTableData = sortData(tableData, "pointsWon")
@@ -133,17 +136,14 @@ const Rankings = ({ topTen = false }) => {
         })
 
         setCategorizedData([...organizedTableData])
-
         return organizedTableData
     }
 
 
     const handleClose = () => setOpen(false);
 
-
+    // open modal with data for current player
     const handleRowClick = (playerData) => {
-        console.log(playerData)
-        console.log(players)
         const playerIndex = players.findIndex(el => el.userID === playerData.id)
         const current = players[playerIndex]
 
@@ -151,6 +151,7 @@ const Rankings = ({ topTen = false }) => {
         setOpen(true)
     }
 
+    // handle search (name/nation) & filter (age/gender/draw) changes
     const handleSearchChange = (e) => {
 
         const name = e.target.name
@@ -199,8 +200,21 @@ const Rankings = ({ topTen = false }) => {
         setData(getData())
     }
 
+    // fetch corresponding rankings when the age/gender/draw filter changes
+    // also listen for changes to the database and update the rankings live
     useEffect(() => {
         fetchRankings(search.ageGroup, search.genderGroup, search.draw)
+
+        if (search.ageGroup && search.genderGroup && search.draw) {
+            const rankingsRef = ref(database, `rankings/${search.ageGroup}${search.genderGroup}${search.draw}`);
+            onValue(rankingsRef, (snapshot) => {
+                if (snapshot.exists()) {
+                    const rankings = snapshot.val();
+                    setRankingData(rankings)
+                }
+            });
+        }
+
     }, [search.ageGroup, search.genderGroup, search.draw])
 
     useEffect(() => {
@@ -212,8 +226,10 @@ const Rankings = ({ topTen = false }) => {
     }, [players, isLoading])
 
     useEffect(() => {
-      window.scrollTo(0,0)
-    }, [])
+        if (rankingData) {
+            fetchPlayers(Object.keys(rankingData))
+        }
+    }, [rankingData])
 
     useEffect(() => {
         const state = location?.state
@@ -237,83 +253,92 @@ const Rankings = ({ topTen = false }) => {
         }
     }, [location])
 
+    // avoid scroll preservation by router 
     useEffect(() => {
-        console.log(currentPlayer)
-    }, [currentPlayer])
+        window.scrollTo(0,0)
+    }, [])
 
     return (
         <div className='container'>
             <h3 className="accent-color" style={{textAlign: 'left'}}>{topTen ? 'Top 10 Currently' : "Search through Rankings"}</h3>
             <div className='flex wrap justify-between'>
-                <div className="flex wrap" style={{minWidth: '250px', maxWidth: "60%"}}>
-                    <TextField
-                        name="name"
-                        id="outlined-basic"
-                        label="Search by name"
-                        variant="outlined"
-                        size="small"
-                        value={search.name}
-                        onChange={handleSearchChange}
-                        style={{minWidth: 200, margin: '0 5px 10px 0'}}
-                    />
-                    <TextField
-                        name="countryOfBirth"
-                        id="outlined-basic"
-                        label="Search by nation"
-                        variant="outlined"
-                        size="small"
-                        value={search.countryOfBirth}
-                        onChange={handleSearchChange}
-                        style={{minWidth: 200, margin: '0 5px 10px 0'}}
-                    />
-                    <TextField
-                        id="outlined-select-currency"
-                        name="ageGroup"
-                        select
-                        // label="Age Group"
-                        value={search.ageGroup}
-                        onChange={handleSearchChange}
-                        size="small"
-                        sx={{width: 150, margin: '0 5px 10px 0 !important'}}
-                    >
-                        {ageGroups.map((option, index) => (
-                            <MenuItem key={index} value={option}>
-                                {option}
-                            </MenuItem>
-                        ))}
-                    </TextField>
-                    <TextField
-                        id="outlined-select-currency"
-                        name="genderGroup"
-                        select
-                        // label="Gender Group"
-                        value={search.genderGroup}
-                        onChange={(e) => handleSearchChange(e)}
-                        size="small"
-                        sx={{width: 150, margin: '0 5px 10px 0'}}
-                    >
-                        {genderGroups.map((option, index) => (
-                            <MenuItem key={index} value={option}>
-                                {option}
-                            </MenuItem>
-                        ))}
-                    </TextField>
-                    <TextField
-                        id="outlined-select-currency"
-                        name="draw"
-                        select
-                        // label="List"
-                        value={search.genderGroup !== 'Mixed' ? search.draw : 'Doubles'}
-                        onChange={handleSearchChange}
-                        size="small"
-                        sx={{width: 200, margin: '0 5px 10px 0 !important'}}
-                    >
-                        {draws.map((option, index) => (
-                            <MenuItem key={index} value={option}>
-                                {option}
-                            </MenuItem>
-                        ))}
-                    </TextField>
+                <div className="flex-column wrap" style={{minWidth: '250px', maxWidth: "60%"}}>
+                    <div className="flex wrap">
+                        <TextField
+                            name="name"
+                            id="outlined-basic"
+                            label="Search by name"
+                            variant="outlined"
+                            size="small"
+                            value={search.name}
+                            onChange={handleSearchChange}
+                            style={{minWidth: 200, margin: '0 5px 10px 0'}}
+                        />
+                        <TextField
+                            name="countryOfBirth"
+                            id="outlined-basic"
+                            label="Search by nation"
+                            variant="outlined"
+                            size="small"
+                            value={search.countryOfBirth}
+                            onChange={handleSearchChange}
+                            style={{minWidth: 200, margin: '0 5px 10px 0'}}
+                        />
+                    </div>
+                    <div className="flex wrap">
+                        <TextField
+                            id="outlined-select-currency"
+                            name="ageGroup"
+                            select
+                            // label="Age Group"
+                            value={search.ageGroup}
+                            onChange={handleSearchChange}
+                            size="small"
+                            sx={{width: 150, margin: '0 5px 10px 0 !important'}}
+                        >
+                            {ageGroups.map((option, index) => (
+                                <MenuItem key={index} value={option}>
+                                    {option}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+                        <TextField
+                            id="outlined-select-currency"
+                            name="genderGroup"
+                            select
+                            // label="Gender Group"
+                            value={search.genderGroup}
+                            onChange={(e) => handleSearchChange(e)}
+                            size="small"
+                            sx={{width: 150, margin: '0 5px 10px 0'}}
+                        >
+                            {genderGroups.map((option, index) => (
+                                <MenuItem key={index} value={option.value}>
+                                    {option.label}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+                        <TextField
+                            id="outlined-select-currency"
+                            name="draw"
+                            select
+                            // label="List"
+                            value={search.genderGroup !== 'Mixed' ? search.draw : 'Doubles'}
+                            onChange={handleSearchChange}
+                            size="small"
+                            sx={{width: 200, margin: '0 5px 10px 0 !important'}}
+                        >
+                            {search.genderGroup !== 'Mixed' ? draws.map((option, index) => (
+                                <MenuItem key={index} value={option}>
+                                    {option}
+                                </MenuItem>
+                            )) : 
+                                <MenuItem value={'Doubles'}>
+                                    Doubles
+                                </MenuItem>
+                            }
+                        </TextField>
+                    </div>
                 </div>
                 <div clasName="flex align-start">
                     {filterApplied() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} sx={{height: 40, margin: '0px !important'}} onClick={clearFilters}>Clear Search</Button>}
