@@ -22,7 +22,6 @@ import {
   MyTournaments,
   About,
   // Chats,
-  LogoutSuccess,
   Profile
 } from './containers'
 
@@ -88,11 +87,6 @@ const unauthenticatedRoutes = [
     name: "Register", 
     Component: Register 
   },
-  { 
-    path: '/logout-success', 
-    name: "Logout Success", 
-    Component: LogoutSuccess 
-  },
 ]
 
 const authenticatedNavbarRoutes = [
@@ -127,7 +121,7 @@ const authenticatedRoutes = [
 
 
 const App = () => {
-  const userData = JSON.parse(sessionStorage.getItem('userData')) || {} // TODO: replace with function that fetches data from firebase
+  const userData = JSON.parse(sessionStorage.getItem('userData')) || {} 
   const [loggedIn, setLoggedIn] = useState(false)
   
   useEffect(() => {

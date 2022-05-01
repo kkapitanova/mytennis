@@ -59,7 +59,7 @@ const style = {
 };
 
 const TournamentSubmission = () => {
-    const userData = JSON.parse(sessionStorage.getItem('userData')) || {} // TODO: replace with function that fetches data from firebase
+    const userData = JSON.parse(sessionStorage.getItem('userData')) || {} 
     const [tournamentData, setTournamentData] = useState(initialTournamentData)
     const [open, setOpen] = useState(false)
     const history = useHistory()
@@ -553,7 +553,6 @@ const TournamentSubmission = () => {
                         <div className="flex wrap">
                             {/* <button className='button action-button' type="submit" style={{marginRight: 10}} disabled={validateFields()}>Submit</button> */}
                             <Button variant="contained" sx={{height: 40, margin: '0px 10px 10px 0px !important'}} type="submit" disabled={validateFields()} endIcon={<SendIcon />}>Submit</Button> 
-                            {/* //TODO: disabled state when not all data fields are entered*/}
                             <Button variant="contained" sx={{height: 40, margin: '0px 10px 10px 0px !important'}} onClick={fillWithTestData}>FILL WITH TEST DATA</Button>
                             {checkIfInfoIsFilledIn() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} sx={{height: 40, margin: '0px 10px 0px 0px !important'}} onClick={clearFields}>Clear Fields</Button>}
                         </div>
@@ -573,8 +572,9 @@ const TournamentSubmission = () => {
                             <Box sx={style} className="large-modal full-width">
                                 <div className="flex-column justify-center align-center">
                                     <div className='flex-column full-width' style={{marginBottom: 30}}>
-                                        <div className="flex align-start">
-                                            <h2 className="accent-color" style={{fontWeight: '500'}}>{tournamentData?.tournamentName}</h2>
+                                        <div className="flex justify-between align-center">
+                                            <h2 className="accent-color modal-title">{tournamentData?.tournamentName}</h2>
+                                            <div className="close-icon"><ClearIcon className="pointer accent-color" onClick={handleClose}/></div>
                                         </div>
                                         <div style={{marginBottom: 5}}>
                                             {tournamentData?.startDate && tournamentData?.endDate && <div>{getDateString(new Date (tournamentData?.startDate).getTime())} - {getDateString(new Date (tournamentData?.endDate).getTime())}</div>}

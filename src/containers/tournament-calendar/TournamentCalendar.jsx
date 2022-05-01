@@ -9,7 +9,7 @@ import {
     getAge, 
     checkAgeGroupEligibility 
 } from '../../utils/helpers'
-import { useLocation } from 'react-router';
+import { useHistory, useLocation } from 'react-router-dom';
 import { 
     ageGroups, 
     genderGroups, 
@@ -36,6 +36,7 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import CheckIcon from '@mui/icons-material/Check';
+import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 
 // toast
 import { toast } from 'react-toastify';
@@ -83,10 +84,11 @@ const withdrawedPlayersTableRowHeaders = [
     'Status'
 ]
 
-const TournamentCalendar = () => {
-    const userData = JSON.parse(sessionStorage.getItem('userData')) || {} // TODO: replace with function that fetches data from firebase
-    const [allData, setAllData] = useState({}) // all data fetched from DB
+const TournamentCalendar = ({ nextTen = false }) => {
     const location = useLocation()
+    const history = useHistory()
+    const userData = JSON.parse(sessionStorage.getItem('userData')) || {}
+    const [allData, setAllData] = useState({}) // all data fetched from DB
     const [search, setSearch] = useState({
         name: '',
         location: '',
@@ -170,8 +172,8 @@ const TournamentCalendar = () => {
 
         allData && allData.length && allData.forEach(t => {
             if (
-                (search.ageGroup ? t.ageGroups.includes(search.ageGroup) : true) && 
-                (search.genderGroup ? t.genderGroup.includes(search.genderGroup) : true) &&
+                (search.ageGroup ? t.ageGroups?.includes(search.ageGroup) : true) && 
+                (search.genderGroup ? t.genderGroup?.includes(search.genderGroup) : true) &&
                 (t.city + t.country).toLowerCase().includes(search.location) &&
                 t.tournamentName.toLowerCase().includes(search.name) && 
                 (t.startDate + t.endDate).includes(search.month) &&
@@ -353,33 +355,41 @@ const TournamentCalendar = () => {
 
     useEffect(() => {
 
-        const searchGenderGroup = location?.state?.tournamentCalendar
+        const state = location?.state
 
-        setSearch({
-            ...search,
-            genderGroup: searchGenderGroup === "women" ? 'Female' : searchGenderGroup === "men" ? 'Male' : searchGenderGroup === "mixed-doubles" ? 'Mixed' : ''
-        })
+        if (state) {
+            setSearch({
+                ...search,
+                ...state
+            })
+        }
+
+        // setSearch({
+        //     ...search,
+        //     genderGroup: searchGenderGroup === "women" ? 'Female' : searchGenderGroup === "men" ? 'Male' : searchGenderGroup === "mixed-doubles" ? 'Mixed' : ''
+        // })
     }, [location])
+
 
     return (
         <div className='container'>
-            <h3 className="accent-color" style={{textAlign: 'left'}}>Search Tournaments</h3>
-            <div className="flex wrap align-center">
-                    <ToggleButtonGroup
-                        color="primary"
-                        value={tournamentsDisplay}
-                        sx={{height: 40, margin: '5px 5px 10px 0px'}}
-                        exclusive
-                        onChange={(e) => {
-                            setTournamentsDisplay(e.target.value)
-                        }}
-                        >
-                        <ToggleButton value={"past"}>past</ToggleButton>
-                        <ToggleButton value={"all"}>All</ToggleButton>
-                        <ToggleButton value={"upcoming"}>Upcoming</ToggleButton>
-                    </ToggleButtonGroup>
-                    {/* <div style={{color: "rgba(0, 0, 0, 0.5)"}}>{tournamentsDisplay === "past" ? 'Only past tournaments will be shown.' : tournamentsDisplay === "upcoming" ? 'Only upcoming tournaments will be shown.' : "All tournaments will be shown."}</div> */}
-                </div>
+            <h3 className="accent-color" style={{textAlign: 'left'}}>{nextTen ? 'Upcoming Tournaments' : "Search Tournaments"}</h3>
+            {!nextTen && <div className="flex wrap align-center">
+                <ToggleButtonGroup
+                    color="primary"
+                    value={tournamentsDisplay}
+                    sx={{height: 40, margin: '5px 5px 10px 0px'}}
+                    exclusive
+                    onChange={(e) => {
+                        setTournamentsDisplay(e.target.value)
+                    }}
+                    >
+                    <ToggleButton value={"past"}>past</ToggleButton>
+                    <ToggleButton value={"all"}>All</ToggleButton>
+                    <ToggleButton value={"upcoming"}>Upcoming</ToggleButton>
+                </ToggleButtonGroup>
+                {/* <div style={{color: "rgba(0, 0, 0, 0.5)"}}>{tournamentsDisplay === "past" ? 'Only past tournaments will be shown.' : tournamentsDisplay === "upcoming" ? 'Only upcoming tournaments will be shown.' : "All tournaments will be shown."}</div> */}
+            </div>}
             <div className='flex wrap justify-between'>
                 <div className="flex wrap" style={{minWidth: '250px', maxWidth: "60%"}}>
                     <TextField
@@ -462,8 +472,8 @@ const TournamentCalendar = () => {
                         style={{width: 150, margin: '0 5px 10px 0'}}
                     >
                         {genderGroups.map((option, index) => (
-                            <MenuItem key={index} value={option}>
-                                {option}
+                            <MenuItem key={index} value={option.value}>
+                                {option.value}
                             </MenuItem>
                         ))}
                     </TextField>
@@ -488,8 +498,12 @@ const TournamentCalendar = () => {
                     {filterApplied() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} sx={{height: 40, minWidth: 180, margin: '0px !important'}} onClick={clearFilters}>Clear Search</Button>}
                 </div>
             </div>
-            <Table tableData={data} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>
-            <Button variant="contained" sx={{height: 40, margin: '30px 10px 0px 0px !important'}} onClick={refreshData} endIcon={<RefreshIcon />}>Refresh Data</Button>
+            <Table tableData={nextTen ? data.slice(0,10) : data} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>
+            {nextTen ? (<div className="flex justify-end" style={{marginTop: 10}}>
+                <Button variant="contained" onClick={() =>  history.replace({pathname: '/tournament-calendar', state: { ...search }})} sx={{height: 40, margin: '0px !important'}} endIcon={<CalendarMonthOutlinedIcon />}>See All</Button>
+            </div>) : (
+                <Button variant="contained" sx={{height: 40, margin: '30px 10px 0px 0px !important'}} onClick={refreshData} endIcon={<RefreshIcon />}>Refresh Data</Button>
+            )}
             <Modal
                 aria-labelledby="transition-modal-title"
                 aria-describedby="transition-modal-description"
@@ -505,12 +519,12 @@ const TournamentCalendar = () => {
                 <Box sx={style} className="large-modal full-width">
                     <div className="flex-column justify-center align-center">
                         <div className='flex-column full-width' style={{marginBottom: 30}}>
-                        <div className="flex justify-between align-center">
+                            <div className="flex justify-between align-center">
                                 <div className="flex-column align-start tournament-header">
-                                    <h2 className="accent-color" style={{fontWeight: '500'}}>{currentTournament?.tournamentName}</h2>
+                                    <h2 className="accent-color modal-title">{currentTournament?.tournamentName}</h2>
                                     <div className={`status-indicator ${statusColor}`}>{currentTournament?.status.toUpperCase()}</div> 
                                 </div>
-                                <ClearIcon className="pointer accent-color" onClick={handleClose}/>
+                                <div className="close-icon"><ClearIcon className="pointer accent-color" onClick={handleClose}/></div>
                             </div>
                             <div style={{margin: '10px 0px 5px 0px'}}>
                                 {currentTournament?.startDate && currentTournament?.endDate && <div>{getDateString(new Date (currentTournament?.startDate).getTime())} - {getDateString(new Date (currentTournament?.endDate).getTime())}</div>}
@@ -611,4 +625,3 @@ const TournamentCalendar = () => {
 }
 
 export default TournamentCalendar
-//TODO: GOOGLE CALENDAR INTEGRATION

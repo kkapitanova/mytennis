@@ -38,7 +38,7 @@ const database = getDatabase();
 
 const Profile = () => {
 
-    const [userData, setUserData] = useState(JSON.parse(sessionStorage.getItem('userData')) || {}) // TODO: replace with redux store function with initial value from localstorage
+    const [userData, setUserData] = useState(JSON.parse(sessionStorage.getItem('userData')) || {}) 
     const [isCompleteProfile, setIsCompleteProfile] = useState(false)
     const [dataConfirmCheck, setDataConfirmCheck] = useState(userData.dataConfirmCheck)
     const [termsCheck, setTermsCheck] = useState(userData.termsCheck)
@@ -505,4 +505,3 @@ const Profile = () => {
 }
 
 export default Profile
-//TODO CHATS PERMISSION - I want people to chat with me
