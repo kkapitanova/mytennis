@@ -102,6 +102,7 @@ export const objectToArrayConverter = (obj) => {
     return arr
 }
 
+// chats messages timestamp
 export const getMessageTimeStamp = (dateString, allMessages, currentMessageIndex) => {
     const date = new Date(dateString)
     const year = date.getFullYear()
