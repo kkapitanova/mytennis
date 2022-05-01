@@ -25,7 +25,7 @@ const BasicTable = ({ tableData, rowHeaders, onRowClick }) => {
                             ))}
                             {/* <TableCell>Ranking</TableCell>
                             <TableCell>Name</TableCell>
-                            <TableCell>Competes For</TableCell>
+                            <TableCell>Country of Birth</TableCell>
                             <TableCell>Age</TableCell>
                             <TableCell align="right">Points Won</TableCell> */}
                         </TableRow>

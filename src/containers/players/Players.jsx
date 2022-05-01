@@ -37,7 +37,7 @@ const style = {
 
 const tableRowHeaders = [
     'Name', 
-    'Competes For', 
+    'Country of Birth', 
     'Age', 
     'Gender',
 ]
@@ -271,9 +271,23 @@ const Players = () => {
                 <Box sx={style} className="large-modal">
                     <div className="flex-column">
                         <h2 className="accent-color modal-title">{currentPlayer?.firstName}&nbsp;{currentPlayer?.familyName}</h2>
-                        <div style={{marginBottom: 5}}>Gender: {currentPlayer?.gender}</div>
-                        <div style={{marginBottom: 5}}>Country of Birth:&nbsp;{currentPlayer?.countryOfBirth}</div>
-                        <div style={{marginBottom: 5}}>Date of Birth:&nbsp;{moment(new Date(currentPlayer?.dateOfBirth)).format('D MMMM YYYY')}</div>
+                        <div className="flex-column info-section">
+                            <h3 className="accent-color section-title-medium">Personal Information</h3>
+                            <div>Gender: {currentPlayer?.gender}</div>
+                            <div>Nation Competing For:&nbsp;{currentPlayer?.countryOfBirth}</div>
+                            <div>Date of Birth:&nbsp;{moment(new Date(currentPlayer?.dateOfBirth)).format('D MMMM YYYY')}</div>
+                            <div>Age:&nbsp;{getAge(new Date(currentPlayer?.dateOfBirth))}</div>
+                            {(currentPlayer?.gameInfo?.plays || currentPlayer?.gameInfo?.backhand) && <div>Plays:&nbsp;{currentPlayer?.gameInfo?.plays && `${currentPlayer?.gameInfo?.plays},\xa0`}{currentPlayer?.gameInfo?.backhand}</div>}
+                        </div>
+                        <div className="flex-column info-section">
+                            <h3 className="accent-color section-title-medium">Contact Information</h3>
+                            {(currentPlayer?.emailVisibility?.toLowerCase() === 'public' ||
+                            userData?.role === 'clubRep') &&
+                            <div>Email:&nbsp;{currentPlayer?.email}</div>}
+                            {(currentPlayer?.phoneNumber && (currentPlayer?.phoneNumberVisibility?.toLowerCase() === 'public' ||
+                            userData?.role === 'clubRep')) &&
+                            <div>Phone Number:&nbsp;{currentPlayer?.phoneNumber}</div>}
+                        </div>
                     </div>
                 </Box>
                 </Fade>

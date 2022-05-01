@@ -41,7 +41,7 @@ const style = {
 };
 
 const tableRowHeaders = [
-    'Ranking', 'Name', 'Competes For', 'Age', 'Points Won'
+    'Ranking', 'Name', 'Country of Birth', 'Age', 'Points Won'
 ]
 
 const Rankings = ({ topTen = false }) => {
