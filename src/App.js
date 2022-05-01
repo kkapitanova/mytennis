@@ -12,7 +12,6 @@ import {
 
 // container imports
 import { 
-  NavBar, 
   Login, 
   Register,
   Home,
@@ -20,13 +19,17 @@ import {
   Rankings,
   TournamentCalendar,
   TournamentSubmission,
-  Footer,
   MyTournaments,
   About,
   // Chats,
   LogoutSuccess,
   Profile
 } from './containers'
+
+import {
+  NavBar,
+  Footer
+} from './components'
 
 // firebase
 import './firebase-config';
