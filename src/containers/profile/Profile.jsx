@@ -26,7 +26,6 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ClearIcon from '@mui/icons-material/Clear';
 
 // country dropdown
-// import Select from 'react-select'
 import countryList from 'react-select-country-list'
 
 // toast
@@ -36,9 +35,6 @@ import { toast } from 'react-toastify';
 import { getDatabase, ref, set } from "firebase/database";
 
 const database = getDatabase();
-
-// trim trailing and leading spaces
-// replace(/^\s+|\s+$/gm,'')
 
 const Profile = () => {
 
@@ -75,6 +71,7 @@ const Profile = () => {
 
     const dataUsageError = !(dataConfirmCheck && termsCheck)
 
+    // input validation
     const isDisabled = () => {
         const { 
             firstName, 
@@ -110,6 +107,7 @@ const Profile = () => {
             }
     }
 
+    // update DB
     const handleDataUpdate = () => {
         const {
             firstName, 
@@ -153,13 +151,11 @@ const Profile = () => {
         setData(updatedData)
         setUserData(updatedData)
 
-        console.log("updatedData", updatedData)
-
         set(ref(database, 'users/' + userID), updatedData)
         .then(() => {
             sessionStorage.setItem('userData', JSON.stringify(updatedData))
             toast.success("You have updated your profile successfully.")
-            setIsCompleteProfile(false)
+            setIsCompleteProfile(true)
         })
         .catch((error) => {
             console.log("error: ", error)
@@ -191,18 +187,14 @@ const Profile = () => {
     }
 
     useEffect(() => {
-        window.scrollTo(0,0)
+        window.scrollTo(0,0) // avoid scroll preservation
     }, [])
 
     useEffect(() => {
-        console.log(sectionSelected)
-    }, [sectionSelected])
-
-    useEffect(() => {
         if (!userData.firstName) {
-            setIsCompleteProfile(true)
+            setIsCompleteProfile(false) // complete profile indicator
         } else {
-            setIsCompleteProfile(false)
+            setIsCompleteProfile(true)
         }
     }, [location.pathname, history])
 
@@ -277,6 +269,18 @@ const Profile = () => {
                                             onChange={handleChange}
                                             required
                                             disabled={userData.familyName ? true : false}
+                                        />
+                                        <TextField 
+                                            id="role" 
+                                            name="role"
+                                            label="User Role" 
+                                            variant="outlined" 
+                                            value={data.role === 'clubRep' ? 'Club Representative' : data.role === 'player' ? 'Player' : 'Admin'}
+                                            size="small"
+                                            sx={{marginTop: '20px', width: 250}}
+                                            onChange={handleChange}
+                                            required
+                                            disabled={true}
                                         />
                                         <LocalizationProvider dateAdapter={AdapterDateFns}>
                                             <Stack spacing={1}>
@@ -483,6 +487,7 @@ const Profile = () => {
                                 <div className="flex wrap align-center justify-center" style={{marginTop: 10}}>
                                     <Button variant="contained" sx={{margin: '10px 5px 0px 5px !important'}} type="submit" onClick={handleDataUpdate} disabled={isDisabled()} startIcon={<UpdateIcon />}>Update Profile</Button>
                                 </div>
+                                <div className="personal-id text-left grey">Note: Your unique personal ID is {data.userID}.</div>
                             </div>}
                         </div>
                     </div>

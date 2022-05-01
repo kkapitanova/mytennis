@@ -324,8 +324,16 @@ textarea {
   color: $accent !important;
 }
 
+.grey {
+  color: silver;
+}
+
 .blue {
   color: #0383ff !important;
+}
+
+.login, .register {
+  min-height: 500px;
 }
 
 .justify {

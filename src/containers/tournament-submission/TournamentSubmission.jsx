@@ -9,7 +9,7 @@ import {
 } from '../../utils/helpers';
 import { useHistory } from 'react-router-dom';
 import { testTournamentData } from '../../data/dummyData';
-import { initialTournamentData } from '../../data/constants';
+import { courtSurfaces, initialTournamentData } from '../../data/constants';
 
 // material imports
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
@@ -28,9 +28,6 @@ import FormLabel from '@mui/material/FormLabel';
 import SendIcon from '@mui/icons-material/Send';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
-// import InputLabel from '@mui/material/InputLabel';
-// import MenuItem from '@mui/material/MenuItem';
-// import Select from '@mui/material/Select';
 
 //modal material
 import Backdrop from '@mui/material/Backdrop';
@@ -129,7 +126,7 @@ const TournamentSubmission = () => {
     }
 
     const handleRadioButtonChange = (e, key) => {
-        if (typeof e === "boolean") {
+        if (typeof e === "boolean" || key === 'courtSurface') {
             setTournamentData({
                 ...tournamentData,
                 [key]: e
@@ -198,6 +195,7 @@ const TournamentSubmission = () => {
                                 name="tournamentName"
                                 label="Tournament Name"
                                 variant="outlined"
+                                required
                                 // // size="small"
                                 value={tournamentData.tournamentName}
                                 onChange={handleTextFieldChange}
@@ -208,6 +206,7 @@ const TournamentSubmission = () => {
                                 name="description"
                                 label="Tournament Description"
                                 variant="outlined"
+                                required
                                 // size="small"
                                 multiline
                                 minRows={3}
@@ -221,6 +220,7 @@ const TournamentSubmission = () => {
                                     type="text" 
                                     name="tournamentDirector"
                                     label="Tournament Director"
+                                    required
                                     // size="small"
                                     variant="outlined"
                                     value={tournamentData.tournamentDirector}
@@ -231,6 +231,7 @@ const TournamentSubmission = () => {
                                     name="phone"
                                     label="Phone Number"
                                     data-cy="user-phone"
+                                    required
                                     // size="small"
                                     defaultCountry={"us"}
                                     value={tournamentData.tournamentDirectorPhone}
@@ -240,12 +241,13 @@ const TournamentSubmission = () => {
                             </div>
                         </div>
                         <div className='flex-column align-start' style={{marginBottom: 10}}>
-                            <div style={{marginBottom: 10}}>Location*</div>
+                            <div style={{marginBottom: 10}}>Venue*</div>
                             <div className='flex-column align-start'>
                                 <TextField 
                                     type="text" 
                                     name="clubName"
                                     label="Club Name"
+                                    required
                                     // size="small"
                                     variant="outlined" 
                                     value={tournamentData.clubName}
@@ -258,6 +260,7 @@ const TournamentSubmission = () => {
                                     type="text"
                                     label="City" 
                                     variant="outlined"
+                                    required
                                     // size="small"
                                     name="city"
                                     value={tournamentData.city}
@@ -270,6 +273,7 @@ const TournamentSubmission = () => {
                                     label="Country"
                                     variant="outlined" 
                                     name="country"
+                                    required
                                     // size="small"
                                     value={tournamentData.country}
                                     onChange={handleTextFieldChange}
@@ -280,6 +284,7 @@ const TournamentSubmission = () => {
                                     label="Street"
                                     variant="outlined" 
                                     name="street"
+                                    required
                                     // size="small"
                                     value={tournamentData.street}
                                     onChange={handleTextFieldChange}
@@ -290,59 +295,88 @@ const TournamentSubmission = () => {
                                     label="Zip Code"
                                     variant="outlined" 
                                     name="zipCode"
+                                    required
                                     // size="small"
                                     value={tournamentData.zipCode}
                                     onChange={handleTextFieldChange}
                                     style={{marginRight: 10, marginBottom: 10, minWidth: 200}}
                                 />
                             </div>
+                            <div className='flex-column align-start wrap'>
+                                <TextField 
+                                    type="number" 
+                                    name="courtsNumber"
+                                    inputProps={{min: 1}}
+                                    label="Number of Courts"
+                                    variant="outlined" 
+                                    required
+                                    // size="small"
+                                    value={tournamentData.courtsNumber}
+                                    onChange={handleTextFieldChange}
+                                    sx={{width: 200, marginBottom: '20px', marginRight: '10px'}}
+                                />
+                            </div>
+                            <div className='flex-column wrap align-start'>
+                                <FormControl   sx={{margin: "0 50px 20px 0"}}>
+                                    <FormLabel id="surface-label" sx={{textAlign: "left"}} required>Court Surface</FormLabel>
+                                    <RadioGroup
+                                        aria-labelledby="surface-label"
+                                        name="radio-buttons-group"
+                                    >
+                                        {courtSurfaces.map(surface => {
+                                            return (
+                                                <FormControlLabel value={surface} control={<Radio checked={tournamentData.courtSurface === surface} onChange={() => handleRadioButtonChange(surface, "courtSurface")}/>} label={surface} />
+                                            )
+                                        })}
+                                    </RadioGroup>
+                                </FormControl>
+                            </div>
                         </div>
                         <div className='flex-column align-start' style={{marginBottom: 10}}>
                             <LocalizationProvider dateAdapter={AdapterDateFns}>
                                 <Stack spacing={2}>
-                                    <div style={{textAlign: "left"}}>On Site Sign Up Deadline*</div>
-                                    <div className="flex wrap">
-                                        <DateTimePicker
-                                            label="Deadline"
-                                            maxDate={tournamentData.startDate || null}
-                                            minDate={getTournamentOnSiteSignupDeadline(tournamentData.startDate)}
-                                            value={tournamentData.onSiteSignupDeadline || null}
-                                            onChange={val => handleChange(val, "onSiteSignupDeadline")}
-                                            renderInput={(params) => <TextField {...params} sx={{margin: '0px 10px 10px 0px !important', width: 220}}/>}
-                                        />
-                                    </div>
-                                </Stack>
-                            </LocalizationProvider>
-                        </div>
-                        <div className='flex-column align-start' style={{marginBottom: 10}}>
-                            <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                <Stack spacing={2}>
-                                    <div style={{textAlign: "left"}}>Tournament Play Dates*</div>
+                                    <div style={{textAlign: "left"}}>Tournament Play Dates*&nbsp;<span className="grey">Must start at least 2 months from now</span></div>
                                     <div className="flex wrap">
                                         <DesktopDatePicker
                                             label="Start Date"
                                             minDate={getTournamentSubmissionMinDate()}
                                             value={tournamentData.startDate || null}
                                             onChange={val => handleChange(val, "startDate")}
-                                            renderInput={(params) => <TextField {...params} sx={{margin: '0px 10px 10px 0px !important', width: 200}}/>}
+                                            renderInput={(params) => <TextField {...params} sx={{margin: '0px 10px 10px 0px !important', width: 200}} required/>}
                                         />
                                         <DesktopDatePicker
                                             label="End Date"
                                             minDate={tournamentData.startDate || getTournamentSubmissionMinDate()}
                                             value={tournamentData.endDate || null}
                                             onChange={val => handleChange(val, "endDate")}
-                                            renderInput={(params) => <TextField {...params} sx={{width: 200}}/>}
+                                            renderInput={(params) => <TextField {...params} sx={{width: 200}} required/>}
                                         />
                                     </div>
                                 </Stack>
                             </LocalizationProvider>
                         </div>
+                        <div className='flex-column align-start' style={{marginBottom: 10}}>
+                            <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                <Stack spacing={2}>
+                                    <div style={{textAlign: "left"}}>On Site Sign Up Deadline*&nbsp;<span className="grey">Must be between 1-3 days before the start date</span></div>
+                                    <div className="flex wrap">
+                                        <DateTimePicker
+                                            label="Deadline"
+                                            maxDate={tournamentData.startDate ? getTournamentOnSiteSignupDeadline(tournamentData.startDate, "max") : null}
+                                            minDate={tournamentData.startDate ? getTournamentOnSiteSignupDeadline(tournamentData.startDate, "min") : getTournamentOnSiteSignupDeadline(getTournamentSubmissionMinDate(), "min")}
+                                            value={tournamentData.onSiteSignupDeadline || null}
+                                            onChange={val => handleChange(val, "onSiteSignupDeadline")}
+                                            renderInput={(params) => <TextField {...params} sx={{margin: '0px 10px 10px 0px !important', width: 220}} required/>}
+                                        />
+                                    </div>
+                                </Stack>
+                            </LocalizationProvider>
+                        </div>                        
                         <div className='flex-column wrap align-start'>
                             <FormControl   sx={{margin: "0 50px 20px 0"}}>
                                 <FormLabel id="qualification-label" sx={{textAlign: "left"}} required>Qualification</FormLabel>
                                 <RadioGroup
                                     aria-labelledby="qualification-label"
-                                    defaultValue="female"
                                     name="radio-buttons-group"
                                 >
                                     <FormControlLabel value="yes" control={<Radio checked={tournamentData.qualification ? true : false} onChange={() => handleRadioButtonChange(true, "qualification")}/>} label="Yes" />
@@ -362,7 +396,7 @@ const TournamentSubmission = () => {
                                             maxDate={tournamentData.endDate}
                                             value={tournamentData.qualificationStartDate || null}
                                             onChange={val => handleChange(val, "qualificationStartDate")}
-                                            renderInput={(params) => <TextField {...params} sx={{margin: '0px 10px 10px 0px !important', width: 200}}/>}
+                                            renderInput={(params) => <TextField {...params} sx={{margin: '0px 10px 10px 0px !important', width: 200}} required/>}
                                         />
                                         <DesktopDatePicker
                                             label="End Date"
@@ -370,7 +404,7 @@ const TournamentSubmission = () => {
                                             maxDate={tournamentData.endDate}
                                             value={tournamentData.qualificationEndDate || null}
                                             onChange={val => handleChange(val, "qualificationEndDate")}
-                                            renderInput={(params) => <TextField {...params} sx={{width: 200}}/>}
+                                            renderInput={(params) => <TextField {...params} sx={{width: 200}} required/>}
                                         />
                                     </div>
                                 </Stack>
@@ -472,80 +506,6 @@ const TournamentSubmission = () => {
                                 </RadioGroup>
                             </FormControl>}
                         </div>
-                        {/* <div className="flex-column">
-                            <div className="flex"> 
-                                <FormControl>
-                                    <InputLabel id="main-draw-size-label" required>Main Draw Size</InputLabel>
-                                    <Select
-                                        name='singlesDrawSize'
-                                        id="main-draw-size"
-                                        value={tournamentData.singlesDrawSize}
-                                        label="Main Draw Size"
-                                        sx={{width: 200, margin: '0px 10px 10px 0px'}}
-                                        onChange={handleSelectChange}
-                                    >
-                                        <MenuItem value={8}>8</MenuItem>
-                                        <MenuItem value={16}>16</MenuItem>
-                                        <MenuItem value={32}>32</MenuItem>
-                                        <MenuItem value={64}>64</MenuItem>
-                                        <MenuItem value={64}>128</MenuItem>
-                                    </Select>
-                                </FormControl>
-                                {tournamentData.qualification && <FormControl>
-                                    <InputLabel id="main-draw-size-label" required>Qualifying Draw Size</InputLabel>
-                                    <Select
-                                        name='qualifyingDrawSize'
-                                        id="qualifying-draw-size"
-                                        value={tournamentData.qualifyingDrawSize}
-                                        label="Main Draw Size"
-                                        sx={{width: 200, margin: '0px 10px 10px 0px'}}
-                                        onChange={handleSelectChange}
-                                    >
-                                        <MenuItem value={8}>8</MenuItem>
-                                        <MenuItem value={16}>16</MenuItem>
-                                        <MenuItem value={32}>32</MenuItem>
-                                        <MenuItem value={64}>64</MenuItem>
-                                        <MenuItem value={64}>128</MenuItem>
-                                    </Select>
-                                </FormControl>}
-                            </div>
-                            <div className="flex"> 
-                                {tournamentData.drawType && tournamentData.drawType !== "singles" && <FormControl>
-                                    <InputLabel id="doubles-draw-size-label" required>Doubles Draw Size</InputLabel>
-                                    <Select
-                                        name='doublesDrawSize'
-                                        id="doubles-draw-size"
-                                        value={tournamentData.doublesDrawSize}
-                                        label="Doubles Draw Size"
-                                        sx={{width: 200, margin: '0px 10px 10px 0px'}}
-                                        onChange={handleSelectChange}
-                                    >
-                                        <MenuItem value={8}>8</MenuItem>
-                                        <MenuItem value={16}>16</MenuItem>
-                                        <MenuItem value={32}>32</MenuItem>
-                                        <MenuItem value={64}>64</MenuItem>
-                                        <MenuItem value={64}>128</MenuItem>
-                                    </Select>
-                                </FormControl>}
-                                {tournamentData.genderGroup === "Mixed" && tournamentData.drawType && tournamentData.drawType !== "singles" && <FormControl>
-                                    <InputLabel id="mixed-doubles-draw-size-label" required>Mixed Doubles Draw Size</InputLabel>
-                                    <Select
-                                        name='mixedDoublesDrawSize'
-                                        id="mixed-doubles-draw-size"
-                                        value={tournamentData.mixedDoublesDrawSize}
-                                        label="Mixed Doubles Draw Size"
-                                        sx={{width: 200, margin: '0px 10px 10px 0px'}}
-                                        onChange={handleSelectChange}
-                                    >
-                                        <MenuItem value={8}>8</MenuItem>
-                                        <MenuItem value={16}>16</MenuItem>
-                                        <MenuItem value={32}>32</MenuItem>
-                                        <MenuItem value={64}>64</MenuItem>
-                                        <MenuItem value={64}>128</MenuItem>
-                                    </Select>
-                                </FormControl>}
-                            </div>
-                        </div> */}
                         <div className='flex-column align-start wrap'>
                             <div style={{marginBottom: 10}}>Entry Tax*</div>
                             <TextField 
@@ -554,6 +514,7 @@ const TournamentSubmission = () => {
                                 inputProps={{min: 0}}
                                 label="Amount (€)"
                                 variant="outlined" 
+                                required
                                 // size="small"
                                 value={tournamentData.entryTax}
                                 onChange={handleTextFieldChange}
@@ -568,6 +529,7 @@ const TournamentSubmission = () => {
                                 inputProps={{min: 0}}
                                 label="Amount (€)"
                                 variant="outlined" 
+                                required
                                 // size="small"
                                 value={tournamentData.prizeMoney}
                                 onChange={handleTextFieldChange}
@@ -630,6 +592,10 @@ const TournamentSubmission = () => {
                                         </div>
                                         <h3 className="accent-color section-title">Terms of Play</h3>
                                         <div className="flex-column">
+                                            {tournamentData?.courtsNumber && tournamentData?.courtSurface && <div className="flex-column justify-start" style={{marginBottom: 30}}>
+                                                <div style={{marginBottom: 5}}>Courts Available:</div>
+                                                <div>{tournamentData?.courtsNumber} {tournamentData?.courtSurface} Courts</div>
+                                            </div>}
                                             <div className="flex-column justify-start"> 
                                                 <div style={{marginBottom: 5}}>Draw(s):</div>
                                                 {getDraws(tournamentData?.ageGroups, tournamentData?.genderGroup, tournamentData?.drawType)}

@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Table } from '../../components';
-import { sortData, getAge } from '../../utils/helpers'
+import { getAge, checkAgeGroupMatch } from '../../utils/helpers'
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
-import { useLocation } from 'react-router';
 import { ageGroups, genderGroups } from '../../data/constants';
-import { mockPlayerData, mockRanking } from '../../data/dummyData';
 import moment from 'moment';
 
 // modal
@@ -15,6 +13,15 @@ import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 import Button from '@mui/material/Button';
 import ClearIcon from '@mui/icons-material/Clear';
+
+//firebase
+import { getDatabase, ref, child, get, onValue } from "firebase/database";
+
+// toast
+import { toast } from 'react-toastify';
+
+const database = getDatabase()
+const dbRef = ref(database);
 
 const style = {
     position: 'absolute',
@@ -29,78 +36,97 @@ const style = {
 };
 
 const tableRowHeaders = [
-    // 'Ranking', 
     'Name', 
     'Competes For', 
     'Age', 
-    'Points Won'
+    'Gender',
 ]
 
 const Rankings = () => {
-
-    const location = useLocation()
     const [search, setSearch] = useState({
         name: '',
-        nationCompetingFor: '',
-        ageGroup: 'U40',
-        genderGroup: 'Male'
+        countryOfBirth: '',
+        ageGroup: 'All Ages',
+        genderGroup: 'All'
     }) 
     const [data, setData] = useState([])
+    const [players, setPlayers] = useState([])
     const [categorizedData, setCategorizedData] = useState([])
     const [currentPlayer, setCurrentPlayer] = useState()
     const [open, setOpen] = useState(false)
 
     const handleClose = () => setOpen(false);
 
+    const fetchPlayers = () => {
+        get(child(dbRef, 'players')).then((snapshot) => {
+            const playersArr = []
+
+            if (snapshot.exists()) {
+                const playersObj = snapshot.val()
+                
+                Object.keys(playersObj).map(key => {
+                    playersArr.push(playersObj[key])
+                })
+                
+
+            } else {
+                console.log("No data available");
+                // setIsLoading(false)
+            }
+
+            setPlayers(playersArr)
+
+            }).catch((error) => {
+                console.error(error);
+                toast.error("An error has occured.")
+                // setIsLoading(false)
+            });   
+    }
+
     const getData = () => {
-        let rankingData = []
-
-        mockRanking.forEach(r => {
-            if ((search.ageGroup ? r.ageGroup === search.ageGroup : true) && (search.genderGroup ? r.genderGroup.toLowerCase() === search.genderGroup.toLowerCase() : true)) {
-                rankingData = r.players
+        // display only the players which match the filters
+        const tableData = players.map(player => {
+            if ((search.genderGroup === 'All' || player.gender.toLowerCase() === search.genderGroup.toLowerCase()) &&
+                checkAgeGroupMatch(search.ageGroup, getAge(player?.dateOfBirth))) {
+                return {
+                    name: `${player?.firstName} ${player?.familyName}`,
+                    countryOfBirth: player?.countryOfBirth,
+                    age: getAge(player?.dateOfBirth),
+                    gender: player.gender,
+                    id: player.userID
+                }
             }
         })
 
-        const tableData = rankingData.map(p => {
-            const currentPlayer = mockPlayerData.find(player => player.playerId === p.playerId)
-        
-            return {
-                name: `${currentPlayer?.firstName} ${currentPlayer?.familyName}`,
-                nationCompetingFor: currentPlayer?.nationCompetingFor,
-                age: getAge(currentPlayer?.dateOfBirth),
-                pointsWon: p.pointsWon,
-                id: currentPlayer.playerId
-            }
-        })
-
+        // sort table by player name
         const sortedTableData = tableData.sort((a, b) => {
-            if(a.name < b.name) { return -1; }
-            if(a.name > b.bame) { return 1; }
+            if (a.name < b.name) { 
+                return -1; 
+            }
+
+            if (a.name > b.bame) { 
+                return 1; 
+            }
+
             return 0;
         })
-        const organizedTableData = sortedTableData.map((player, index) => {
-            return {
-                // ranking: index + 1,
-                ...player
-            }
-        })
 
-        setCategorizedData([...organizedTableData])
+        setCategorizedData([...sortedTableData])
 
-        return organizedTableData
+        return sortedTableData
     }
 
 
     const handleRowClick = (playerData) => {
-        const playerIndex =  mockPlayerData.findIndex(el => el.playerId === playerData.id)
-        const current = mockPlayerData[playerIndex]
+        const playerIndex = players.findIndex(el => el.userID === playerData.id)
+        const current = players[playerIndex]
 
         setCurrentPlayer(current)
         setOpen(true)
     }
 
+    // display the players that match the search
     const handleSearchChange = (e) => {
-
         const name = e.target.name
         const value = e.target.value
 
@@ -112,11 +138,11 @@ const Rankings = () => {
         })
 
         if (name === "name") {
-            sortedAndFilteredData = categorizedData.filter(player => player.name.toLowerCase().includes(value.toLowerCase())).filter(player => player.nationCompetingFor.toLowerCase().includes(search.nationCompetingFor.toLowerCase()));
+            sortedAndFilteredData = categorizedData.filter(player => player.name.toLowerCase().includes(value.toLowerCase())).filter(player => player.countryOfBirth.toLowerCase().includes(search.countryOfBirth.toLowerCase()));
         }
 
-        if (name === "nationCompetingFor") {
-            sortedAndFilteredData = categorizedData.filter(player => player.name.toLowerCase().includes(search.name.toLowerCase())).filter(player => player.nationCompetingFor.toLowerCase().includes(value.toLowerCase()));
+        if (name === "countryOfBirth") {
+            sortedAndFilteredData = categorizedData.filter(player => player.name.toLowerCase().includes(search.name.toLowerCase())).filter(player => player.countryOfBirth.toLowerCase().includes(value.toLowerCase()));
         }
 
         setData(sortedAndFilteredData)
@@ -126,7 +152,7 @@ const Rankings = () => {
         let bool = false
 
         for (const key in search) {
-            if (search.name || search.nationCompetingFor) {
+            if (search.name || search.countryOfBirth) {
                 bool = true
             }
         }
@@ -135,35 +161,36 @@ const Rankings = () => {
     }
 
     const clearFilters = () => {
-        setSearch({...search, name: '', nationCompetingFor: ''})
+        setSearch({...search, name: '', countryOfBirth: ''})
         setData(getData())
     }
 
     useEffect(() => {
         getData()
         setData(getData())
-    }, [search.ageGroup, search.genderGroup])
+    }, [search.ageGroup, search.genderGroup, players])
 
     useEffect(() => {
-      window.scrollTo(0,0)
+      window.scrollTo(0,0) // avoid scroll preservation because of react router
+      fetchPlayers()
+
+      // listen for changes to the database and display them live
+      const playersRef = ref(database, 'players');
+      onValue(playersRef, (snapshot) => {
+          const playersArr = []
+          const playersObj = snapshot.val();
+
+          Object.keys(playersObj).map(key => {
+              playersArr.push(playersObj[key])
+            })
+
+          setPlayers(playersArr)
+      });
     }, [])
-
-    useEffect(() => {
-
-        const searchGenderGroup = location?.state?.rankings
-
-        const rand = Math.floor(Math.random()*10)
-        const randomGenderGroup = rand % 2 === 0 ? 'Female' : 'Male'
-
-        setSearch({
-            ...search,
-            genderGroup: searchGenderGroup === "women" ? 'Female' : searchGenderGroup === "men" ? 'Male' : searchGenderGroup === "mixed-doubles" ? 'Mixed' : randomGenderGroup
-        })
-    }, [location])
 
     return (
         <div className='container'>
-            <h3 className="accent-color" style={{textAlign: 'left'}}>Search through Rankings</h3>
+            <h3 className="accent-color" style={{textAlign: 'left'}}>Search through Players</h3>
             <div className='flex wrap justify-between'>
                 <div className="flex wrap" style={{minWidth: '250px', maxWidth: "60%"}}>
                     <TextField
@@ -177,12 +204,12 @@ const Rankings = () => {
                         style={{minWidth: 200, margin: '0 5px 10px 0'}}
                     />
                     <TextField
-                        name="nationCompetingFor"
+                        name="countryOfBirth"
                         id="outlined-basic"
                         label="Search by nation"
                         variant="outlined"
                         size="small"
-                        value={search.nationCompetingFor}
+                        value={search.countryOfBirth}
                         onChange={handleSearchChange}
                         style={{minWidth: 200, margin: '0 5px 10px 0'}}
                     />
@@ -196,7 +223,7 @@ const Rankings = () => {
                         size="small"
                         sx={{width: 150, margin: '0 5px 10px 0'}}
                     >
-                        {genderGroups.map((option, index) => (
+                        {['Female', 'Male', 'All'].map((option, index) => (
                             <MenuItem key={index} value={option}>
                                 {option}
                             </MenuItem>
@@ -212,7 +239,7 @@ const Rankings = () => {
                         size="small"
                         sx={{width: 150, marginBottom: '10px !important'}}
                     >
-                        {ageGroups.map((option, index) => (
+                        {[...ageGroups, 'All Ages'].map((option, index) => (
                             <MenuItem key={index} value={option}>
                                 {option}
                             </MenuItem>
@@ -240,7 +267,7 @@ const Rankings = () => {
                     <div className="flex-column">
                         <h2 className="accent-color" style={{fontWeight: '500'}}>{currentPlayer?.firstName}&nbsp;{currentPlayer?.familyName}</h2>
                         <div style={{marginBottom: 5}}>Gender: {currentPlayer?.gender}</div>
-                        <div style={{marginBottom: 5}}>Nation Competing For:&nbsp;{currentPlayer?.nationCompetingFor}</div>
+                        <div style={{marginBottom: 5}}>Country of Birth:&nbsp;{currentPlayer?.countryOfBirth}</div>
                         <div style={{marginBottom: 5}}>Date of Birth:&nbsp;{moment(new Date(currentPlayer?.dateOfBirth)).format('D MMMM YYYY')}</div>
                     </div>
                 </Box>

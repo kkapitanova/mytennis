@@ -1,13 +1,34 @@
+import { getTournamentSubmissionMinDate } from "../utils/helpers"
+
 export const ageGroups = [
     'U40', 'U60', '60+'
 ]
 
 export const genderGroups = [
-    'Female', 'Male', 'Mixed'
+    {
+        label: `Women's`,
+        value: 'Female'
+    },
+    {
+        label: `Men's`,
+        value: 'Male'
+    },
+    {
+        label: 'Mixed',
+        value: 'Mixed'
+    }
 ]
 
 export const draws = [
     'Singles', 'Doubles'
+]
+
+export const courtSurfaces = [
+    'Indoor Clay',
+    'Outdoor Clay',
+    'Indoor Hard', 
+    'Outdoor Hard',
+    'Outdoor Grass',
 ]
 
 // all draw combinations (age, gender, draw type)
@@ -82,6 +103,8 @@ export const initialTournamentData = {
     description: '',
     city: '',
     country: '',
+    courtSurface: '',
+    courtsNumber: '',
     street: '',
     zipCode: '',
     clubName: '',

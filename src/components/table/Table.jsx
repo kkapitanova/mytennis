@@ -1,4 +1,6 @@
 import * as React from 'react';
+
+// material imports
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -7,12 +9,15 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
+// styles
+import './Table.scss'
+
 const BasicTable = ({ tableData, rowHeaders, onRowClick }) => {
 
     if (tableData && tableData.length) {
         return (
             <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <Table sx={{ minWidth: 650 }} stickyHeader aria-label="sticky table">
                     <TableHead>
                         <TableRow>
                             {rowHeaders.map((header, index) => (
@@ -31,7 +36,7 @@ const BasicTable = ({ tableData, rowHeaders, onRowClick }) => {
                                 key={index}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
-                                {Object.keys(dataItem).map((key, index) => { 
+                                {dataItem && Object.keys(dataItem).map((key, index) => { 
 
                                     let value = dataItem[key]
 
@@ -53,7 +58,7 @@ const BasicTable = ({ tableData, rowHeaders, onRowClick }) => {
                                                 onClick={() => onRowClick(dataItem)} 
                                                 className={`${ typeof value === 'string' &&
                                                     (value.toLowerCase() === 'waiting for approval' || value.toLowerCase() === 'postponed' || value.toLowerCase() === 'waiting for points distribution' ? 'orange' : 
-                                                    value.toLowerCase() === 'declined' || value.toLowerCase() === 'withdrawn' || value.toLowerCase() === 'cancelled' ? 'red' :
+                                                    value.toLowerCase() === 'declined' || value.toLowerCase() === 'withdrawn' || value.toLowerCase() === 'canceled' ? 'red' :
                                                     value.toLowerCase() === 'concluded' ? "blue" :
                                                     value.toLowerCase() === 'sign up open' || value.toLowerCase() === 'in progress' || value.toLowerCase() === 'entered' ? 'green' : '')
                                                 }`}
@@ -90,7 +95,7 @@ const BasicTable = ({ tableData, rowHeaders, onRowClick }) => {
             </TableContainer>
         );
     } else {
-        return <div>No data available.</div>
+        return <div className="no-data-message full-width">No data available.</div>
     }
 }
 

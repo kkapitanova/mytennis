@@ -11,7 +11,7 @@
     width: 100%;
     z-index: 4;
     animation: 1s ease-out 0s 1 slideInFromTop;
-    border: 1px solid $accent;
+    border-bottom: 1px solid $accent;
     height: 60px;
     overflow: visible;
 }

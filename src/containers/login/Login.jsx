@@ -80,36 +80,28 @@ const Login = () => {
     }, [])
 
     return (
-        <div className="flex-column justify-center align-center container">
-            {!loggedIn ? (<div>
+        <div className="flex-column justify-center align-center container login">
+            {!loggedIn ? (<div className="flex-column justify-center align-center">
                 <h3 className="accent-color">Login Form</h3>
-                <Box
-                    component="form"
-                    sx={{
-                        '& > :not(style)': { m: 1, width: '30ch' },
-                    }}
-                    noValidate
-                    autoComplete="off"
-                    className="flex-column"
-                >
-                    <TextField 
-                        id="email" 
-                        label="Enter email" 
-                        variant="outlined" 
-                        size="small"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <TextField 
-                        id="password" 
-                        type="password"
-                        size="small"
-                        label="Enter password" 
-                        variant="outlined" 
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                </Box>
+                <TextField 
+                    id="email" 
+                    label="Enter email" 
+                    variant="outlined" 
+                    size="small"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    sx={{marginTop: '20px', width: 250}}
+                />
+                <TextField 
+                    id="password" 
+                    type="password"
+                    size="small"
+                    label="Enter password" 
+                    variant="outlined" 
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    sx={{marginTop: '20px', width: 250}}
+                />
                 <Button variant="contained" sx={{margin: '10px !important'}} onClick={handleLogin}>Login</Button>
                 <div>You are new? <span className="underlined pointer" onClick={() => history.push('/register')}>Register here.</span></div>
                 </div>) : 

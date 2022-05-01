@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getAvailableDraws } from '../../utils/helpers'
+import { getAvailableDraws, objectToArrayConverter } from '../../utils/helpers'
 
 // material imports
 import Button from '@mui/material/Button';
@@ -8,27 +8,90 @@ import AddIcon from '@mui/icons-material/Add';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import Autocomplete from '@mui/material/Autocomplete';
+
+//firebase
+import { getDatabase, ref, child, get, onValue } from "firebase/database";
+
+// toast
+import { toast } from 'react-toastify';
+
+const database = getDatabase()
+const dbRef = ref(database);
 
 const PointsDistribution = ({
     tournament, 
     onConfirm,
-    text
+    text,
 }) => {
 
     const [count, setCount] = useState(0)
     const [points, setPoints] = useState([])
     const [isDisabled, setIsDisabled] = useState(true)
+    const { playersSignedUp } = tournament || {}
+    const [players, setPlayers] = useState([])
 
     const availableDraws = getAvailableDraws(tournament)
 
-    const handleChange = (e, key, name) => {
+    const fetchPlayers = () => {
+        get(child(dbRef, 'players')).then((snapshot) => {
+            const playersArr = []
+
+            if (snapshot.exists()) {
+                const playersObj = snapshot.val()
+                
+                Object.keys(playersObj).map(key => {
+                    playersArr.push({
+                        ...playersObj[key], 
+                        label: `${playersObj[key].firstName}\xa0${playersObj[key].middleName}\xa0${playersObj[key].familyName}\xa0(${playersObj[key].countryOfBirth})`
+                    })
+                })
+                
+
+            } else {
+                console.log("No data available");
+                // setIsLoading(false)
+            }
+
+            // sort players alphabetically
+            setPlayers(playersArr.sort((a, b) => {
+                if (a.name < b.name) { 
+                    return -1; 
+                }
+    
+                if (a.name > b.bame) { 
+                    return 1; 
+                }
+    
+                return 0;
+            }))
+
+            }).catch((error) => {
+                console.error(error);
+                toast.error("An error has occured.")
+                // setIsLoading(false)
+            });   
+    }
+
+    const handleChange = (e, key, name, id) => {
 
         const updatedPoints = [...points]
         const updatedItemIndex = points.findIndex(el => el.key === key)
 
         if (updatedItemIndex !== -1) {
             const updatedItem = updatedPoints[updatedItemIndex]
-            updatedItem[name] = e.target.value
+
+            if (name === 'playerName') {
+                updatedItem[name] = players?.[e.target.dataset.optionIndex]?.label
+            } else {
+                updatedItem[name] = e.target.value
+            }
+
+            if (name !== 'playerID' && id) {
+                updatedItem['playerID'] = id
+            } else if (name === 'playerName' && !updatedItem[name]) {
+                updatedItem['playerID'] = '' // clear id if player name is cleared too
+            }
 
             setPoints(updatedPoints)
         }
@@ -37,6 +100,8 @@ const PointsDistribution = ({
     // disable confirm button if not all fields are filled in
     useEffect(() => {
         let bool = false
+
+        console.log(points)
 
         points.forEach(p => {
             for (let key in p) {
@@ -51,8 +116,9 @@ const PointsDistribution = ({
 
 
     useEffect(() => {
-        console.log(tournament)
+        fetchPlayers()
     }, [tournament])
+
 
     return (
         <div className="flex-column justify-start full-width">
@@ -61,6 +127,15 @@ const PointsDistribution = ({
                 {points.map(entry => {
                     return (
                         <div className="flex wrap" key={entry.key}>
+                            <Autocomplete
+                                freeSolo
+                                id="player-name-autocomplete"
+                                size="small"
+                                options={players}
+                                onChange={(e) => handleChange(e, entry.key, 'playerName', players?.[e.target.dataset.optionIndex]?.userID)}
+                                sx={{ width: 320, margin: '0px 5px 10px 0px' }}
+                                renderInput={(params) => <TextField {...params} label="Player name" />}
+                            />
                             <TextField
                                 name="playerID"
                                 label="Player ID"
@@ -68,7 +143,7 @@ const PointsDistribution = ({
                                 size="small"
                                 value={entry.playerID}
                                 onChange={(e) => handleChange(e, entry.key, 'playerID')}
-                                style={{minWidth: 200, margin: '0px 5px 10px 0px'}}
+                                style={{minWidth: 320, margin: '0px 5px 10px 0px'}}
                             />
                             <TextField
                                 type="number" 
@@ -118,6 +193,7 @@ const PointsDistribution = ({
                         ...points,
                         {
                             playerID: '',
+                            playerName: '',
                             pointsWon: '',
                             draw: '',
                             key: new Date().getTime()

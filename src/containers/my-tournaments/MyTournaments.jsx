@@ -86,7 +86,7 @@ const MyTournaments = () => {
     const [dataByCategories, setDataByCategories] = useState([]) // all data filtered by categories (gender group, age group, dates)
     const [currentTournament, setCurrentTournament] = useState() // current tournament modal
     const [open, setOpen] = useState(false) // tournament info modal open state
-    const [tournamentsTime, setTournamentsTime] = useState("upcoming") // toggle between archive and upcoming tournaments
+    const [tournamentsTime, setTournamentsTime] = useState("upcoming") // toggle between past and upcoming tournaments
     const [tournamentsDisplay, setTournamentsDisplay] = useState(userData.role === 'player' ? 'entered' : '') // toggle between enterd and withdrawn from tournaments for player view only
     
     const [withdrawalButtonText, setWithdrawalButtonText] = useState("Withdraw")
@@ -106,13 +106,13 @@ const MyTournaments = () => {
     const updateCurrentPlayerPoints = (draw, id, pointsWon) => {
         const updates = {}
 
-        get(child(dbRef, 'rankings/' + draw + '/' + id)).then((snapshot) => {
+        get(child(dbRef, `rankings/${draw}/${id}`)).then((snapshot) => {
             if (snapshot.exists()) {
                 const currentPlayerPoints = snapshot.val().pointsWon
-                updates['/rankings/' + `${draw}/` + id] = { playerID: id, pointsWon: parseInt(pointsWon) + currentPlayerPoints, updated: new Date() };
+                updates[`/rankings/${draw}/${id}`] = { playerID: id, pointsWon: parseInt(pointsWon) + currentPlayerPoints, updated: new Date() };
 
             } else {
-                updates['/rankings/' + `${draw}/` + id] = { playerID: id, pointsWon: parseInt(pointsWon), updated: new Date()};
+                updates[`/rankings/${draw}/${id}`] = { playerID: id, pointsWon: parseInt(pointsWon), updated: new Date()};
                 console.log("No data available");
             }
 
@@ -208,8 +208,8 @@ const MyTournaments = () => {
                 (t.startDate + t.endDate).includes(search.year) && 
                 // (t.status.toLowerCase() === 'waiting for approval' || t.status.toLowerCase() === 'declined') &&
                 
-                /// UPCOMING TOURNAMENTS VS ARCHIVED TOURNAMENTS VS ALL TOURNAMENTS
-                (tournamentsTime === 'upcoming' ? new Date (t.endDate).getTime() > new Date ().getTime() : tournamentsTime === 'archive' ? new Date (t.endDate).getTime() < new Date ().getTime() : true) &&
+                /// UPCOMING TOURNAMENTS VS PAST TOURNAMENTS VS ALL TOURNAMENTS
+                (tournamentsTime === 'upcoming' ? new Date (t.endDate).getTime() > new Date ().getTime() : tournamentsTime === 'past' ? new Date (t.endDate).getTime() < new Date ().getTime() : true) &&
 
                 // ADMIN VIEW
                 (((userRole && userRole.toLowerCase() === 'admin') ? (t.status?.toLowerCase() === "waiting for approval" || t.status?.toLowerCase() === 'declined') : false) ||
@@ -260,7 +260,7 @@ const MyTournaments = () => {
                         current?.status.toLowerCase() === 'concluded' ?
                             'blue' :
                         current?.status.toLowerCase() === 'declined' || 
-                        current?.status.toLowerCase() === 'cancelled' ? 
+                        current?.status.toLowerCase() === 'canceled' ? 
                             'red' : 'green'
 
         setStatusColor(color)
@@ -375,7 +375,7 @@ const MyTournaments = () => {
             update(dbRef, updates)
             .then(() => {
                 toast.success("You have declined a tournament successfully.")
-                toast.info("The tournament will stay archived only for you and the club representative to see.")
+                toast.info("The tournament will stay pastd only for you and the club representative to see.")
                 console.log("submission confirmed")
             })
             .catch((error) => {
@@ -490,7 +490,7 @@ const MyTournaments = () => {
             
             data.forEach(item => {
                 if (item.id === currentTournament.tournamentID) {
-                    item.status = "Cancelled"
+                    item.status = "Canceled"
                 }
                 updatedData.push(item)
             })
@@ -499,14 +499,14 @@ const MyTournaments = () => {
             handleClose()
 
             let updatedTournament = currentTournament;
-            updatedTournament.status = 'Cancelled'
+            updatedTournament.status = 'Canceled'
 
             const updates = {};
             updates['/tournaments/' + currentTournament.tournamentID] = updatedTournament;
 
             update(dbRef, updates)
             .then(() => {
-                toast.success("You have cancelled this tournament successfully.")
+                toast.success("You have canceled this tournament successfully.")
                 toast.info("We hope that you will have another opportunity to host a tournament!")
             })
             .catch((error) => {
@@ -602,12 +602,12 @@ const MyTournaments = () => {
                 </div>) :
             userData?.role?.toLowerCase() === 'clubrep' ? 
                 (<div className="helper-text">
-                    Here you can preview all of the tournaments you have submitted and their status. 
+                    Here you can preview all of the tournaments you have submitted. 
                     'Waiting for Approval' means that the tournament is waiting to be approved by an admin. 'Declined' means that the request for a tournament has been rejected.
                 </div>) :
             userData?.role?.toLowerCase() === 'player' &&
                 <div className="helper-text">
-                    Here you can preview the tournaments you have signed up for. 
+                    Here you can preview the tournaments you have signed up for/withdrawn from. 
                     You can withdraw from any tournament, but withdrawing meeans you will not be able to sign up for the tournament again.
                 </div>
             }
@@ -624,7 +624,7 @@ const MyTournaments = () => {
                     <ToggleButton value={"withdrawn"} className="red-option">Withdrawn from</ToggleButton>
                     <ToggleButton value={"entered"}>Entered</ToggleButton>
                 </ToggleButtonGroup>
-                {/* <div style={{color: "rgba(0, 0, 0, 0.5)"}}>{tournamentsDisplay === "archive" ? 'Only past tournaments will be shown.' : tournamentsDisplay === "upcoming" ? 'Only upcoming tournaments will be shown.' : "All tournaments will be shown."}</div> */}
+                {/* <div style={{color: "rgba(0, 0, 0, 0.5)"}}>{tournamentsDisplay === "past" ? 'Only past tournaments will be shown.' : tournamentsDisplay === "upcoming" ? 'Only upcoming tournaments will be shown.' : "All tournaments will be shown."}</div> */}
             </div>}
             <div className="flex wrap align-center">
                 <ToggleButtonGroup
@@ -636,11 +636,11 @@ const MyTournaments = () => {
                         setTournamentsTime(e.target.value)
                     }}
                     >
-                    <ToggleButton value={"archive"}>Archive</ToggleButton>
+                    <ToggleButton value={"past"}>past</ToggleButton>
                     <ToggleButton value={"all"}>All</ToggleButton>
                     <ToggleButton value={"upcoming"}>Upcoming</ToggleButton>
                 </ToggleButtonGroup>
-                {/* <div style={{color: "rgba(0, 0, 0, 0.5)"}}>{tournamentsDisplay === "archive" ? 'Only past tournaments will be shown.' : tournamentsDisplay === "upcoming" ? 'Only upcoming tournaments will be shown.' : "All tournaments will be shown."}</div> */}
+                {/* <div style={{color: "rgba(0, 0, 0, 0.5)"}}>{tournamentsDisplay === "past" ? 'Only past tournaments will be shown.' : tournamentsDisplay === "upcoming" ? 'Only upcoming tournaments will be shown.' : "All tournaments will be shown."}</div> */}
             </div>
             <div className='flex wrap justify-between'>
                 <div className="flex wrap" style={{minWidth: '250px', maxWidth: "60%"}}>
@@ -697,7 +697,7 @@ const MyTournaments = () => {
                                 </MenuItem>
                             ))
                         }
-                        {tournamentsTime === 'archive' &&
+                        {tournamentsTime === 'past' &&
                             previousYears.map((option, index) => (
                                 <MenuItem key={index} value={option}>
                                     {option}
@@ -766,11 +766,14 @@ const MyTournaments = () => {
                 <Box sx={style} className="large-modal full-width">
                     <div className="flex-column justify-center align-center">
                         <div className="flex-column full-width">
-                            <div className="flex justify-between align-center tournament-header">
-                                <h2 className="accent-color" style={{fontWeight: '500'}}>{currentTournament?.tournamentName}</h2>
-                                <div className={`status-indicator ${statusColor}`}>{currentTournament?.status.toUpperCase()}</div> 
+                            <div className="flex justify-between align-center">
+                                <div className="flex-column align-start tournament-header">
+                                    <h2 className="accent-color" style={{fontWeight: '500'}}>{currentTournament?.tournamentName}</h2>
+                                    <div className={`status-indicator ${statusColor}`}>{currentTournament?.status.toUpperCase()}</div> 
+                                </div>
+                                <ClearIcon className="pointer accent-color" onClick={handleClose}/>
                             </div>
-                            <div style={{marginBottom: 5}}>
+                            <div style={{margin: '10px 0px 5px 0px'}}>
                                 {currentTournament?.startDate && currentTournament?.endDate && <div>{getDateString(new Date (currentTournament?.startDate).getTime())} - {getDateString(new Date (currentTournament?.endDate).getTime())}</div>}
                             </div>
                             <div style={{marginBottom: 5}}>{currentTournament?.clubName}</div>
@@ -786,13 +789,17 @@ const MyTournaments = () => {
                             </div>
                             <h3 className="accent-color section-title">Terms of Play</h3>
                             <div className="flex-column">
+                                {currentTournament?.courtsNumber && currentTournament?.courtSurface && <div className="flex-column justify-start" style={{marginBottom: 30}}>
+                                    <div style={{marginBottom: 5}}>Courts Available:</div>
+                                    <div>{currentTournament?.courtsNumber} {currentTournament?.courtSurface} Courts</div>
+                                </div>}
                                 <div className="flex-column justify-start" style={{marginRight: 40}}> 
                                     <div style={{marginBottom: 5}}>Draw(s):</div>
                                     {getDraws(currentTournament?.ageGroups, currentTournament?.genderGroup, currentTournament?.drawType)}
                                 </div>
                                 <div className="flex-column justify-start" style={{marginBottom: 30}}> 
                                     <div style={{marginBottom: 5}}>Draw size(s):</div>
-                                    {currentTournament?.drawType !== "doubles" && currentTournament?.mainDrawSize && <div>Main Draw: {currentTournament.mainDrawSize}</div>}
+                                    {currentTournament?.drawType !== "doubles" && currentTournament?.singlesDrawSize && <div>Singles Draw: {currentTournament.singlesDrawSize}</div>}
                                     {currentTournament?.drawType !== "singles" && currentTournament?.doublesDrawSize && <div>Doubles Draw: {currentTournament.doublesDrawSize}</div>}
                                     {currentTournament?.drawType !== "singles" && currentTournament?.genderGroup?.toLowerCase() === "mixed" && currentTournament?.mixedDoublesDrawSize && <div>Mixed Doubles Draw: {currentTournament.mixedDoublesDrawSize}</div>}
                                 </div>
@@ -822,6 +829,7 @@ const MyTournaments = () => {
                                 variant={withdrawalButtonText === 'Withdraw' ? 'outlined' : 'contained'} 
                                 sx={{height: 40, marginTop: '30px !important'}} 
                                 onClick={confirmWithdrawal}
+                                disabled={currentTournament?.status.toLowerCase() !== 'sign up open'}
                                 endIcon={<LogoutOutlinedIcon />}
                             >
                                 {withdrawalButtonText}
@@ -838,6 +846,11 @@ const MyTournaments = () => {
                         currentTournament?.playersSignedUp[userData.userID] &&
                         currentTournament?.playersSignedUp[userData.userID].withdrawed === true && 
                         <div>You have already withdrawn from this tournament. You cannot enter again.</div>}
+                        {currentTournament?.status?.toLowerCase() !== 'sign up open' && 
+                        currentTournament?.playersSignedUp && 
+                        currentTournament?.playersSignedUp[userData.userID] &&
+                        currentTournament?.playersSignedUp[userData.userID].withdrawed !== true && 
+                        <div>You cannot withdraw from this tournament because the deadline has passed.</div>}
                         {withdrawalButtonText === "Confirm Withdrawal" && <div>Please keep in mind that after withdrawing, you will not be able to sign up for the tournament again.</div>}
                         {currentTournament?.playersSignedUp ? 
                         (<div className="flex-column full-width">
