@@ -2,16 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 // material
-import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import FormGroup from '@mui/material/FormGroup';
-import Checkbox from '@mui/material/Checkbox';
-import FormHelperText from '@mui/material/FormHelperText';
 
 // firebase
 import '../../firebase-config';
@@ -34,7 +28,6 @@ const Register = () => {
     })
     const [userRole, setUserRole] = useState('player')
     const history = useHistory();
-    const [checked, setChecked] = useState(false)
 
     const handleChange = e => {
         const value = e.target.value
@@ -47,13 +40,7 @@ const Register = () => {
 
         if (!userData.password || !userData.email || !userData.confirmPassword) {
             toast.error('Please fill out all of the fields.')
-        } 
-
-        // else if (!checked) { //uncomment if you decide to add the T&C's checkmark here instead of in the profile
-        //     toast.error('Please read and agree to the T&Cs.')
-        // } 
-
-        else if (userData.password !== userData.confirmPassword) {
+        } else if (userData.password !== userData.confirmPassword) {
             toast.error('Passwords do not match.')
         } else {
             createUserWithEmailAndPassword(authentication, userData.email, userData.password)
@@ -149,17 +136,6 @@ const Register = () => {
                 onChange={handleChange}
                 sx={{marginTop: '20px', width: 250}}
             />
-            {/* <FormControl sx={{ m: 1 }} component="fieldset" variant="standard" error={!checked}>
-                <FormGroup>
-                <FormControlLabel
-                    control={
-                    <Checkbox checked={checked} onChange={(e) => {setChecked(e.target.checked)}} name="gilad" />
-                    }
-                    label="By registering, I confirm that I agree to the T&Cs of My Tennis."
-                />
-                </FormGroup>
-                <FormHelperText>You must agree to continue forward.</FormHelperText>
-            </FormControl> */}
             <Button variant="contained" sx={{margin: '20px 0px 10px 0px!important'}} type="submit" onClick={handleRegister} disabled={!userData.email || !userData.password || !userData.confirmPassword}>Register</Button>
             <div className="flex-column">
                 <div>Already a member?</div>
