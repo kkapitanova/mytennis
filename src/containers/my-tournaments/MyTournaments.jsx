@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table } from '../../components';
 import { useLocation } from 'react-router';
-import { ageGroups, genderGroups, months, upcomingYears, previousYears, allYears } from '../../data/constants';
+import { ageGroups, genderGroups, months, upcomingYears, previousYears, allYears, tournamentDrawsOptions } from '../../data/constants';
 import { sortData, getDateString, objectToArrayConverter, getDraws, getDateTimeString } from '../../utils/helpers';
 import PointsDistribution from './PointsDistribution';
 
@@ -50,9 +50,9 @@ const tableRowHeaders = [
     'Name', 
     'Start Date', 
     'End Date', 
-    'Gender Group', 
     'Age Groups', 
-    // 'Draw Types', 
+    'Gender Group', 
+    'Draw Types', 
     'Status'
 ]
 
@@ -75,11 +75,11 @@ const MyTournaments = () => {
     const [search, setSearch] = useState({
         name: '',
         location: '',
-        ageGroup: '',
-        genderGroup: '',
-        draws: ['Singles'],
-        month: '',
-        year: ''
+        ageGroup: 'All Ages',
+        genderGroup: 'All Genders',
+        drawType: 'All Draw Types',
+        month: 'All',
+        year: 'All'
     }) 
 
     const [data, setData] = useState([]) // data displayed in the table
@@ -87,7 +87,7 @@ const MyTournaments = () => {
     const [currentTournament, setCurrentTournament] = useState() // current tournament modal
     const [open, setOpen] = useState(false) // tournament info modal open state
     const [tournamentsTime, setTournamentsTime] = useState("upcoming") // toggle between past and upcoming tournaments
-    const [tournamentsDisplay, setTournamentsDisplay] = useState(userData.role === 'player' ? 'entered' : '') // toggle between enterd and withdrawn from tournaments for player view only
+    const [tournamentsDisplay, setTournamentsDisplay] = useState(userData.role === 'player' ? 'entered' : '') // toggle between entered and withdrawn from tournaments for player view only
     
     const [withdrawalButtonText, setWithdrawalButtonText] = useState("Withdraw")
     const [approvalText, setApprovalText] = useState("Approve")
@@ -98,16 +98,9 @@ const MyTournaments = () => {
     const [signUpClosureText, setSignUpClosureText] = useState("Close Sign Up")
     const [statusColor, setStatusColor] = useState()
 
-    //testing user roles
-    const userRole = userData.role
-    const userID = userData.userID
-
-
     const updateCurrentPlayerPoints = (draw, id, pointsWon) => {
         const updates = {}
         
-        console.log("HEREE", draw, id, pointsWon)
-
         get(child(dbRef, `rankings/${draw}/${id}`)).then((snapshot) => {
             if (snapshot.exists()) {
                 const currentPlayerPoints = snapshot.val().pointsWon
@@ -199,37 +192,39 @@ const MyTournaments = () => {
 
     const getData = () => {
         let tournamentData = []
-        
+
         allData && allData.length && allData.forEach(t => {
+            console.log(t)
+
             if (
-                (search.ageGroup ? t.ageGroups && t.ageGroups.includes(search.ageGroup) : true) && 
-                (search.genderGroup ? t.genderGroup && t.genderGroup.includes(search.genderGroup) : true) &&
-                (t.city + t.country)?.toLowerCase().includes(search.location) &&
-                t.tournamentName?.toLowerCase().includes(search.name) && 
-                (t.startDate + t.endDate).includes(search.month) &&
-                (t.startDate + t.endDate).includes(search.year) && 
-                // (t.status.toLowerCase() === 'waiting for approval' || t.status.toLowerCase() === 'declined') &&
+                (search.ageGroup && search.ageGroup !== 'All Ages' ? t.ageGroups?.includes(search.ageGroup) : true) && 
+                (search.genderGroup && search.genderGroup !== 'All Genders' ? t.genderGroup?.includes(search.genderGroup) : true) &&
+                (search.drawType && search.drawType !== 'All Draw Types' ? t.drawType === search.drawType : true) &&
+                (t.city + t.country).toLowerCase().includes(search.location) &&
+                t.tournamentName.toLowerCase().includes(search.name) && 
+                (search.month !== 'All' ? new Date(t.startDate).getUTCMonth() === search.month || new Date(t.endDate).getUTCMonth() === search.month : true) &&
+                (search.year !== 'All' ? (new Date(t.startDate).toDateString() + new Date(t.endDate).toDateString()).includes(search.year) : true) && 
                 
                 /// UPCOMING TOURNAMENTS VS PAST TOURNAMENTS VS ALL TOURNAMENTS
                 (tournamentsTime === 'upcoming' ? new Date (t.endDate).getTime() > new Date ().getTime() : tournamentsTime === 'past' ? new Date (t.endDate).getTime() < new Date ().getTime() : true) &&
 
-                // ADMIN VIEW
-                (((userRole && userRole.toLowerCase() === 'admin') ? (t.status?.toLowerCase() === "waiting for approval" || t.status?.toLowerCase() === 'declined') : false) ||
+                // ADMIN VIEW - show only tournaments for approval/declined ones
+                (((userData.role && userData.role.toLowerCase() === 'admin') ? (t.status?.toLowerCase() === "waiting for approval" || t.status?.toLowerCase() === 'declined') : false) ||
 
-                // CLUB REP VIEW
-                (userRole && userRole.toLowerCase() === 'clubrep' && t.submittedBy === userData.userID) ||
+                // CLUB REP VIEW - show only tournaments that player has submitted
+                (userData.role && userData.role.toLowerCase() === 'clubrep' && t.submittedBy === userData.userID) ||
 
-                // PLAYER VIEW - show only tournaments you've signed up for/withdrawn from
-                (userRole && userRole.toLowerCase() === 'player' &&  t.playersSignedUp && Object.keys(t.playersSignedUp) && t.playersSignedUp[userID] && ((tournamentsDisplay === 'entered' ? !t.playersSignedUp[userID].withdrawalTime : tournamentsDisplay === 'withdrawn' ? t.playersSignedUp[userID].withdrawalTime : true))))
+                // PLAYER VIEW - show only tournaments that player has signed up for/withdrawn from
+                (userData.role && userData.role.toLowerCase() === 'player' &&  t.playersSignedUp && Object.keys(t.playersSignedUp) && t.playersSignedUp[userData.userID] && ((tournamentsDisplay === 'entered' ? !t.playersSignedUp[userData.userID].withdrawalTime : tournamentsDisplay === 'withdrawn' ? t.playersSignedUp[userData.userID].withdrawalTime : true))))
             ) {
                 tournamentData.push({
                     location: `${t.city}, ${t.country}`,
                     name: t.tournamentName,
                     startDate: new Date (t.startDate).getTime(),
                     endDate: new Date(t.endDate).getTime(),
-                    genderGroup: t.genderGroup,
                     ageGroups: t.ageGroups,
-                    // draws: t.draws,
+                    genderGroup: t.genderGroup,
+                    draws: t.drawType === 'singlesAndDoubles' ? 'Singles & Doubles' : t.drawType === 'singles' ? 'Singles Only' : 'Doubles Only',
                     status: t.status,
                     id: t.tournamentID
                 })
@@ -238,7 +233,7 @@ const MyTournaments = () => {
         })
 
         // sort data by start data in ascending order (sooner tournaments will appear first)
-        const sortedTableData = userRole?.toLowerCase() !== 'clubrep' ? sortData(tournamentData, "startDate", 'asc') : sortData(tournamentData, "startDate", 'desc')
+        const sortedTableData = userData.role?.toLowerCase() !== 'clubrep' ? sortData(tournamentData, "startDate", 'asc') : sortData(tournamentData, "startDate", 'desc')
 
         // format the tournaments' start and end dates
         const organizedTableData = sortedTableData.map(t => {
@@ -272,45 +267,36 @@ const MyTournaments = () => {
 
     // handle search changes (filters applied, etc.)
     const handleSearchChange = (e) => {
-
         const name = e.target.name
         const value = e.target.value
 
-        setSearch({
-            ...search,
-            [name]: value
-        })
-
-        let sortedAndFilteredData = []
-
-        if (name === 'month' || name === 'year') { // if a filter for the dates is applied, then the filter should consider both the start date and the end date
-            sortedAndFilteredData = dataByCategories.filter(tournament => name === 'month' ? (tournament["startDate"].includes(value) || tournament["endDate"].includes(value)) && (tournament["startDate"].includes(search.year) || tournament["endDate"].includes(search.year)) : (tournament["startDate"].includes(value) || tournament["endDate"].includes(value)) && (tournament["startDate"].includes(search.month) || tournament["endDate"].includes(search.month)));
+        if (name === 'genderGroup' && value === 'Mixed') {
+            setSearch({
+                ...search,
+                [name]: value,
+                drawType: !(search.drawType.includes('Doubles')) ? 'singlesAndDoubles' : 'doubles'
+            })
         } else {
-            sortedAndFilteredData = dataByCategories.filter(tournament => tournament[name]?.toLowerCase().includes(value.toLowerCase()));
+            setSearch({
+                ...search,
+                [name]: value
+            })
         }
-
-        setData(sortedAndFilteredData)
     }
 
-    const clearFilters = () => {
+    const clearSearch = () => {
         setSearch({
+            ...search,
             name: '',
             location: '',
-            ageGroup: '',
-            genderGroup: '',
-            draws: ['Singles'],
-            month: '',
-            year: ''
         })
     }
 
     const filterApplied = () => {
         let bool = false
 
-        for (const key in search) {
-            if (typeof search[key] !== 'object' && search[key] !== '') {
-                bool = true
-            }
+        if (search.name || search.location) {
+            bool = true
         }
 
         return bool
@@ -599,7 +585,7 @@ const MyTournaments = () => {
 
     useEffect(() => {
         setData(getData())
-    }, [search.ageGroup, search.genderGroup, search.draws, userRole, tournamentsTime, tournamentsDisplay, allData])
+    }, [search, userData.role, tournamentsTime, tournamentsDisplay, allData])
 
     // update data accordingly if the search query changes in the location 
     useEffect(() => {
@@ -607,13 +593,13 @@ const MyTournaments = () => {
 
         setSearch({
             ...search,
-            genderGroup: searchGenderGroup === "women" ? 'Female' : searchGenderGroup === "men" ? 'Male' : searchGenderGroup === "mixed-doubles" ? 'Mixed' : ''
+            genderGroup: searchGenderGroup === "women" ? 'Female' : searchGenderGroup === "men" ? 'Male' : searchGenderGroup === "mixed-doubles" ? 'Mixed' : 'All Genders'
         })
     }, [location])
 
     return (
         <div className="container">
-            <h3 className="accent-color" style={{textAlign: 'left'}}>My Tournaments - {userRole === "clubRep" ? 'Club Representative' : userRole === 'player' ? 'Player' : 'Admin'} View</h3>
+            <h3 className="accent-color" style={{textAlign: 'left'}}>My Tournaments - {userData.role === "clubRep" ? 'Club Representative' : userData.role === 'player' ? 'Player' : 'Admin'} View</h3>
             {userData?.role?.toLowerCase() === 'admin' ?
                 (<div className="helper-text">
                     Here you can preview the tournaments submitted for approval and update their status by either rejecting or approving them. 
@@ -630,7 +616,7 @@ const MyTournaments = () => {
                     You can withdraw from any tournament, but withdrawing meeans you will not be able to sign up for the tournament again.
                 </div>
             }
-            {userRole && userRole === 'player' && <div className="flex wrap align-center">
+            {userData.role && userData.role === 'player' && <div className="flex wrap align-center">
                 <ToggleButtonGroup
                     color="primary"
                     value={tournamentsDisplay}
@@ -653,6 +639,7 @@ const MyTournaments = () => {
                     exclusive
                     onChange={(e) => {
                         setTournamentsTime(e.target.value)
+                        setSearch({...search, year: 'All'})
                     }}
                     >
                     <ToggleButton value={"past"}>past</ToggleButton>
@@ -694,8 +681,8 @@ const MyTournaments = () => {
                         style={{width: 150, margin: '0 5px 10px 0'}}
                     >
                         {months.map((option, index) => (
-                            <MenuItem key={index} value={option}>
-                                {option}
+                            <MenuItem key={index} value={option.value}>
+                                {option.label}
                             </MenuItem>
                         ))}
                     </TextField>
@@ -733,22 +720,6 @@ const MyTournaments = () => {
                     </TextField>
                     <TextField
                         id="outlined-select-currency"
-                        name="genderGroup"
-                        select
-                        label="Gender Group"
-                        value={search.genderGroup}
-                        onChange={(e) => handleSearchChange(e)}
-                        size="small"
-                        style={{width: 150, margin: '0 5px 10px 0'}}
-                    >
-                        {genderGroups.map((option, index) => (
-                            <MenuItem key={index} value={option}>
-                                {option}
-                            </MenuItem>
-                        ))}
-                    </TextField>
-                    <TextField
-                        id="outlined-select-currency"
                         name="ageGroup"
                         select
                         label="Age Group"
@@ -757,15 +728,47 @@ const MyTournaments = () => {
                         size="small"
                         style={{width: 150, margin: '0 5px 10px 0'}}
                     >
-                        {ageGroups.map((option, index) => (
+                        {[...ageGroups, 'All Ages'].map((option, index) => (
                             <MenuItem key={index} value={option}>
                                 {option}
                             </MenuItem>
                         ))}
                     </TextField>
+                    <TextField
+                        id="outlined-select-currency"
+                        name="genderGroup"
+                        select
+                        label="Gender Group"
+                        value={search.genderGroup}
+                        onChange={(e) => handleSearchChange(e)}
+                        size="small"
+                        style={{width: 150, margin: '0 5px 10px 0'}}
+                    >
+                        {[...genderGroups, { label: 'All Genders', value: 'All Genders' }].map((option, index) => (
+                            <MenuItem key={index} value={option.value}>
+                                {option.value}
+                            </MenuItem>
+                        ))}
+                    </TextField>
+                    <TextField
+                        id="outlined-select-currency"
+                        name="drawType"
+                        select
+                        label="Draw Type"
+                        value={search.drawType}
+                        onChange={handleSearchChange}
+                        size="small"
+                        sx={{width: 200, margin: '0 5px 10px 0 !important'}}
+                    >
+                        {[...tournamentDrawsOptions].map((option, index) => (
+                            <MenuItem key={index} value={option.value}>
+                                {option.label}
+                            </MenuItem>
+                        ))}
+                    </TextField>
                 </div>
                 <div className='flex align-start'>
-                    {filterApplied() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} sx={{height: 40, minWidth: 180, margin: '0px !important'}} onClick={clearFilters}>Clear Search</Button>}
+                    {filterApplied() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} sx={{height: 40, minWidth: 180, margin: '0px !important'}} onClick={clearSearch}>Clear Search</Button>}
                 </div>
             </div>
             <Table tableData={data} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>
@@ -887,7 +890,7 @@ const MyTournaments = () => {
                         </div>) : (
                         <div></div>
                         )}
-                        {userRole === 'clubRep' && currentTournament?.status?.toLowerCase() === 'sign up open' && <Button 
+                        {userData.role === 'clubRep' && currentTournament?.status?.toLowerCase() === 'sign up open' && <Button 
                             variant={signUpClosureText === "Confirm Sign Up Closure" ? 'contained' : 'outlined'} 
                             className="red-button"
                             sx={{height: 40, margin: '30px 0px 0px 0px !important'}} 
@@ -895,13 +898,13 @@ const MyTournaments = () => {
                             startIcon={<CancelOutlinedIcon />}
                         >{signUpClosureText}</Button>}
                         <div className="flex">
-                            {userRole === 'clubRep' && currentTournament?.status?.toLowerCase() === 'in progress' && <Button 
+                            {userData.role === 'clubRep' && currentTournament?.status?.toLowerCase() === 'in progress' && <Button 
                                 variant={conclusionText === "Confirm Conclusion" ? 'contained' : 'outlined'} 
                                 sx={{height: 40, margin: '30px 10px 0px 0px !important'}} 
                                 onClick={confirmConclusion}
                                 startIcon={<CheckIcon />}
                             >{conclusionText}</Button>}
-                            {(userRole === 'clubRep' || userRole === 'admin') && currentTournament?.status?.toLowerCase() === 'in progress' && <Button 
+                            {(userData.role === 'clubRep' || userData.role === 'admin') && currentTournament?.status?.toLowerCase() === 'in progress' && <Button 
                                 variant={cancellationText === "Confirm Cancellation" ? 'contained' : 'outlined'} 
                                 sx={{height: 40, margin: '30px 0px 0px 10px !important'}} 
                                 className="red-button"
@@ -909,7 +912,7 @@ const MyTournaments = () => {
                                 startIcon={<CancelOutlinedIcon />}
                             >{cancellationText}</Button>}
                         </div>
-                        {userRole === 'clubRep' && currentTournament?.status?.toLowerCase() === 'waiting for points distribution' && 
+                        {userData.role === 'clubRep' && currentTournament?.status?.toLowerCase() === 'waiting for points distribution' && 
                             <PointsDistribution tournament={currentTournament} onConfirm={confirmPointsDistribution} text={pointsDistributionText}/>
                         }
                     </div>

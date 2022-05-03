@@ -16,7 +16,8 @@ import {
     months, 
     upcomingYears, 
     previousYears, 
-    allYears 
+    allYears,
+    tournamentDrawsOptions
 } from '../../data/constants';
 
 //firebase
@@ -62,9 +63,9 @@ const tableRowHeaders = [
     'Name', 
     'Start Date', 
     'End Date', 
-    'Gender Group', 
     'Age Groups', 
-    // 'Draw Types', 
+    'Gender Group', 
+    'Draw Type', 
     'Status'
 ]
 
@@ -92,15 +93,15 @@ const TournamentCalendar = ({ nextTen = false }) => {
     const [search, setSearch] = useState({
         name: '',
         location: '',
-        ageGroup: '',
-        genderGroup: '',
-        draws: ['Singles'],
-        month: '',
-        year: ''
+        ageGroup: 'All Ages',
+        genderGroup: 'All Genders',
+        drawType: 'All Draw Types',
+        month: 'All',
+        year: 'All'
     }) 
     const [data, setData] = useState([]) // data displayed in the table
     const [dataByCategories, setDataByCategories] = useState([]) // data filtered by categories (gender, age, etc.)
-    const [tournamentsDisplay, setTournamentsDisplay] = useState("upcoming") // toggle between past and upcoming tournaments
+    const [tournamentsTime, setTournamentsTime] = useState("upcoming") // toggle between past and upcoming tournaments
 
     const [currentTournament, setCurrentTournament] = useState()
     const [open, setOpen] = useState(false)
@@ -172,25 +173,26 @@ const TournamentCalendar = ({ nextTen = false }) => {
 
         allData && allData.length && allData.forEach(t => {
             if (
-                (search.ageGroup ? t.ageGroups?.includes(search.ageGroup) : true) && 
-                (search.genderGroup ? t.genderGroup?.includes(search.genderGroup) : true) &&
+                (search.ageGroup && search.ageGroup !== 'All Ages' ? t.ageGroups?.includes(search.ageGroup) : true) && 
+                (search.genderGroup && search.genderGroup !== 'All Genders' ? t.genderGroup?.includes(search.genderGroup) : true) &&
+                (search.drawType && search.drawType !== 'All Draw Types' ? t.drawType === search.drawType : true) &&
                 (t.city + t.country).toLowerCase().includes(search.location) &&
                 t.tournamentName.toLowerCase().includes(search.name) && 
-                (t.startDate + t.endDate).includes(search.month) &&
-                (t.startDate + t.endDate).includes(search.year) && 
+                (search.month && search.month !== 'All' ? new Date(t.startDate).getUTCMonth() === search.month || new Date(t.endDate).getUTCMonth() === search.month : true) &&
+                (search.year && search.year !== 'All' ? (new Date(t.startDate).toDateString() + new Date(t.endDate).toDateString()).includes(search.year) : true) && 
                 t.status.toLowerCase() !== 'waiting for approval' && t.status.toLowerCase() !== 'declined' &&
                 
                 // UPCOMING TOURNAMENTS VS pastD TOURNAMENTS VS ALL TOURNAMENTS
-                (tournamentsDisplay === 'upcoming' ? new Date (t.endDate).getTime() > new Date ().getTime() : tournamentsDisplay === 'past' ? new Date (t.endDate).getTime() < new Date ().getTime() : true)
+                (tournamentsTime === 'upcoming' ? new Date (t.endDate).getTime() > new Date ().getTime() : tournamentsTime === 'past' ? new Date (t.endDate).getTime() < new Date ().getTime() : true)
             ) {
                 tournamentData.push({
                     location: `${t.city}, ${t.country}`,
                     name: t.tournamentName,
                     startDate: new Date (t.startDate).getTime(),
                     endDate: new Date(t.endDate).getTime(),
-                    genderGroup: t.genderGroup,
                     ageGroups: t.ageGroups,
-                    // draws: t.draws,
+                    genderGroup: t.genderGroup,
+                    draws: t.drawType === 'singlesAndDoubles' ? 'Singles & Doubles' : t.drawType === 'singles' ? 'Singles Only' : 'Doubles Only',
                     status: t.status,
                     id: t.tournamentID
                 })
@@ -227,45 +229,36 @@ const TournamentCalendar = ({ nextTen = false }) => {
     }
 
     const handleSearchChange = (e) => {
-
         const name = e.target.name
         const value = e.target.value
 
-        setSearch({
-            ...search,
-            [name]: value
-        })
-
-        let sortedAndFilteredData = []
-
-        if (name === 'month' || name === 'year') {
-            sortedAndFilteredData = dataByCategories.filter(tournament => name === 'month' ? (tournament["startDate"].includes(value) || tournament["endDate"].includes(value)) && (tournament["startDate"].includes(search.year) || tournament["endDate"].includes(search.year)) : (tournament["startDate"].includes(value) || tournament["endDate"].includes(value)) && (tournament["startDate"].includes(search.month) || tournament["endDate"].includes(search.month)));
+        if (name === 'genderGroup' && value === 'Mixed') {
+            setSearch({
+                ...search,
+                [name]: value,
+                drawType: !(search.drawType.includes('Doubles')) ? 'singlesAndDoubles' : 'doubles'
+            })
         } else {
-            sortedAndFilteredData = dataByCategories.filter(tournament => tournament[name]?.toLowerCase().includes(value.toLowerCase()));
+            setSearch({
+                ...search,
+                [name]: value
+            })
         }
-
-        setData(sortedAndFilteredData)
     }
 
-    const clearFilters = () => {
+    const clearSearch = () => {
         setSearch({
+            ...search,
             name: '',
             location: '',
-            ageGroup: '',
-            genderGroup: '',
-            draws: ['Singles'],
-            month: '',
-            year: ''
         })
     }
 
     const filterApplied = () => {
         let bool = false
 
-        for (const key in search) {
-            if (typeof search[key] !== 'object' && search[key] !== '') {
-                bool = true
-            }
+        if (search.name || search.location) {
+            bool = true
         }
 
         return bool
@@ -346,7 +339,7 @@ const TournamentCalendar = ({ nextTen = false }) => {
 
     useEffect(() => {
         setData(getData())
-    }, [search.ageGroup, search.genderGroup, search.draws, tournamentsDisplay, allData])
+    }, [search, tournamentsTime, allData])
 
     useEffect(() => {
       window.scrollTo(0,0)
@@ -377,18 +370,19 @@ const TournamentCalendar = ({ nextTen = false }) => {
             {!nextTen && <div className="flex wrap align-center">
                 <ToggleButtonGroup
                     color="primary"
-                    value={tournamentsDisplay}
+                    value={tournamentsTime}
                     sx={{height: 40, margin: '5px 5px 10px 0px'}}
                     exclusive
                     onChange={(e) => {
-                        setTournamentsDisplay(e.target.value)
+                        setTournamentsTime(e.target.value)
+                        setSearch({...search, year: 'All'})
                     }}
                     >
-                    <ToggleButton value={"past"}>past</ToggleButton>
+                    <ToggleButton value={"past"}>Past</ToggleButton>
                     <ToggleButton value={"all"}>All</ToggleButton>
                     <ToggleButton value={"upcoming"}>Upcoming</ToggleButton>
                 </ToggleButtonGroup>
-                {/* <div style={{color: "rgba(0, 0, 0, 0.5)"}}>{tournamentsDisplay === "past" ? 'Only past tournaments will be shown.' : tournamentsDisplay === "upcoming" ? 'Only upcoming tournaments will be shown.' : "All tournaments will be shown."}</div> */}
+                {/* <div style={{color: "rgba(0, 0, 0, 0.5)"}}>{tournamentsTime === "past" ? 'Only past tournaments will be shown.' : tournamentsTime === "upcoming" ? 'Only upcoming tournaments will be shown.' : "All tournaments will be shown."}</div> */}
             </div>}
             <div className='flex wrap justify-between'>
                 <div className="flex wrap" style={{minWidth: '250px', maxWidth: "60%"}}>
@@ -423,8 +417,8 @@ const TournamentCalendar = ({ nextTen = false }) => {
                         style={{width: 150, margin: '0 5px 10px 0'}}
                     >
                         {months.map((option, index) => (
-                            <MenuItem key={index} value={option}>
-                                {option}
+                            <MenuItem key={index} value={option.value}>
+                                {option.label}
                             </MenuItem>
                         ))}
                     </TextField>
@@ -438,14 +432,14 @@ const TournamentCalendar = ({ nextTen = false }) => {
                         size="small"
                         style={{width: 150, margin: '0 5px 10px 0'}}
                     >
-                        {tournamentsDisplay === 'upcoming' &&
+                        {tournamentsTime === 'upcoming' &&
                             upcomingYears.map((option, index) => (
                                 <MenuItem key={index} value={option}>
                                     {option}
                                 </MenuItem>
                             ))
                         }
-                        {tournamentsDisplay === 'past' &&
+                        {tournamentsTime === 'past' &&
                             previousYears.map((option, index) => (
                                 <MenuItem key={index} value={option}>
                                     {option}
@@ -453,29 +447,13 @@ const TournamentCalendar = ({ nextTen = false }) => {
                             ))
                         }
                         {/* all years limited to recent 5 */}
-                        {tournamentsDisplay === 'all' &&
+                        {tournamentsTime === 'all' &&
                             allYears.map((option, index) => (
                                 <MenuItem key={index} value={option}>
                                     {option}
                                 </MenuItem>
                             ))
                         }
-                    </TextField>
-                    <TextField
-                        id="outlined-select-currency"
-                        name="genderGroup"
-                        select
-                        label="Gender Group"
-                        value={search.genderGroup}
-                        onChange={(e) => handleSearchChange(e)}
-                        size="small"
-                        style={{width: 150, margin: '0 5px 10px 0'}}
-                    >
-                        {genderGroups.map((option, index) => (
-                            <MenuItem key={index} value={option.value}>
-                                {option.value}
-                            </MenuItem>
-                        ))}
                     </TextField>
                     <TextField
                         id="outlined-select-currency"
@@ -487,15 +465,47 @@ const TournamentCalendar = ({ nextTen = false }) => {
                         size="small"
                         style={{width: 150, margin: '0 5px 10px 0'}}
                     >
-                        {ageGroups.map((option, index) => (
+                        {[...ageGroups, 'All Ages'].map((option, index) => (
                             <MenuItem key={index} value={option}>
                                 {option}
                             </MenuItem>
                         ))}
                     </TextField>
+                    <TextField
+                        id="outlined-select-currency"
+                        name="genderGroup"
+                        select
+                        label="Gender Group"
+                        value={search.genderGroup}
+                        onChange={(e) => handleSearchChange(e)}
+                        size="small"
+                        style={{width: 150, margin: '0 5px 10px 0'}}
+                    >
+                        {[...genderGroups, { label: 'All Genders', value: 'All Genders'}].map((option, index) => (
+                            <MenuItem key={index} value={option.value}>
+                                {option.value}
+                            </MenuItem>
+                        ))}
+                    </TextField>
+                    <TextField
+                        id="outlined-select-currency"
+                        name="drawType"
+                        select
+                        label="Draw Type"
+                        value={search.drawType}
+                        onChange={handleSearchChange}
+                        size="small"
+                        sx={{width: 200, margin: '0 5px 10px 0 !important'}}
+                    >
+                        {[...tournamentDrawsOptions].map((option, index) => (
+                            <MenuItem key={index} value={option.value}>
+                                {option.label}
+                            </MenuItem>
+                        ))}
+                    </TextField>
                 </div>
                 <div className='flex align-start'>
-                    {filterApplied() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} sx={{height: 40, minWidth: 180, margin: '0px !important'}} onClick={clearFilters}>Clear Search</Button>}
+                    {filterApplied() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} sx={{height: 40, minWidth: 180, margin: '0px !important'}} onClick={clearSearch}>Clear Search</Button>}
                 </div>
             </div>
             <Table tableData={nextTen ? data.slice(0,10) : data} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>

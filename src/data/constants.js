@@ -23,6 +23,26 @@ export const draws = [
     'Singles', 'Doubles'
 ]
 
+export const tournamentDrawsOptions = [
+    {
+        label: 'Singles Only',
+        value: 'singles'
+    },
+    {
+        label: 'Doubles Only',
+        value: 'doubles'
+    },
+    {
+        label: 'Singles & Doubles',
+        value: 'singlesAndDoubles'
+    },
+    {
+        label: 'All Draw Types',
+        value: 'All Draw Types'
+    },
+    
+]
+
 export const courtSurfaces = [
     'Indoor Clay',
     'Outdoor Clay',
@@ -53,12 +73,14 @@ export const allDrawCombinations = [
 // years options for the dropdown depending on the toggle button's value
 // 'UPCOMING' as value of the toggle for tournaments
 export const upcomingYears = [
+    'All',
     new Date().getFullYear(),
     new Date().getFullYear() + 1
 ]
 
 // 'PREVIOUS' as value of the toggle for tournaments
 export const previousYears = [
+    'All',
     new Date().getFullYear(),
     new Date().getFullYear() - 1,
     new Date().getFullYear() - 2,
@@ -68,6 +90,7 @@ export const previousYears = [
 
 // 'ALL' as value of the toggle for tournaments
 export const allYears = [
+    'All',
     new Date().getFullYear() + 1,
     new Date().getFullYear(),
     new Date().getFullYear() - 1,
@@ -76,18 +99,58 @@ export const allYears = [
 ]
 
 export const months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August', 
-    'September', 
-    'October', 
-    'November', 
-    'December'
+    {
+        label: 'All',
+        value: 'All'
+    },
+    {
+        label: 'January',
+        value: 0
+    },
+    {
+        label: 'February',
+        value: 1
+    },
+    {
+        label: 'March',
+        value: 2
+    },
+    {
+        label: 'April',
+        value: 3
+    },
+    {
+        label: 'May',
+        value: 4
+    },
+    {
+        label: 'June',
+        value: 5
+    },
+    {
+        label: 'July',
+        value: 6
+    },
+    {
+        label: 'August',
+        value: 7
+    },
+    {
+        label: 'September',
+        value: 8
+    },
+    {
+        label: 'October',
+        value: 9
+    },
+    {
+        label: 'November',
+        value: 10
+    },
+    {
+        label: 'December',
+        value: 11
+    }
 ]
 
 // profile settings visibility options
