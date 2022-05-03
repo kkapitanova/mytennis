@@ -14,7 +14,7 @@ import './Footer.scss'
 
 
 const Footer = () => {
-    const userData = JSON.parse(sessionStorage.getItem('userData')) || {} // TODO: replace with function that fetches data from firebase
+    const userData = JSON.parse(sessionStorage.getItem('userData')) || {} 
 
     return (
         <>

@@ -70,7 +70,7 @@ const withdrawedPlayersTableRowHeaders = [
 
 const MyTournaments = () => {
     const [allData, setAllData] = useState({}) // all data fetched from db
-    const userData = JSON.parse(sessionStorage.getItem('userData')) || {} // TODO: replace with function that fetches data from firebase
+    const userData = JSON.parse(sessionStorage.getItem('userData')) || {} 
     const location = useLocation()
     const [search, setSearch] = useState({
         name: '',
@@ -105,6 +105,8 @@ const MyTournaments = () => {
 
     const updateCurrentPlayerPoints = (draw, id, pointsWon) => {
         const updates = {}
+        
+        console.log("HEREE", draw, id, pointsWon)
 
         get(child(dbRef, `rankings/${draw}/${id}`)).then((snapshot) => {
             if (snapshot.exists()) {
@@ -521,16 +523,33 @@ const MyTournaments = () => {
 
     // CLUB REP - Points distribution
     const confirmPointsDistribution = (points) => {
-        if (pointsDistributionText === "Confirm Distribution") {            
+        if (pointsDistributionText === "Confirm Distribution") { 
+            console.log("points", points)           
+            
             const signedUpPlayers = { ...currentTournament.playersSignedUp }
+
+            console.log("SIGNED UP", signedUpPlayers)
+
             const updates = {};
 
             for (let key in signedUpPlayers) {
                 points.map(p => {
                     if (key === p.playerID) {
                         signedUpPlayers[key].pointsWon = p.pointsWon
-                        updateCurrentPlayerPoints(`${p.draw}`, p.playerID, p.pointsWon) // update ranking points in DB
+                    } else {
+                        signedUpPlayers[p.playerID] = { 
+                            name: p.playerName,
+                            countryOfBirth: p.countryOfBirth,
+                            signUpTime: new Date(), 
+                            signedUp: true, 
+                            playerID: p.playerID, 
+                            age: p.age,
+                            gender: p.gender,
+                            pointsWon: p.pointsWon, 
+                        }
                     }
+
+                    updateCurrentPlayerPoints(`${p.draw}`, p.playerID, p.pointsWon) // update ranking points in DB
                 })
             }
 
@@ -547,7 +566,7 @@ const MyTournaments = () => {
             handleClose()
 
             const updatedTournament = currentTournament
-            updatedTournament.status = 'Concluded'
+            // updatedTournament.status = 'Concluded'
             updatedTournament.playersSignedUp = signedUpPlayers
 
             // update points won within current tournament in DB

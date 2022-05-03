@@ -28,7 +28,7 @@ const NavBar = ({ unauthRoutes, authRoutes, unauthRouteLast }) => {
     const history = useHistory();
     const location = useLocation();
     const [loggedIn, setLoggedIn] = useState(false)
-    const userData = JSON.parse(sessionStorage.getItem('userData')) || {} // TODO: replace with function that fetches data from firebase
+    const userData = JSON.parse(sessionStorage.getItem('userData')) || {} 
 
     const expandMenu = () => {
 

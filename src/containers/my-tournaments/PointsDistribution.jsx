@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getAvailableDraws, objectToArrayConverter } from '../../utils/helpers'
+import { getAvailableDraws, objectToArrayConverter, getAge } from '../../utils/helpers'
 
 // material imports
 import Button from '@mui/material/Button';
@@ -73,7 +73,7 @@ const PointsDistribution = ({
             });   
     }
 
-    const handleChange = (e, key, name, id) => {
+    const handleChange = (e, key, name, autofillIndex) => {
 
         const updatedPoints = [...points]
         const updatedItemIndex = points.findIndex(el => el.key === key)
@@ -82,15 +82,18 @@ const PointsDistribution = ({
             const updatedItem = updatedPoints[updatedItemIndex]
 
             if (name === 'playerName') {
-                updatedItem[name] = players?.[e.target.dataset.optionIndex]?.label
-            } else {
-                updatedItem[name] = e.target.value
-            }
+                updatedItem[name] = `${players[autofillIndex].firstName}\xa0${players[autofillIndex].middleName}\xa0${players[autofillIndex].familyName}`
 
-            if (name !== 'playerID' && id) {
-                updatedItem['playerID'] = id
+                if (autofillIndex) {
+                    updatedItem['playerID'] = players[autofillIndex].userID
+                    updatedItem['gender'] = players[autofillIndex].gender
+                    updatedItem['countryOfBirth'] = players[autofillIndex].countryOfBirth
+                    updatedItem['age'] = getAge(players[autofillIndex].dateOfBirth)
+                } 
             } else if (name === 'playerName' && !updatedItem[name]) {
                 updatedItem['playerID'] = '' // clear id if player name is cleared too
+            } else {
+                updatedItem[name] = e.target.value
             }
 
             setPoints(updatedPoints)
@@ -120,6 +123,11 @@ const PointsDistribution = ({
     }, [tournament])
 
 
+    useEffect(() => {
+        console.log(players)
+    }, [players])
+
+
     return (
         <div className="flex-column justify-start full-width">
             <h3 className="accent-color section-title">Points distribution</h3>
@@ -132,7 +140,7 @@ const PointsDistribution = ({
                                 id="player-name-autocomplete"
                                 size="small"
                                 options={players}
-                                onChange={(e) => handleChange(e, entry.key, 'playerName', players?.[e.target.dataset.optionIndex]?.userID)}
+                                onChange={(e) => handleChange(e, entry.key, 'playerName', e.target.dataset.optionIndex)}
                                 sx={{ width: 320, margin: '0px 5px 10px 0px' }}
                                 renderInput={(params) => <TextField {...params} label="Player name" />}
                             />
@@ -143,6 +151,26 @@ const PointsDistribution = ({
                                 size="small"
                                 value={entry.playerID}
                                 onChange={(e) => handleChange(e, entry.key, 'playerID')}
+                                style={{minWidth: 320, margin: '0px 5px 10px 0px'}}
+                            />
+                            <TextField
+                                type='number'
+                                name="age"
+                                label="Age"
+                                variant="outlined"
+                                size="small"
+                                value={entry.age}
+                                onChange={(e) => handleChange(e, entry.key, 'age')}
+                                style={{minWidth: 320, margin: '0px 5px 10px 0px'}}
+                            />
+                            <TextField
+                                type='countryOfBirth'
+                                name="countryOfBirth"
+                                label="Country of Birth"
+                                variant="outlined"
+                                size="small"
+                                value={entry.countryOfBirth}
+                                onChange={(e) => handleChange(e, entry.key, 'countryOfBirth')}
                                 style={{minWidth: 320, margin: '0px 5px 10px 0px'}}
                             />
                             <TextField

@@ -399,6 +399,19 @@ textarea {
   // -webkit-text-fill-color: transparent;
 }
 
+.modal-title {
+  font-weight: 500;
+}
+
+.close-icon {
+  margin-left: 20px;
+}
+
+.section-title {
+  font-weight: 600;
+  margin-top: 30px;
+}
+
 .bold {
   font-weight: bold;
 }
@@ -626,12 +639,6 @@ button {
 
   .container {
     margin: 20px;
-  }
-}
-
-@media only screen and (min-width: 425px) and (max-width: 500px) {
-  .container {
-    margin: 30px;
   }
 }
 

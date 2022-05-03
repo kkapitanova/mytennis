@@ -23,6 +23,8 @@ import { getDatabase, ref, child, get, onValue} from "firebase/database";
 // toast
 import { toast } from 'react-toastify';
 
+import './Rankings.scss';
+
 const database = getDatabase()
 const dbRef = ref(database);
 
@@ -39,11 +41,11 @@ const style = {
 };
 
 const tableRowHeaders = [
-    'Ranking', 'Name', 'Competes For', 'Age', 'Points Won'
+    'Ranking', 'Name', 'Country of Birth', 'Age', 'Points Won'
 ]
 
 const Rankings = ({ topTen = false }) => {
-
+    const userData = JSON.parse(sessionStorage.getItem('userData')) || {}
     const location = useLocation()
     const history = useHistory()
     const [search, setSearch] = useState({
@@ -144,10 +146,11 @@ const Rankings = ({ topTen = false }) => {
 
     // open modal with data for current player
     const handleRowClick = (playerData) => {
+        const { ranking, pointsWon } = playerData
         const playerIndex = players.findIndex(el => el.userID === playerData.id)
         const current = players[playerIndex]
 
-        setCurrentPlayer(current)
+        setCurrentPlayer({ ...current, ranking: ranking, pointsWon: pointsWon })
         setOpen(true)
     }
 
@@ -258,9 +261,13 @@ const Rankings = ({ topTen = false }) => {
         window.scrollTo(0,0)
     }, [])
 
+    useEffect(() => {
+        console.log(currentPlayer)
+    }, [currentPlayer])
+
     return (
         <div className='container'>
-            <h3 className="accent-color" style={{textAlign: 'left'}}>{topTen ? 'Top 10 Currently' : "Search through Rankings"}</h3>
+            <h3 className="accent-color" style={{textAlign: 'left'}}>{topTen ? 'Top Ranked Players Currently' : "Search through Rankings"}</h3>
             <div className='flex wrap justify-between'>
                 <div className="flex-column wrap" style={{minWidth: '250px', maxWidth: "60%"}}>
                     <div className="flex wrap">
@@ -340,13 +347,13 @@ const Rankings = ({ topTen = false }) => {
                         </TextField>
                     </div>
                 </div>
-                <div clasName="flex align-start">
+                <div className="flex align-start">
                     {filterApplied() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} sx={{height: 40, margin: '0px !important'}} onClick={clearFilters}>Clear Search</Button>}
                 </div>
             </div>
             <Table tableData={topTen ? data.slice(0,10) : data} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>
             {topTen && <div className="flex justify-end" style={{marginTop: 10}}>
-                <Button variant="contained" onClick={() =>  history.replace({pathname: '/rankings', state: {genderGroup: search.genderGroup, ageGroup: search.ageGroup, draw: search.draw}})} sx={{height: 40, margin: '0px !important'}} endIcon={<PeopleOutlineOutlinedIcon />}>See All</Button>
+                <Button variant="contained" onClick={() =>  history.replace({pathname: '/rankings', state: { ...search}})} sx={{height: 40, margin: '0px !important'}} endIcon={<PeopleOutlineOutlinedIcon />}>See All</Button>
             </div>}
             <Modal
                 aria-labelledby="transition-modal-title"
@@ -360,12 +367,31 @@ const Rankings = ({ topTen = false }) => {
                 }}
             >
                 <Fade in={open}>
-                <Box sx={style} className="large-modal">
-                    <div className="flex-column">
-                        <h2 className="accent-color" style={{fontWeight: '500'}}>{currentPlayer?.firstName}&nbsp;{currentPlayer?.familyName}</h2>
-                        <div style={{marginBottom: 5}}>Gender: {currentPlayer?.gender}</div>
-                        <div style={{marginBottom: 5}}>Nation Competing For:&nbsp;{currentPlayer?.countryOfBirth}</div>
-                        <div style={{marginBottom: 5}}>Date of Birth:&nbsp;{moment(new Date(currentPlayer?.dateOfBirth)).format('D MMMM YYYY')}</div>
+                <Box sx={style} className="flex-column large-modal">
+                    <div className="flex justify-between align-center">
+                        <div className="flex-column align-start rankings-header">
+                            <h2 className="accent-color modal-title">{currentPlayer?.firstName}&nbsp;{currentPlayer?.familyName}</h2>
+                            <div className="flex-column">Ranking:&nbsp;{currentPlayer?.ranking} ({search.ageGroup}&nbsp;{search.genderGroup}&nbsp;{search.draw})</div>
+                            <div className="flex-column">Points Won:&nbsp;{currentPlayer?.pointsWon}</div>
+                        </div>
+                        <div className="close-icon"><ClearIcon className="pointer accent-color" onClick={handleClose}/></div>
+                    </div>
+                    <div className="flex-column info-section">
+                        <h3 className="accent-color section-title">Personal Information</h3>
+                        <div>Gender: {currentPlayer?.gender}</div>
+                        <div>Nation Competing For:&nbsp;{currentPlayer?.countryOfBirth}</div>
+                        <div>Date of Birth:&nbsp;{moment(new Date(currentPlayer?.dateOfBirth)).format('D MMMM YYYY')}</div>
+                        <div>Age:&nbsp;{getAge(new Date(currentPlayer?.dateOfBirth))}</div>
+                        {(currentPlayer?.gameInfo?.plays || currentPlayer?.gameInfo?.backhand) && <div>Plays:&nbsp;{currentPlayer?.gameInfo?.plays && `${currentPlayer?.gameInfo?.plays},\xa0`}{currentPlayer?.gameInfo?.backhand}</div>}
+                    </div>
+                    <div className="flex-column info-section">
+                        <h3 className="accent-color section-title">Contact Information</h3>
+                        {(currentPlayer?.emailVisibility?.toLowerCase() === 'public' ||
+                        userData?.role === 'clubRep') &&
+                        <div>Email:&nbsp;{currentPlayer?.email}</div>}
+                        {(currentPlayer?.phoneNumber && (currentPlayer?.phoneNumberVisibility?.toLowerCase() === 'public' ||
+                        userData?.role === 'clubRep')) &&
+                        <div>Phone Number:&nbsp;{currentPlayer?.phoneNumber}</div>}
                     </div>
                 </Box>
                 </Fade>

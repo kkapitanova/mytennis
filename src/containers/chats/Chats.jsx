@@ -45,7 +45,7 @@ const sort = (data) => {
 }
 
 const Chats = () => {
-    const userData = JSON.parse(sessionStorage.getItem('userData')) || {} // TODO: replace with redux store function with initial value from localstorage
+    const userData = JSON.parse(sessionStorage.getItem('userData')) || {} 
     const [search, setSearch] = useState()
     const [message, setMessage] = useState()
     const [current, setCurrent] = useState()

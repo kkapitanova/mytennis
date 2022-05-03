@@ -6,7 +6,7 @@
     display: flex;
     flex-direction: column;
     bottom: 0;
-    padding: 20px;
+    padding: 20px 50px;
     border-top: 1px solid rgba(172, 172, 172, 0.308);
     font-family: $fontFamily;
 
@@ -33,11 +33,9 @@
     }
 
     .sections-wrapper {
-        padding-left: 50px;
-        padding-right: 50px;
         display: flex;
         flex-direction: row;
-        justify-content: space-evenly;
+        justify-content: space-between;
         z-index: 1;
         align-items: flex-start;
     }
@@ -108,10 +106,9 @@
 
 /* Extra Small and Small devices (portrait tablets and large phones, 600px and up) */
 // @media only screen and (max-width: 768px) {
-@media only screen and (max-width: 1100px) { //TODO: revert back to the query above when removing the Routes Testing section
+@media only screen and (max-width: 1100px) {
     .footer-wrapper .sections-wrapper {
         flex-direction: column;
-        padding: 5vw;
 
         .section-wrapper {
             margin-bottom: 30px;
