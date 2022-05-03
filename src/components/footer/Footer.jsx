@@ -25,18 +25,12 @@ const Footer = () => {
                                 {/* {t("Footer.Contacts")} */}
                             </h3>
                             <div className="section-wrapper-item">
-                                <a href="tel:+35988423108">
-                                    <FontAwesomeIcon style={{height: "20px", width: "20px"}} icon={faPhoneAlt}/>&nbsp;+359&nbsp;MY&nbsp;TENNIS
-                                </a>
+                                <FontAwesomeIcon style={{height: "20px", width: "20px"}} icon={faPhoneAlt}/>&nbsp;+359&nbsp;MY&nbsp;TENNIS
                             </div>
                             <div className="section-wrapper-item">
-                                {/* <img alt="phone-icon" src={emailIcon}></img> */}
-                                <Link to="/contacts">
                                     <FontAwesomeIcon style={{height: "20px", width: "20px"}} icon={faEnvelope} />&nbsp;inquiries@mytennisplatform.com
-                                </Link>
                             </div>
                             <div className="section-wrapper-item">
-                                {/* <img alt="phone-icon" src={emailIcon}></img> */}
                                 <FontAwesomeIcon style={{height: "20px", width: "20px"}} icon={faMapPin} />&nbsp;National Tennis Centre, Sofia, Bulgaria
                             </div>
                         </div>
