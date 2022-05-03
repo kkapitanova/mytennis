@@ -74,28 +74,28 @@ export const allDrawCombinations = [
 // 'UPCOMING' as value of the toggle for tournaments
 export const upcomingYears = [
     'All',
-    new Date().getFullYear(),
-    new Date().getFullYear() + 1
+    new Date().getUTCFullYear(),
+    new Date().getUTCFullYear() + 1
 ]
 
 // 'PREVIOUS' as value of the toggle for tournaments
 export const previousYears = [
     'All',
-    new Date().getFullYear(),
-    new Date().getFullYear() - 1,
-    new Date().getFullYear() - 2,
-    new Date().getFullYear() - 3,
+    new Date().getUTCFullYear(),
+    new Date().getUTCFullYear() - 1,
+    new Date().getUTCFullYear() - 2,
+    new Date().getUTCFullYear() - 3,
 ]
 
 
 // 'ALL' as value of the toggle for tournaments
 export const allYears = [
     'All',
-    new Date().getFullYear() + 1,
-    new Date().getFullYear(),
-    new Date().getFullYear() - 1,
-    new Date().getFullYear() - 2,
-    new Date().getFullYear() - 3,
+    new Date().getUTCFullYear() + 1,
+    new Date().getUTCFullYear(),
+    new Date().getUTCFullYear() - 1,
+    new Date().getUTCFullYear() - 2,
+    new Date().getUTCFullYear() - 3,
 ]
 
 export const months = [

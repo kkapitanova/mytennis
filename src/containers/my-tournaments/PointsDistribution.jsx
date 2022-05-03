@@ -223,6 +223,8 @@ const PointsDistribution = ({
                             playerID: '',
                             playerName: '',
                             pointsWon: '',
+                            age: '',
+                            countryOfBirth: '',
                             draw: '',
                             key: new Date().getTime()
                         }

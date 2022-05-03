@@ -552,7 +552,7 @@ const MyTournaments = () => {
             handleClose()
 
             const updatedTournament = currentTournament
-            // updatedTournament.status = 'Concluded'
+            updatedTournament.status = 'Concluded'
             updatedTournament.playersSignedUp = signedUpPlayers
 
             // update points won within current tournament in DB
