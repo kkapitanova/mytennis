@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getAvailableDraws, objectToArrayConverter, getAge } from '../../utils/helpers'
+import { getAvailableDraws, getAge } from '../../utils/helpers'
 
 // material imports
 import Button from '@mui/material/Button';
@@ -11,7 +11,7 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import Autocomplete from '@mui/material/Autocomplete';
 
 //firebase
-import { getDatabase, ref, child, get, onValue } from "firebase/database";
+import { getDatabase, ref, child, get } from "firebase/database";
 
 // toast
 import { toast } from 'react-toastify';
@@ -24,11 +24,8 @@ const PointsDistribution = ({
     onConfirm,
     text,
 }) => {
-
-    const [count, setCount] = useState(0)
     const [points, setPoints] = useState([])
     const [isDisabled, setIsDisabled] = useState(true)
-    const { playersSignedUp } = tournament || {}
     const [players, setPlayers] = useState([])
 
     const availableDraws = getAvailableDraws(tournament)
@@ -50,7 +47,6 @@ const PointsDistribution = ({
 
             } else {
                 console.log("No data available");
-                // setIsLoading(false)
             }
 
             // sort players alphabetically
@@ -69,7 +65,6 @@ const PointsDistribution = ({
             }).catch((error) => {
                 console.error(error);
                 toast.error("An error has occured.")
-                // setIsLoading(false)
             });   
     }
 
@@ -223,6 +218,8 @@ const PointsDistribution = ({
                             playerID: '',
                             playerName: '',
                             pointsWon: '',
+                            age: '',
+                            countryOfBirth: '',
                             draw: '',
                             key: new Date().getTime()
                         }

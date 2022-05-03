@@ -1,9 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { Table } from '../../components';
 import { useLocation } from 'react-router';
-import { ageGroups, genderGroups, months, upcomingYears, previousYears, allYears, tournamentDrawsOptions } from '../../data/constants';
-import { sortData, getDateString, objectToArrayConverter, getDraws, getDateTimeString } from '../../utils/helpers';
+import { Table } from '../../components';
 import PointsDistribution from './PointsDistribution';
+import { 
+    ageGroups, 
+    genderGroups, 
+    months, 
+    upcomingYears, 
+    previousYears, 
+    allYears, 
+    tournamentDrawsOptions 
+} from '../../data/constants';
+import { 
+    sortData, 
+    getDateString, 
+    objectToArrayConverter, 
+    getDraws, 
+    getDateTimeString, 
+    getStatusColor
+} from '../../utils/helpers';
 
 // material
 import Backdrop from '@mui/material/Backdrop';
@@ -190,6 +205,7 @@ const MyTournaments = () => {
         }, 300)
     }
 
+    // get tournaments that match the search/filters & user role permissions
     const getData = () => {
         let tournamentData = []
 
@@ -209,13 +225,13 @@ const MyTournaments = () => {
                 (tournamentsTime === 'upcoming' ? new Date (t.endDate).getTime() > new Date ().getTime() : tournamentsTime === 'past' ? new Date (t.endDate).getTime() < new Date ().getTime() : true) &&
 
                 // ADMIN VIEW - show only tournaments for approval/declined ones
-                (((userData.role && userData.role.toLowerCase() === 'admin') ? (t.status?.toLowerCase() === "waiting for approval" || t.status?.toLowerCase() === 'declined') : false) ||
+                (((userData?.role && userData.role.toLowerCase() === 'admin') ? (t.status?.toLowerCase() === "waiting for approval" || t.status?.toLowerCase() === 'declined') : false) ||
 
                 // CLUB REP VIEW - show only tournaments that player has submitted
-                (userData.role && userData.role.toLowerCase() === 'clubrep' && t.submittedBy === userData.userID) ||
+                (userData?.role && userData.role.toLowerCase() === 'clubrep' && t.submittedBy === userData.userID) ||
 
                 // PLAYER VIEW - show only tournaments that player has signed up for/withdrawn from
-                (userData.role && userData.role.toLowerCase() === 'player' &&  t.playersSignedUp && Object.keys(t.playersSignedUp) && t.playersSignedUp[userData.userID] && ((tournamentsDisplay === 'entered' ? !t.playersSignedUp[userData.userID].withdrawalTime : tournamentsDisplay === 'withdrawn' ? t.playersSignedUp[userData.userID].withdrawalTime : true))))
+                (userData?.role && userData.role.toLowerCase() === 'player' &&  t.playersSignedUp && Object.keys(t.playersSignedUp) && t.playersSignedUp[userData.userID] && ((tournamentsDisplay === 'entered' ? !t.playersSignedUp[userData.userID].withdrawalTime : tournamentsDisplay === 'withdrawn' ? t.playersSignedUp[userData.userID].withdrawalTime : true))))
             ) {
                 tournamentData.push({
                     location: `${t.city}, ${t.country}`,
@@ -250,17 +266,8 @@ const MyTournaments = () => {
     const handleRowClick = (tournamentData) => {
         const tournamentIndex = allData.findIndex(el => el.tournamentID === tournamentData.id)
         const current = allData[tournamentIndex]
-        const color = current?.status.toLowerCase() === 'waiting for approval' || 
-                        current?.status.toLowerCase() === 'waiting for points distribution' || 
-                        current?.status.toLowerCase() === 'postponed' ? 
-                            'orange' : 
-                        current?.status.toLowerCase() === 'concluded' ?
-                            'blue' :
-                        current?.status.toLowerCase() === 'declined' || 
-                        current?.status.toLowerCase() === 'canceled' ? 
-                            'red' : 'green'
 
-        setStatusColor(color)
+        setStatusColor(getStatusColor(current?.status))
         setCurrentTournament(current)
         setOpen(true)
     }
@@ -509,13 +516,8 @@ const MyTournaments = () => {
 
     // CLUB REP - Points distribution
     const confirmPointsDistribution = (points) => {
-        if (pointsDistributionText === "Confirm Distribution") { 
-            console.log("points", points)           
-            
+        if (pointsDistributionText === "Confirm Distribution") {             
             const signedUpPlayers = { ...currentTournament.playersSignedUp }
-
-            console.log("SIGNED UP", signedUpPlayers)
-
             const updates = {};
 
             for (let key in signedUpPlayers) {
@@ -526,7 +528,7 @@ const MyTournaments = () => {
                         signedUpPlayers[p.playerID] = { 
                             name: p.playerName,
                             countryOfBirth: p.countryOfBirth,
-                            signUpTime: new Date(), 
+                            signUpTime: new Date(currentTournament.onSiteSignupDeadline), // if the player has not signed up through the app, this means they signed up on the on site signup date
                             signedUp: true, 
                             playerID: p.playerID, 
                             age: p.age,
@@ -552,7 +554,7 @@ const MyTournaments = () => {
             handleClose()
 
             const updatedTournament = currentTournament
-            // updatedTournament.status = 'Concluded'
+            updatedTournament.status = 'Concluded'
             updatedTournament.playersSignedUp = signedUpPlayers
 
             // update points won within current tournament in DB
@@ -629,7 +631,6 @@ const MyTournaments = () => {
                     <ToggleButton value={"withdrawn"} className="red-option">Withdrawn from</ToggleButton>
                     <ToggleButton value={"entered"}>Entered</ToggleButton>
                 </ToggleButtonGroup>
-                {/* <div style={{color: "rgba(0, 0, 0, 0.5)"}}>{tournamentsDisplay === "past" ? 'Only past tournaments will be shown.' : tournamentsDisplay === "upcoming" ? 'Only upcoming tournaments will be shown.' : "All tournaments will be shown."}</div> */}
             </div>}
             <div className="flex wrap align-center">
                 <ToggleButtonGroup
@@ -642,11 +643,10 @@ const MyTournaments = () => {
                         setSearch({...search, year: 'All'})
                     }}
                     >
-                    <ToggleButton value={"past"}>past</ToggleButton>
+                    <ToggleButton value={"past"}>Past</ToggleButton>
                     <ToggleButton value={"all"}>All</ToggleButton>
                     <ToggleButton value={"upcoming"}>Upcoming</ToggleButton>
                 </ToggleButtonGroup>
-                {/* <div style={{color: "rgba(0, 0, 0, 0.5)"}}>{tournamentsDisplay === "past" ? 'Only past tournaments will be shown.' : tournamentsDisplay === "upcoming" ? 'Only upcoming tournaments will be shown.' : "All tournaments will be shown."}</div> */}
             </div>
             <div className='flex wrap justify-between'>
                 <div className="flex wrap" style={{minWidth: '250px', maxWidth: "60%"}}>
@@ -878,11 +878,11 @@ const MyTournaments = () => {
                         (<div className="flex-column full-width">
                             <div>
                                 <h3 className="accent-color section-title">Signed Up Players</h3>
-                                <Table tableData={getSignedUpPlayers(currentTournament.playersSignedUp)} rowHeaders={enteredPlayersTableRowHeaders}/>
+                                <Table tableData={getSignedUpPlayers(currentTournament.playersSignedUp)} rowHeaders={enteredPlayersTableRowHeaders} noRowClickEvent/>
                             </div>
                             <div>
                                 <h3 className="accent-color section-title">Withdrawn Players</h3>
-                                <Table tableData={getSignedUpPlayers(currentTournament.playersSignedUp, true)} rowHeaders={withdrawedPlayersTableRowHeaders}/>
+                                <Table tableData={getSignedUpPlayers(currentTournament.playersSignedUp, true)} rowHeaders={withdrawedPlayersTableRowHeaders} noRowClickEvent/>
                             </div>
                         </div>) : currentTournament?.status && currentTournament?.status === 'Sign Up Open' ? 
                         (<div>

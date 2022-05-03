@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table } from '../../components';
+import { useHistory, useLocation } from 'react-router-dom';
 import { 
     sortData, 
     getDateString, 
@@ -7,9 +8,9 @@ import {
     getDraws, 
     getDateTimeString, 
     getAge, 
-    checkAgeGroupEligibility 
+    checkAgeGroupEligibility,
+    getStatusColor 
 } from '../../utils/helpers'
-import { useHistory, useLocation } from 'react-router-dom';
 import { 
     ageGroups, 
     genderGroups, 
@@ -182,7 +183,7 @@ const TournamentCalendar = ({ nextTen = false }) => {
                 (search.year && search.year !== 'All' ? (new Date(t.startDate).toDateString() + new Date(t.endDate).toDateString()).includes(search.year) : true) && 
                 t.status.toLowerCase() !== 'waiting for approval' && t.status.toLowerCase() !== 'declined' &&
                 
-                // UPCOMING TOURNAMENTS VS pastD TOURNAMENTS VS ALL TOURNAMENTS
+                // UPCOMING TOURNAMENTS VS PAST TOURNAMENTS VS ALL TOURNAMENTS
                 (tournamentsTime === 'upcoming' ? new Date (t.endDate).getTime() > new Date ().getTime() : tournamentsTime === 'past' ? new Date (t.endDate).getTime() < new Date ().getTime() : true)
             ) {
                 tournamentData.push({
@@ -214,16 +215,7 @@ const TournamentCalendar = ({ nextTen = false }) => {
     const handleRowClick = (tournamentData) => {
         const tournamentIndex = allData.findIndex(el => el.tournamentID === tournamentData.id)
         const current = allData[tournamentIndex]
-        const color = current?.status.toLowerCase() === 'waiting for approval' || 
-                        current?.status.toLowerCase() === 'waiting for points distribution' || 
-                        current?.status.toLowerCase() === 'postponed' ? 
-                            'orange' : 
-                        current?.status.toLowerCase() === 'concluded' ?
-                            'blue' :
-                        current?.status.toLowerCase() === 'declined' || 
-                        current?.status.toLowerCase() === 'canceled' ? 
-                            'red' : 'green'
-        setStatusColor(color)
+        setStatusColor(getStatusColor(current?.status))
         setCurrentTournament(current)
         setOpen(true)
     }

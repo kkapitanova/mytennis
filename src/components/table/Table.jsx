@@ -12,7 +12,7 @@ import Paper from '@mui/material/Paper';
 // styles
 import './Table.scss'
 
-const BasicTable = ({ tableData, rowHeaders, onRowClick }) => {
+const BasicTable = ({ tableData, rowHeaders, onRowClick, noRowClickEvent = false }) => {
 
     if (tableData && tableData.length) {
         return (
@@ -23,11 +23,6 @@ const BasicTable = ({ tableData, rowHeaders, onRowClick }) => {
                             {rowHeaders.map((header, index) => (
                                 <TableCell key={index} align={`${index === rowHeaders.length - 1 ? "right" : 'left'}`}>{header}</TableCell>
                             ))}
-                            {/* <TableCell>Ranking</TableCell>
-                            <TableCell>Name</TableCell>
-                            <TableCell>Country of Birth</TableCell>
-                            <TableCell>Age</TableCell>
-                            <TableCell align="right">Points Won</TableCell> */}
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -55,7 +50,7 @@ const BasicTable = ({ tableData, rowHeaders, onRowClick }) => {
                                             <TableCell 
                                                 key={index + new Date().getTime()} 
                                                 align={`${index === rowHeaders.length - 1 ? "right" : 'left'}`} 
-                                                onClick={() => onRowClick(dataItem)} 
+                                                onClick={() => !noRowClickEvent && onRowClick(dataItem)} 
                                                 className={`${ typeof value === 'string' &&
                                                     (value.toLowerCase() === 'waiting for approval' || value.toLowerCase() === 'postponed' || value.toLowerCase() === 'waiting for points distribution' ? 'orange' : 
                                                     value.toLowerCase() === 'declined' || value.toLowerCase() === 'withdrawn' || value.toLowerCase() === 'canceled' ? 'red' :
@@ -68,26 +63,6 @@ const BasicTable = ({ tableData, rowHeaders, onRowClick }) => {
                                         )
                                     }
                                 })}
-
-                                {/* <TableCell>{index + 1}</TableCell>
-                                <TableCell>{player.name}</TableCell>
-                                <TableCell>{player.nationCompetingFor}</TableCell>
-                                <TableCell>{player.age}</TableCell> 
-                                <TableCell align="right">{player.pointsWon}</TableCell>  */}
-                                {/* <TableCell sortDirection={orderBy === headCell.id ? order : false}>
-                                    <TableSortLabel
-                                        active={orderBy === headCell.id}
-                                        direction={orderBy === headCell.id ? order : 'asc'}
-                                        onClick={createSortHandler(headCell.id)}
-                                    >
-                                        {headCell.label}
-                                    {orderBy === headCell.id ? (
-                                        <Box component="span" sx={visuallyHidden}>
-                                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                                        </Box>
-                                    ) : null}
-                                    </TableSortLabel>
-                                </TableCell> */}
                             </TableRow>
                         ))}
                     </TableBody>

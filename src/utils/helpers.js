@@ -188,7 +188,7 @@ export const getDraws = (ageGroups, genderGroup, drawType) => {
     )
 }
 
-export const getAvailableDraws = tournament => {
+export const getAvailableDraws = (tournament, playerAge, playerGender) => {
     const draws = []
     
     tournament.ageGroups.forEach(ag => {
@@ -292,4 +292,15 @@ export const getTournamentOnSiteSignupDeadline = (tournamentStartDate, type) => 
     }
     return date
 
+}
+export const getStatusColor = status => {
+    return status.toLowerCase() === 'waiting for approval' || 
+        status.toLowerCase() === 'waiting for points distribution' || 
+        status.toLowerCase() === 'postponed' ? 
+            'orange' : 
+        status.toLowerCase() === 'concluded' ?
+            'blue' :
+        status.toLowerCase() === 'declined' || 
+        status.toLowerCase() === 'canceled' ? 
+            'red' : 'green'
 }
