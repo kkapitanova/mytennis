@@ -241,7 +241,7 @@ const Profile = () => {
                                             variant="outlined" 
                                             value={data.firstName}
                                             size="small"
-                                            sx={{marginTop: '15px', width: 250}}
+                                            sx={{marginTop: '15px', width: '20vw', minWidth: 250}}
                                             onChange={handleChange}
                                             required
                                             disabled={userData.firstName ? true : false}
@@ -253,7 +253,7 @@ const Profile = () => {
                                             variant="outlined" 
                                             value={data.middleName}
                                             size="small"
-                                            sx={{marginTop: '20px', width: 250}}
+                                            sx={{marginTop: '20px', width: '20vw', minWidth: 250}}
                                             onChange={handleChange}
                                             required
                                             disabled={userData.middleName ? true : false}
@@ -265,7 +265,7 @@ const Profile = () => {
                                             variant="outlined" 
                                             value={data.familyName}
                                             size="small"
-                                            sx={{marginTop: '20px', width: 250}}
+                                            sx={{marginTop: '20px', width: '20vw', minWidth: 250}}
                                             onChange={handleChange}
                                             required
                                             disabled={userData.familyName ? true : false}
@@ -277,7 +277,7 @@ const Profile = () => {
                                             variant="outlined" 
                                             value={data.role === 'clubRep' ? 'Club Representative' : data.role === 'player' ? 'Player' : 'Admin'}
                                             size="small"
-                                            sx={{marginTop: '20px', width: 250}}
+                                            sx={{marginTop: '20px', width: '20vw', minWidth: 250}}
                                             onChange={handleChange}
                                             required
                                             disabled={true}
@@ -292,7 +292,7 @@ const Profile = () => {
                                                     value={data.dateOfBirth || null}
                                                     onChange={handleDOBChange}
                                                     disabled={userData.dateOfBirth ? true : false}
-                                                    renderInput={(params) => <TextField required size="small" {...params} sx={{margin: '20px 0px 0px 0px !important', width: 250}}
+                                                    renderInput={(params) => <TextField required size="small" {...params} sx={{margin: '20px 0px 0px 0px !important', width: '20vw', minWidth: 250}}
                                                 />}
                                                 />
                                             </Stack>
@@ -337,7 +337,7 @@ const Profile = () => {
                                                 value={data.countryOfBirth}
                                                 label="Country of Birth"
                                                 size="small"
-                                                sx={{width: 250}}
+                                                sx={{width: '20vw', minWidth: 250}}
                                                 disabled={userData.countryOfBirth ? true : false}
                                             >
                                                 {countryOptions.map(c => {
@@ -348,73 +348,71 @@ const Profile = () => {
                                             </Select>
                                         </FormControl>
                                     </div>
-                                    <div className="flex-column fields-wrapper justify-between">
-                                        <div>
-                                            <div className="flex wrap align-center" style={{marginTop: '15px'}}>
-                                                <TextField 
-                                                    id="email" 
-                                                    name="email"
-                                                    label="Email" 
-                                                    variant="outlined" 
-                                                    value={data.email}
-                                                    size="small"
-                                                    sx={{width: 250, marginRight: '10px'}}
-                                                    // onChange={handleChange}
-                                                    disabled
-                                                    required
-                                                />
-                                                <FormControl sx={{minWidth: 120 }}>
-                                                    <InputLabel id="email-visibility-label">Email Visible To</InputLabel>
-                                                    <Select
-                                                        name="emailVisibility"
-                                                        id="email-visibility"
-                                                        onChange={handleChange}
-                                                        value={data.emailVisibility}
-                                                        label="Email Visible To"
-                                                        size="small"
-                                                        sx={{width: 250}}
-                                                    >
-                                                        {visibilityOptions.map(option => {
-                                                            return (
-                                                                <MenuItem value={option}>{option}</MenuItem>
-                                                            )
-                                                        })}
-                                                    </Select>
-                                                </FormControl>
-                                            </div>
-                                            <div className="flex wrap align-center" style={{marginTop: '20px'}}>
-                                                <TextField 
-                                                    id="phone-number" 
-                                                    name="phoneNumber"
-                                                    label="Phone Number" 
-                                                    variant="outlined" 
-                                                    value={data.phoneNumber}
-                                                    size="small"
-                                                    sx={{width: 250, marginRight: '10px'}}
+                                    <div className="flex-column wrap fields-wrapper justify-between">
+                                        <div className="flex wrap align-center combo-wrapper" style={{marginTop: '15px'}}>
+                                            <TextField 
+                                                id="email" 
+                                                name="email"
+                                                label="Email" 
+                                                variant="outlined" 
+                                                value={data.email}
+                                                size="small"
+                                                sx={{width: '20vw', minWidth: 250, marginRight: '10px'}}
+                                                // onChange={handleChange}
+                                                disabled
+                                                required
+                                            />
+                                            <FormControl sx={{minWidth: 120}}>
+                                                <InputLabel id="email-visibility-label">Email Visible To</InputLabel>
+                                                <Select
+                                                    name="emailVisibility"
+                                                    id="email-visibility"
                                                     onChange={handleChange}
-                                                />
-                                                <FormControl sx={{minWidth: 120 }}>
-                                                    <InputLabel id="phone-number-visibility-label">Phone Visible To</InputLabel>
-                                                    <Select
-                                                        name="phoneNumberVisibility"
-                                                        id="phone-number-visibility"
-                                                        onChange={handleChange}
-                                                        value={data.phoneNumberVisibility}
-                                                        label="Phone Visible To"
-                                                        size="small"
-                                                        sx={{width: 250}}
-                                                    >
-                                                        {visibilityOptions.map(option => {
-                                                            return (
-                                                                <MenuItem value={option}>{option}</MenuItem>
-                                                            )
-                                                        })}
-                                                    </Select>
-                                                </FormControl>
-                                            </div>
+                                                    value={data.emailVisibility}
+                                                    label="Email Visible To"
+                                                    size="small"
+                                                    sx={{width: '20vw', minWidth: 250}}
+                                                >
+                                                    {visibilityOptions.map(option => {
+                                                        return (
+                                                            <MenuItem value={option}>{option}</MenuItem>
+                                                        )
+                                                    })}
+                                                </Select>
+                                            </FormControl>
                                         </div>
-                                        <div>
-                                            <div className="flex wrap align-center" style={{margin: '20px 0px 16px 0px'}}>
+                                        <div className="flex wrap align-center combo-wrapper" style={{marginTop: '20px'}}>
+                                            <TextField 
+                                                id="phone-number" 
+                                                name="phoneNumber"
+                                                label="Phone Number" 
+                                                variant="outlined" 
+                                                value={data.phoneNumber}
+                                                size="small"
+                                                sx={{width: '20vw', minWidth: 250, marginRight: '10px'}}
+                                                onChange={handleChange}
+                                            />
+                                            <FormControl sx={{minWidth: 120 }}>
+                                                <InputLabel id="phone-number-visibility-label">Phone Visible To</InputLabel>
+                                                <Select
+                                                    name="phoneNumberVisibility"
+                                                    id="phone-number-visibility"
+                                                    onChange={handleChange}
+                                                    value={data.phoneNumberVisibility}
+                                                    label="Phone Visible To"
+                                                    size="small"
+                                                    sx={{width: '20vw', minWidth: 250}}
+                                                >
+                                                    {visibilityOptions.map(option => {
+                                                        return (
+                                                            <MenuItem value={option}>{option}</MenuItem>
+                                                        )
+                                                    })}
+                                                </Select>
+                                            </FormControl>
+                                        </div>
+                                        <div className="flex-column wrap">
+                                            <div className="flex wrap align-center combo-wrapper" style={{margin: '20px 0px 16px 0px'}}>
                                                 <FormControl sx={{minWidth: 120, marginRight: '10px' }}>
                                                     <InputLabel id="game-info-plays-label">You Play</InputLabel>
                                                     <Select
@@ -424,7 +422,7 @@ const Profile = () => {
                                                         onChange={e => handlePlayStyleChange(e, "plays")}
                                                         value={data.gameInfo?.plays}
                                                         size="small"
-                                                        sx={{width: 250}}
+                                                        sx={{width: '20vw', minWidth: 250}}
                                                     >
                                                         <MenuItem value={"Right-handed"}>Right-handed</MenuItem>
                                                         <MenuItem value={"Left-handed"}>Left-handed</MenuItem>
@@ -439,7 +437,7 @@ const Profile = () => {
                                                         value={data.gameInfo?.backhand}
                                                         label="Backhand"
                                                         size="small"
-                                                        sx={{width: 250}}
+                                                        sx={{width: '20vw', minWidth: 250}}
                                                     >
                                                         <MenuItem value={"One-handed backhand"}>One-handed backhand</MenuItem>
                                                         <MenuItem value={"Two-handed backhand"}>Two-handed backhand</MenuItem>
@@ -454,10 +452,11 @@ const Profile = () => {
                                                 multiline
                                                 label="About Me" 
                                                 variant="outlined" 
+                                                className='about-wrapper'
                                                 value={data.about}
                                                 rows={4}
                                                 size="small"
-                                                sx={{marginTop: '20px', width: 510}}
+                                                sx={{marginTop: '20px', width: 'calc(40vw + 10px)', minWidth: 510}}
                                                 onChange={handleChange}
                                             />
                                         </div>

@@ -3,7 +3,6 @@
 .profile-section-wrapper {
     height: fit-content;
     padding: 20px 0px;
-    width: 90vw;
 
     &-left {
         transition: width 1s;
@@ -16,7 +15,7 @@
 
     &-right {
         max-width: 800px;
-        width: fit-content;
+        width: 100%;
         transition: width 1s;
         border: 1px solid $accent;
         border-top-right-radius: 10px;
@@ -151,5 +150,27 @@
                 border: none !important;
             }
         }
+    }
+}
+
+@media screen and (max-width: 650px) {
+    .combo-wrapper {
+        flex-direction: column;
+        align-items: flex-start;
+        margin-top: 10px !important;
+
+        & > div {
+            margin-bottom: 10px;
+        }
+    }
+
+    .about-wrapper {
+        margin-top: 10px !important;
+        min-width: 250px !important;
+        width: 70vw !important;
+    }
+
+    .checks-wrapper {
+        margin-top: 30px !important;
     }
 }

@@ -173,7 +173,7 @@ export const getDraws = (ageGroups, genderGroup, drawType) => {
                                 <div>Men's {drawDisplayName}</div>
                                 <div>Mixed Doubles</div>
                             </div>
-                        ) : genderGroup === "Mixed" && drawType !== 'singlesAndDoubles' ? (
+                        ) : genderGroup !== "Mixed" && drawType !== 'singlesAndDoubles' ? (
                             <div>
                                 <div>Women's {drawDisplayName}</div>
                                 <div>Men's {drawDisplayName}</div>
