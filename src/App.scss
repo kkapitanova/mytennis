@@ -162,11 +162,27 @@
 
 // animation: 1s ease-out 0s 1 slideInFromTop;
 
+
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+
+  &::-webkit-scrollbar {
+    display: none !important;
+  }
+}
+
 .App {
   text-align: center;
   background: $background;
   color: $body;
   font-family: $fontFamily !important;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.App::-webkit-scrollbar {
+  display: none !important;
 }
 
 button {
