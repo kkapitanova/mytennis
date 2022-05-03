@@ -228,7 +228,7 @@ const TournamentCalendar = ({ nextTen = false }) => {
             setSearch({
                 ...search,
                 [name]: value,
-                drawType: !(search.drawType.includes('Doubles')) ? 'singlesAndDoubles' : 'doubles'
+                drawType: search.drawType === 'All Draw Types' ? search.drawType : !(search.drawType.toLowerCase().includes('doubles')) ? 'singlesAndDoubles' : 'doubles'
             })
         } else {
             setSearch({
