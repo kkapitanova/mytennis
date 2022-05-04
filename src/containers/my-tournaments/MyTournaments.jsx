@@ -102,7 +102,7 @@ const MyTournaments = () => {
     const [data, setData] = useState([]) // data displayed in the table
     const [currentTournament, setCurrentTournament] = useState() // current tournament modal
     const [open, setOpen] = useState(false) // tournament info modal open state
-    const [tournamentsTime, setTournamentsTime] = useState("upcoming") // toggle between past and upcoming tournaments
+    const [tournamentsTime, setTournamentsTime] = useState("all") // toggle between past and upcoming tournaments
     const [tournamentsDisplay, setTournamentsDisplay] = useState(userData.role === 'player' ? 'entered' : '') // toggle between entered and withdrawn from tournaments for player view only
     
     const [withdrawalButtonText, setWithdrawalButtonText] = useState("Withdraw")
