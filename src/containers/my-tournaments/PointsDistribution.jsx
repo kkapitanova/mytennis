@@ -77,7 +77,7 @@ const PointsDistribution = ({
             const updatedItem = updatedPoints[updatedItemIndex]
 
             if (name === 'playerName' && autofillIndex) { // autofill data on dropdown selection
-                updatedItem[name] = `${players[autofillIndex].firstName}\xa0${players[autofillIndex].middleName}\xa0${players[autofillIndex].familyName}`
+                updatedItem[name] = `${players[autofillIndex].firstName}\xa0${players[autofillIndex].middleName ? `${players[autofillIndex].middleName}\xa0` : ''}${players[autofillIndex].familyName}`
                 updatedItem['playerID'] = players[autofillIndex].userID
                 updatedItem['gender'] = players[autofillIndex].gender
                 updatedItem['countryOfBirth'] = players[autofillIndex].countryOfBirth

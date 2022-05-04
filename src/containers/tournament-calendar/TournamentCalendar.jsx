@@ -72,6 +72,7 @@ const tableRowHeaders = [
 
 const enteredPlayersTableRowHeaders = [
     'Name', 
+    'Country of Birth',
     'Age', 
     'Gender',
     'Entry Date',
@@ -80,6 +81,7 @@ const enteredPlayersTableRowHeaders = [
 
 const withdrawedPlayersTableRowHeaders = [
     'Name', 
+    'Country of Birth',
     'Age', 
     'Gender',
     'Withdrawal Date',
@@ -120,6 +122,7 @@ const TournamentCalendar = ({ nextTen = false }) => {
             if (withdrawed && player.withdrawed && player.withdrawalTime) {
                 playersData.push({
                     name: player.name,
+                    countryOfBirth: player.countryOfBirth,
                     age: player.age,
                     gender: player.gender,
                     time: getDateString(player.withdrawalTime),
@@ -129,6 +132,7 @@ const TournamentCalendar = ({ nextTen = false }) => {
             } else if (!withdrawed && !player.withdrawed && !player.withdrawalTime) {
                 playersData.push({
                     name: player.name,
+                    countryOfBirth: player.countryOfBirth,
                     age: player.age,
                     gender: player.gender,
                     time: getDateString(player.signUpTime),
@@ -260,7 +264,7 @@ const TournamentCalendar = ({ nextTen = false }) => {
         } else {
             const updates = {};
             updates['tournaments/' + currentTournament.tournamentID + '/playersSignedUp/' + userData.userID] = {
-                name: `${userData.firstName}\xa0${userData.middleName}\xa0${userData.familyName}`,
+                name: `${userData.firstName}\xa0${userData.middleName ? `${userData.middleName}\xa0` : ''}${userData.familyName}`,
                 countryOfBirth: userData.countryOfBirth,
                 signUpTime: new Date(), 
                 signedUp: true,
