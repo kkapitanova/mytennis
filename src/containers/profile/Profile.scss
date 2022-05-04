@@ -14,7 +14,7 @@
     }
 
     &-right {
-        max-width: 800px;
+        max-width: 80vw;
         width: 100%;
         transition: width 1s;
         border: 1px solid $accent;
@@ -30,8 +30,9 @@
     margin-bottom: 10px;
 
     .name {
-        white-space: nowrap;
+        white-space: pre-wrap;
         margin-left: 10px;
+        text-align: left;
     }
 }
 
@@ -63,13 +64,6 @@
     display: none;
 }
 
-// @media screen and (max-width: 1100px) {
-//     .profile-section-wrapper {
-//         &-right {
-//             width: 350px !important;
-//         }
-//     }
-// }
 
 .profile-selection {
     white-space: nowrap;
@@ -93,6 +87,19 @@
         background-color: $accent-bg !important;
         border-radius: 10px;
         transition: .3s background ease;
+    }
+}
+
+.privacy-notice  {
+    margin-top: 40px;
+
+    & > div {
+        margin-bottom: 10px;
+        text-align: left;
+
+        &.end-message {
+            margin-top: 40px;
+        }
     }
 }
 
@@ -120,8 +127,7 @@
 
     .profile-section-wrapper {
         &-left {
-            max-width: none;
-            width: 100%;
+            max-width: 90vw;
             height: fit-content;
             border-radius: 10px !important;
 
@@ -144,6 +150,7 @@
 
             &.left-open {
                 width: 0px !important;
+                height: 0px !important;
                 padding: 0;
                 overflow: hidden !important;
                 animation: fadeOut 1s;

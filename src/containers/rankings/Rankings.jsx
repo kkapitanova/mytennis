@@ -383,6 +383,7 @@ const Rankings = ({ topTen = false }) => {
                         <div>Date of Birth:&nbsp;{moment(new Date(currentPlayer?.dateOfBirth)).format('D MMMM YYYY')}</div>
                         <div>Age:&nbsp;{getAge(new Date(currentPlayer?.dateOfBirth))}</div>
                         {(currentPlayer?.gameInfo?.plays || currentPlayer?.gameInfo?.backhand) && <div>Plays:&nbsp;{currentPlayer?.gameInfo?.plays && `${currentPlayer?.gameInfo?.plays},\xa0`}{currentPlayer?.gameInfo?.backhand}</div>}
+                        {currentPlayer?.about && <div className="about-section">{currentPlayer?.about}</div>}
                     </div>
                     <div className="flex-column info-section">
                         <h3 className="accent-color section-title">Contact Information</h3>

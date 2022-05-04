@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
-import sampleBackground from '../../assets/images/sample_background.jpeg';
-
+import playerOnCourt from '../../assets/images/player_on_court.jpg';
 import { Rankings, TournamentCalendar } from '../index';
 
 const Home = () => {
@@ -11,7 +10,7 @@ const Home = () => {
 
     return (
         <div className="home-wrapper">
-            <img alt="" src={sampleBackground} width="100%" height="400px"/>
+            <img alt="" src={playerOnCourt} width="100%" height="400px"/>
             <Rankings topTen/>
             <TournamentCalendar nextTen/>
         </div>

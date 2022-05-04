@@ -228,8 +228,10 @@ const Profile = () => {
                                 <h3 className="accent-color">{sectionSelected ? sectionSelected : "Personal Information"}</h3>
                                 <ClearIcon className={`clear-button accent-color ${(sectionSelected === "Personal Information" || !sectionSelected) && 'main-section'}`} onClick={() => setSectionSelected('')}/>
                             </div>
-                            {sectionSelected === "Privacy"  && <div className='flex justify-center align-center full-height'>
-                                <div>We are working hard to provide you with all our information. We thank you for your patience!</div>
+                            {sectionSelected === "Privacy"  && <div className='flex-column justify-center align-start full-height privacy-notice'>
+                                <div>Your data will be used for purposes related only to My Tennis and in accordance with the General Data Protection Regulation (GDPR). By completing your profile, you agree that your information will be publicly visible to other users who access the system, as this is standard practice for competitive sports. We will not collect any other data except for the one you have given us.</div>
+                                <div>If you wish to delete your account, please contact us by email at inquiries@mytennisplatform.com. Once deleted, we will erase all tracks of your account for security purposes.</div>
+                                <div className="end-message">We thank you for your understanding and hope you have an amazing time with the My Tennis community!</div>
                             </div>}
                             {(sectionSelected === "Personal Information" || sectionSelected === "") && <div>
                                 <div className="flex wrap justify-between fields-container">
@@ -349,117 +351,119 @@ const Profile = () => {
                                         </FormControl>
                                     </div>
                                     <div className="flex-column wrap fields-wrapper justify-between">
-                                        <div className="flex wrap align-center combo-wrapper" style={{marginTop: '15px'}}>
-                                            <TextField 
-                                                id="email" 
-                                                name="email"
-                                                label="Email" 
-                                                variant="outlined" 
-                                                value={data.email}
-                                                size="small"
-                                                sx={{width: '20vw', minWidth: 250, marginRight: '10px'}}
-                                                // onChange={handleChange}
-                                                disabled
-                                                required
-                                            />
-                                            <FormControl sx={{minWidth: 120}}>
-                                                <InputLabel id="email-visibility-label">Email Visible To</InputLabel>
-                                                <Select
-                                                    name="emailVisibility"
-                                                    id="email-visibility"
-                                                    onChange={handleChange}
-                                                    value={data.emailVisibility}
-                                                    label="Email Visible To"
+                                        <div>
+                                            <div className="flex wrap align-center combo-wrapper" style={{marginTop: '15px'}}>
+                                                <TextField 
+                                                    id="email" 
+                                                    name="email"
+                                                    label="Email" 
+                                                    variant="outlined" 
+                                                    value={data.email}
                                                     size="small"
-                                                    sx={{width: '20vw', minWidth: 250}}
-                                                >
-                                                    {visibilityOptions.map(option => {
-                                                        return (
-                                                            <MenuItem value={option}>{option}</MenuItem>
-                                                        )
-                                                    })}
-                                                </Select>
-                                            </FormControl>
-                                        </div>
-                                        <div className="flex wrap align-center combo-wrapper" style={{marginTop: '20px'}}>
-                                            <TextField 
-                                                id="phone-number" 
-                                                name="phoneNumber"
-                                                label="Phone Number" 
-                                                variant="outlined" 
-                                                value={data.phoneNumber}
-                                                size="small"
-                                                sx={{width: '20vw', minWidth: 250, marginRight: '10px'}}
-                                                onChange={handleChange}
-                                            />
-                                            <FormControl sx={{minWidth: 120 }}>
-                                                <InputLabel id="phone-number-visibility-label">Phone Visible To</InputLabel>
-                                                <Select
-                                                    name="phoneNumberVisibility"
-                                                    id="phone-number-visibility"
-                                                    onChange={handleChange}
-                                                    value={data.phoneNumberVisibility}
-                                                    label="Phone Visible To"
-                                                    size="small"
-                                                    sx={{width: '20vw', minWidth: 250}}
-                                                >
-                                                    {visibilityOptions.map(option => {
-                                                        return (
-                                                            <MenuItem value={option}>{option}</MenuItem>
-                                                        )
-                                                    })}
-                                                </Select>
-                                            </FormControl>
-                                        </div>
-                                        <div className="flex-column wrap">
-                                            <div className="flex wrap align-center combo-wrapper" style={{margin: '20px 0px 16px 0px'}}>
-                                                <FormControl sx={{minWidth: 120, marginRight: '10px' }}>
-                                                    <InputLabel id="game-info-plays-label">You Play</InputLabel>
+                                                    sx={{width: '20vw', minWidth: 250, marginRight: '10px'}}
+                                                    // onChange={handleChange}
+                                                    disabled
+                                                    required
+                                                />
+                                                <FormControl sx={{minWidth: 120}}>
+                                                    <InputLabel id="email-visibility-label">Email Visible To</InputLabel>
                                                     <Select
-                                                        id="game-info-plays" 
-                                                        name={`gameInfo["plays"]`}
-                                                        label="You Play"
-                                                        onChange={e => handlePlayStyleChange(e, "plays")}
-                                                        value={data.gameInfo?.plays}
+                                                        name="emailVisibility"
+                                                        id="email-visibility"
+                                                        onChange={handleChange}
+                                                        value={data.emailVisibility}
+                                                        label="Email Visible To"
                                                         size="small"
                                                         sx={{width: '20vw', minWidth: 250}}
                                                     >
-                                                        <MenuItem value={"Right-handed"}>Right-handed</MenuItem>
-                                                        <MenuItem value={"Left-handed"}>Left-handed</MenuItem>
-                                                    </Select>
-                                                </FormControl>
-                                                <FormControl sx={{minWidth: 120 }}>
-                                                    <InputLabel id="game-info-backhand-label">Play style</InputLabel>
-                                                    <Select
-                                                        name={`gameInfo["backhand"]`}
-                                                        id="game-info-backhand"
-                                                        onChange={e => handlePlayStyleChange(e, "backhand")}
-                                                        value={data.gameInfo?.backhand}
-                                                        label="Backhand"
-                                                        size="small"
-                                                        sx={{width: '20vw', minWidth: 250}}
-                                                    >
-                                                        <MenuItem value={"One-handed backhand"}>One-handed backhand</MenuItem>
-                                                        <MenuItem value={"Two-handed backhand"}>Two-handed backhand</MenuItem>
-                                                        <MenuItem value={"Two backhands"}>Two backhands</MenuItem>
-                                                        <MenuItem value={"Two forehands"}>Two forehands</MenuItem>
+                                                        {visibilityOptions.map(option => {
+                                                            return (
+                                                                <MenuItem value={option}>{option}</MenuItem>
+                                                            )
+                                                        })}
                                                     </Select>
                                                 </FormControl>
                                             </div>
-                                            <TextField 
-                                                id="about" 
-                                                name="about"
-                                                multiline
-                                                label="About Me" 
-                                                variant="outlined" 
-                                                className='about-wrapper'
-                                                value={data.about}
-                                                rows={4}
-                                                size="small"
-                                                sx={{marginTop: '20px', width: 'calc(40vw + 10px)', minWidth: 510}}
-                                                onChange={handleChange}
-                                            />
+                                            <div className="flex wrap align-center combo-wrapper" style={{marginTop: '20px'}}>
+                                                <TextField 
+                                                    id="phone-number" 
+                                                    name="phoneNumber"
+                                                    label="Phone Number" 
+                                                    variant="outlined" 
+                                                    value={data.phoneNumber}
+                                                    size="small"
+                                                    sx={{width: '20vw', minWidth: 250, marginRight: '10px'}}
+                                                    onChange={handleChange}
+                                                />
+                                                <FormControl sx={{minWidth: 120 }}>
+                                                    <InputLabel id="phone-number-visibility-label">Phone Visible To</InputLabel>
+                                                    <Select
+                                                        name="phoneNumberVisibility"
+                                                        id="phone-number-visibility"
+                                                        onChange={handleChange}
+                                                        value={data.phoneNumberVisibility}
+                                                        label="Phone Visible To"
+                                                        size="small"
+                                                        sx={{width: '20vw', minWidth: 250}}
+                                                    >
+                                                        {visibilityOptions.map(option => {
+                                                            return (
+                                                                <MenuItem value={option}>{option}</MenuItem>
+                                                            )
+                                                        })}
+                                                    </Select>
+                                                </FormControl>
+                                            </div>
+                                            <div className="flex-column wrap">
+                                                <div className="flex wrap align-center combo-wrapper" style={{margin: '20px 0px 16px 0px'}}>
+                                                    <FormControl sx={{minWidth: 120, marginRight: '10px' }}>
+                                                        <InputLabel id="game-info-plays-label">You Play</InputLabel>
+                                                        <Select
+                                                            id="game-info-plays" 
+                                                            name={`gameInfo["plays"]`}
+                                                            label="You Play"
+                                                            onChange={e => handlePlayStyleChange(e, "plays")}
+                                                            value={data.gameInfo?.plays}
+                                                            size="small"
+                                                            sx={{width: '20vw', minWidth: 250}}
+                                                        >
+                                                            <MenuItem value={"Right-handed"}>Right-handed</MenuItem>
+                                                            <MenuItem value={"Left-handed"}>Left-handed</MenuItem>
+                                                        </Select>
+                                                    </FormControl>
+                                                    <FormControl sx={{minWidth: 120 }}>
+                                                        <InputLabel id="game-info-backhand-label">Play style</InputLabel>
+                                                        <Select
+                                                            name={`gameInfo["backhand"]`}
+                                                            id="game-info-backhand"
+                                                            onChange={e => handlePlayStyleChange(e, "backhand")}
+                                                            value={data.gameInfo?.backhand}
+                                                            label="Backhand"
+                                                            size="small"
+                                                            sx={{width: '20vw', minWidth: 250}}
+                                                        >
+                                                            <MenuItem value={"One-handed backhand"}>One-handed backhand</MenuItem>
+                                                            <MenuItem value={"Two-handed backhand"}>Two-handed backhand</MenuItem>
+                                                            <MenuItem value={"Two backhands"}>Two backhands</MenuItem>
+                                                            <MenuItem value={"Two forehands"}>Two forehands</MenuItem>
+                                                        </Select>
+                                                    </FormControl>
+                                                </div>
+                                            </div>
                                         </div>
+                                        <TextField 
+                                            id="about" 
+                                            name="about"
+                                            multiline
+                                            label="About Me" 
+                                            variant="outlined" 
+                                            className='about-wrapper'
+                                            value={data.about}
+                                            rows={4}
+                                            size="small"
+                                            sx={{marginTop: '20px', width: 'calc(40vw + 10px)', minWidth: 510}}
+                                            onChange={handleChange}
+                                        />
                                     </div>
                                 </div>
                                 <div className="flex-column align-start checks-wrapper">

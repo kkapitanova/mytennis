@@ -73,6 +73,8 @@ const tableRowHeaders = [
 
 const enteredPlayersTableRowHeaders = [
     'Name', 
+    'Age', 
+    'Gender',
     'Entry Date',
     'Status'
 ]
@@ -145,13 +147,6 @@ const MyTournaments = () => {
 
     // get the players signed up for the current tournament
     const getSignedUpPlayers = (playersSignedUp, withdrawed = false) => {
-
-        const test = [{
-            name: "Kristina Kapitanova",
-            date: getDateString(new Date ().toString()),
-            status: "Entered"
-        }]    
-
         const playersData = []
     
         Object.keys(playersSignedUp).map((key, index) => {
@@ -160,14 +155,20 @@ const MyTournaments = () => {
             if (withdrawed && player.withdrawed && player.withdrawalTime) {
                 playersData.push({
                     name: player.name,
+                    age: player.age,
+                    gender: player.gender,
                     time: getDateString(player.withdrawalTime),
-                    status: 'Withdrawn'
+                    status: 'Withdrawn',
+                    id: player.playerID,
                 })
             } else if (!withdrawed && !player.withdrawed && !player.withdrawalTime) {
                 playersData.push({
                     name: player.name,
+                    age: player.age,
+                    gender: player.gender,
                     time: getDateString(player.signUpTime),
-                    status: 'Entered'
+                    status: 'Entered',
+                    id: player.playerID,
                 })
             }
         })
@@ -248,8 +249,8 @@ const MyTournaments = () => {
 
         })
 
-        // sort data by start data in ascending order (sooner tournaments will appear first)
-        const sortedTableData = userData.role?.toLowerCase() !== 'clubrep' ? sortData(tournamentData, "startDate", 'asc') : sortData(tournamentData, "startDate", 'desc')
+        // sort data by start data in ascending order (tournaments happening sooner will appear first)
+        const sortedTableData = sortData(tournamentData, "startDate", 'asc')
 
         // format the tournaments' start and end dates
         const organizedTableData = sortedTableData.map(t => {
@@ -281,7 +282,7 @@ const MyTournaments = () => {
             setSearch({
                 ...search,
                 [name]: value,
-                drawType: !(search.drawType.includes('Doubles')) ? 'singlesAndDoubles' : 'doubles'
+                drawType: search.drawType === 'All Draw Types' ? search.drawType : !(search.drawType.toLowerCase().includes('doubles')) ? 'singlesAndDoubles' : 'doubles'
             })
         } else {
             setSearch({
@@ -520,32 +521,51 @@ const MyTournaments = () => {
             const signedUpPlayers = { ...currentTournament.playersSignedUp }
             const updates = {};
 
-            for (let key in signedUpPlayers) {
-                points.map(p => {
-                    if (key === p.playerID) {
-                        signedUpPlayers[key].pointsWon = p.pointsWon
-                    } else {
-                        signedUpPlayers[p.playerID] = { 
-                            name: p.playerName,
-                            countryOfBirth: p.countryOfBirth,
-                            signUpTime: new Date(currentTournament.onSiteSignupDeadline), // if the player has not signed up through the app, this means they signed up on the on site signup date
-                            signedUp: true, 
-                            playerID: p.playerID, 
-                            age: p.age,
-                            gender: p.gender,
-                            pointsWon: p.pointsWon, 
+
+            if (Object.keys(signedUpPlayers)?.length) {
+                Object.keys(signedUpPlayers).forEach(key => {
+                    points.map(p => {
+                        if (key === p.playerID) {
+                            signedUpPlayers[key].pointsWon = p.pointsWon
+                        } else {
+                            signedUpPlayers[p.playerID] = { 
+                                name: p.playerName,
+                                countryOfBirth: p.countryOfBirth,
+                                signUpTime: new Date(currentTournament.onSiteSignupDeadline), // if the player has not signed up through the app, this means they signed up on the on site signup date
+                                signedUp: true, 
+                                playerID: p.playerID, 
+                                age: p.age,
+                                gender: p.gender,
+                                pointsWon: p.pointsWon, 
+                            }
                         }
+    
+                        updateCurrentPlayerPoints(`${p.draw}`, p.playerID, p.pointsWon) // update ranking points in DB
+                    })
+                })
+            } else {
+                points.map(p => {
+                    signedUpPlayers[p.playerID] = { 
+                        name: p.playerName,
+                        countryOfBirth: p.countryOfBirth,
+                        signUpTime: new Date(currentTournament.onSiteSignupDeadline), // if the player has not signed up through the app, this means they signed up on the on site signup date
+                        signedUp: true, 
+                        playerID: p.playerID, 
+                        age: p.age,
+                        gender: p.gender,
+                        pointsWon: p.pointsWon, 
                     }
 
                     updateCurrentPlayerPoints(`${p.draw}`, p.playerID, p.pointsWon) // update ranking points in DB
                 })
             }
 
+
             const updatedData = []
             
             data.forEach(item => {
                 if (item.id === currentTournament.tournamentID) {
-                    item.status = "Concluded"
+                    // item.status = "Concluded"
                 }
                 updatedData.push(item)
             })
@@ -553,8 +573,8 @@ const MyTournaments = () => {
             setData(updatedData)
             handleClose()
 
-            const updatedTournament = currentTournament
-            updatedTournament.status = 'Concluded'
+            const updatedTournament = { ...currentTournament, playersSignedUp: {} }
+            // updatedTournament.status = 'Concluded'
             updatedTournament.playersSignedUp = signedUpPlayers
 
             // update points won within current tournament in DB

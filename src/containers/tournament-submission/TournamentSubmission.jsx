@@ -551,9 +551,8 @@ const TournamentSubmission = () => {
                             </FormControl>
                         </div>
                         <div className="flex wrap">
-                            {/* <button className='button action-button' type="submit" style={{marginRight: 10}} disabled={validateFields()}>Submit</button> */}
                             <Button variant="contained" sx={{height: 40, margin: '0px 10px 10px 0px !important'}} type="submit" disabled={validateFields()} endIcon={<SendIcon />}>Submit</Button> 
-                            <Button variant="contained" sx={{height: 40, margin: '0px 10px 10px 0px !important'}} onClick={fillWithTestData}>FILL WITH TEST DATA</Button>
+                            {/* <Button variant="contained" sx={{height: 40, margin: '0px 10px 10px 0px !important'}} onClick={fillWithTestData}>FILL WITH TEST DATA</Button> uncomment for test purposes only */}
                             {checkIfInfoIsFilledIn() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} sx={{height: 40, margin: '0px 10px 0px 0px !important'}} onClick={clearFields}>Clear Fields</Button>}
                         </div>
                         {validateFields() && <div className="error">Please fill in all of the fields above.</div>}

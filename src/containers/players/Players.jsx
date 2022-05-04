@@ -56,7 +56,10 @@ const Players = () => {
     const [currentPlayer, setCurrentPlayer] = useState()
     const [open, setOpen] = useState(false)
 
-    const handleClose = () => setOpen(false);
+    const handleClose = () => {
+        setCurrentPlayer()
+        setOpen(false);
+    }
 
     const fetchPlayers = () => {
         get(child(dbRef, 'players')).then((snapshot) => {
@@ -270,7 +273,10 @@ const Players = () => {
                 <Fade in={open}>
                 <Box sx={style} className="large-modal">
                     <div className="flex-column">
-                        <h2 className="accent-color modal-title">{currentPlayer?.firstName}&nbsp;{currentPlayer?.familyName}</h2>
+                        <div className="flex justify-between align-center">
+                            <h2 className="accent-color modal-title">{currentPlayer?.firstName}&nbsp;{currentPlayer?.familyName}</h2>
+                            <div className="close-icon"><ClearIcon className="pointer accent-color" onClick={handleClose}/></div>
+                        </div>
                         <div className="flex-column info-section">
                             <h3 className="accent-color section-title-medium">Personal Information</h3>
                             <div>Gender: {currentPlayer?.gender}</div>
@@ -278,6 +284,7 @@ const Players = () => {
                             <div>Date of Birth:&nbsp;{moment(new Date(currentPlayer?.dateOfBirth)).format('D MMMM YYYY')}</div>
                             <div>Age:&nbsp;{getAge(new Date(currentPlayer?.dateOfBirth))}</div>
                             {(currentPlayer?.gameInfo?.plays || currentPlayer?.gameInfo?.backhand) && <div>Plays:&nbsp;{currentPlayer?.gameInfo?.plays && `${currentPlayer?.gameInfo?.plays},\xa0`}{currentPlayer?.gameInfo?.backhand}</div>}
+                            {currentPlayer?.about && <div className="about-section">{currentPlayer?.about}</div>}
                         </div>
                         <div className="flex-column info-section">
                             <h3 className="accent-color section-title-medium">Contact Information</h3>

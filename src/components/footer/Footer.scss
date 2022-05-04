@@ -50,6 +50,19 @@
             align-items: center;
             justify-content: center;
             font-family: $fontFamily !important;
+            margin-bottom: 10px;
+
+            > a {
+                display: flex;
+                align-items: center;
+            }
+        }
+
+        &-item-alt {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: $fontFamily !important;
 
             > a {
                 display: flex;
