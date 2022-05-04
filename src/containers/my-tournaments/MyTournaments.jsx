@@ -785,7 +785,7 @@ const MyTournaments = () => {
                     </TextField>
                 </div>
                 <div className='flex align-start'>
-                    {filterApplied() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} sx={{height: 40, minWidth: 180, margin: '0px !important'}} onClick={clearSearch}>Clear Search</Button>}
+                    {filterApplied() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} sx={{height: 40, minWidth: 180, margin: '0px 0px 10px 0px !important'}} onClick={clearSearch}>Clear Search</Button>}
                 </div>
             </div>
             <Table tableData={data} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>

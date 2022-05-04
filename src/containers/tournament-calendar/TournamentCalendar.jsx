@@ -498,7 +498,7 @@ const TournamentCalendar = ({ nextTen = false }) => {
                     </TextField>
                 </div>
                 <div className='flex align-start'>
-                    {filterApplied() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} sx={{height: 40, minWidth: 180, margin: '0px !important'}} onClick={clearSearch}>Clear Search</Button>}
+                    {filterApplied() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} sx={{height: 40, minWidth: 180, margin: '0px 0px 20px 0px !important'}} onClick={clearSearch}>Clear Search</Button>}
                 </div>
             </div>
             <Table tableData={nextTen ? data.slice(0,10) : data} rowHeaders={tableRowHeaders} onRowClick={handleRowClick}/>
