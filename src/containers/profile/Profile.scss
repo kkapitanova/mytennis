@@ -30,8 +30,9 @@
     margin-bottom: 10px;
 
     .name {
-        white-space: nowrap;
+        white-space: pre-wrap;
         margin-left: 10px;
+        text-align: left;
     }
 }
 
@@ -63,13 +64,6 @@
     display: none;
 }
 
-// @media screen and (max-width: 1100px) {
-//     .profile-section-wrapper {
-//         &-right {
-//             width: 350px !important;
-//         }
-//     }
-// }
 
 .profile-selection {
     white-space: nowrap;
@@ -120,8 +114,7 @@
 
     .profile-section-wrapper {
         &-left {
-            max-width: none;
-            width: 100%;
+            max-width: 90vw;
             height: fit-content;
             border-radius: 10px !important;
 
@@ -144,6 +137,7 @@
 
             &.left-open {
                 width: 0px !important;
+                height: 0px !important;
                 padding: 0;
                 overflow: hidden !important;
                 animation: fadeOut 1s;
