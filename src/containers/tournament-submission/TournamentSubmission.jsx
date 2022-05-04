@@ -384,7 +384,6 @@ const TournamentSubmission = () => {
                                 </RadioGroup>
                             </FormControl>
                         </div>
-                        {/* Qualifying Draw */}
                         {tournamentData.qualification && <div className='flex-column align-start' style={{marginBottom: 10}}>
                             <LocalizationProvider dateAdapter={AdapterDateFns}>
                                 <Stack spacing={2}>
@@ -539,7 +538,6 @@ const TournamentSubmission = () => {
                         <div className='flex-column wrap align-start'>
                             <div style={{marginBottom: 10}}>Medical Team on Site*</div>
                             <FormControl   sx={{margin: "0 50px 20px 0"}}>
-                                {/* <FormLabel id="demo-radio-buttons-group-label" sx={{textAlign: "left"}}>Draw Types*</FormLabel> */}
                                 <RadioGroup
                                     aria-labelledby="medical-team-on-site"
                                     defaultValue="no"
