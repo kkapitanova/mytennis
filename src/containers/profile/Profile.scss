@@ -90,6 +90,19 @@
     }
 }
 
+.privacy-notice  {
+    margin-top: 40px;
+
+    & > div {
+        margin-bottom: 10px;
+        text-align: left;
+
+        &.end-message {
+            margin-top: 40px;
+        }
+    }
+}
+
 @media screen and (min-width: 960px) {
     .profile-selection.active {
         cursor: pointer;

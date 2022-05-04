@@ -228,8 +228,10 @@ const Profile = () => {
                                 <h3 className="accent-color">{sectionSelected ? sectionSelected : "Personal Information"}</h3>
                                 <ClearIcon className={`clear-button accent-color ${(sectionSelected === "Personal Information" || !sectionSelected) && 'main-section'}`} onClick={() => setSectionSelected('')}/>
                             </div>
-                            {sectionSelected === "Privacy"  && <div className='flex justify-center align-center full-height'>
-                                <div>We are working hard to provide you with all our information. We thank you for your patience!</div>
+                            {sectionSelected === "Privacy"  && <div className='flex-column justify-center align-start full-height privacy-notice'>
+                                <div>Your data will be used for purposes related only to My Tennis and in accordance with the General Data Protection Regulation (GDPR). By completing your profile, you agree that your information will be publicly visible to other users who access the system, as this is standard practice for competitive sports. We will not collect any other data except for the one you have given us.</div>
+                                <div>If you wish to delete your account, please contact us by email at inquiries@mytennisplatform.com. Once deleted, we will erase all tracks of your account for security purposes.</div>
+                                <div className="end-message">We thank you for your understanding and hope you have an amazing time with the My Tennis community!</div>
                             </div>}
                             {(sectionSelected === "Personal Information" || sectionSelected === "") && <div>
                                 <div className="flex wrap justify-between fields-container">
