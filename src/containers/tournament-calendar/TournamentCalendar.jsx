@@ -101,7 +101,6 @@ const TournamentCalendar = ({ nextTen = false }) => {
         year: 'All'
     }) 
     const [data, setData] = useState([]) // data displayed in the table
-    const [dataByCategories, setDataByCategories] = useState([]) // data filtered by categories (gender, age, etc.)
     const [tournamentsTime, setTournamentsTime] = useState("upcoming") // toggle between past and upcoming tournaments
 
     const [currentTournament, setCurrentTournament] = useState()
@@ -205,8 +204,6 @@ const TournamentCalendar = ({ nextTen = false }) => {
         const organizedTableData = sortedTableData.map(t => {
             return {...t, startDate: getDateString(t.startDate), endDate: getDateString(t.endDate)}
         })
-
-        setDataByCategories([...organizedTableData])
 
         return organizedTableData
     }

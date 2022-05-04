@@ -100,7 +100,6 @@ const MyTournaments = () => {
     }) 
 
     const [data, setData] = useState([]) // data displayed in the table
-    const [dataByCategories, setDataByCategories] = useState([]) // all data filtered by categories (gender group, age group, dates)
     const [currentTournament, setCurrentTournament] = useState() // current tournament modal
     const [open, setOpen] = useState(false) // tournament info modal open state
     const [tournamentsTime, setTournamentsTime] = useState("upcoming") // toggle between past and upcoming tournaments
@@ -256,8 +255,6 @@ const MyTournaments = () => {
         const organizedTableData = sortedTableData.map(t => {
             return {...t, startDate: getDateString(t.startDate), endDate: getDateString(t.endDate)}
         })
-
-        setDataByCategories([...organizedTableData])
 
         return organizedTableData
     }
