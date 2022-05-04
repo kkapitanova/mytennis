@@ -58,6 +58,18 @@
             }
         }
 
+        &-item-alt {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: $fontFamily !important;
+
+            > a {
+                display: flex;
+                align-items: center;
+            }
+        }
+
         .classes-wrapper {
             display: flex;
             flex-direction: row;
