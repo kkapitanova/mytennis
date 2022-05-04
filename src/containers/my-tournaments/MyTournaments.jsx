@@ -100,7 +100,6 @@ const MyTournaments = () => {
     }) 
 
     const [data, setData] = useState([]) // data displayed in the table
-    const [dataByCategories, setDataByCategories] = useState([]) // all data filtered by categories (gender group, age group, dates)
     const [currentTournament, setCurrentTournament] = useState() // current tournament modal
     const [open, setOpen] = useState(false) // tournament info modal open state
     const [tournamentsTime, setTournamentsTime] = useState("upcoming") // toggle between past and upcoming tournaments
@@ -225,13 +224,13 @@ const MyTournaments = () => {
                 /// UPCOMING TOURNAMENTS VS PAST TOURNAMENTS VS ALL TOURNAMENTS
                 (tournamentsTime === 'upcoming' ? new Date (t.endDate).getTime() > new Date ().getTime() : tournamentsTime === 'past' ? new Date (t.endDate).getTime() < new Date ().getTime() : true) &&
 
-                // ADMIN VIEW - show only tournaments for approval/declined ones
+                // ADMIN ROLE - show only tournaments for approval/declined ones
                 (((userData?.role && userData.role.toLowerCase() === 'admin') ? (t.status?.toLowerCase() === "waiting for approval" || t.status?.toLowerCase() === 'declined') : false) ||
 
-                // CLUB REP VIEW - show only tournaments that player has submitted
+                // CLUB REP ROLE - show only tournaments that player has submitted
                 (userData?.role && userData.role.toLowerCase() === 'clubrep' && t.submittedBy === userData.userID) ||
 
-                // PLAYER VIEW - show only tournaments that player has signed up for/withdrawn from
+                // PLAYER ROLE - show only tournaments that player has signed up for/withdrawn from
                 (userData?.role && userData.role.toLowerCase() === 'player' &&  t.playersSignedUp && Object.keys(t.playersSignedUp) && t.playersSignedUp[userData.userID] && ((tournamentsDisplay === 'entered' ? !t.playersSignedUp[userData.userID].withdrawalTime : tournamentsDisplay === 'withdrawn' ? t.playersSignedUp[userData.userID].withdrawalTime : true))))
             ) {
                 tournamentData.push({
@@ -256,8 +255,6 @@ const MyTournaments = () => {
         const organizedTableData = sortedTableData.map(t => {
             return {...t, startDate: getDateString(t.startDate), endDate: getDateString(t.endDate)}
         })
-
-        setDataByCategories([...organizedTableData])
 
         return organizedTableData
     }
@@ -310,7 +307,7 @@ const MyTournaments = () => {
         return bool
     }
 
-    // ADMIN VIEW - tournament approval
+    // ADMIN ROLE - tournament approval
     const confirmApproval = () => {
         if (approvalText === "Confirm Approval") {
             const updatedData = []
@@ -347,7 +344,7 @@ const MyTournaments = () => {
         }
     }
 
-    // ADMIN VIEW - tournament decline
+    // ADMIN ROLE - tournament decline
     const confirmDecline = () => {
         if (declinatureText === "Confirm Decline") {
             const updatedData = []
@@ -383,7 +380,7 @@ const MyTournaments = () => {
         }
     }
 
-    // PLAYER VIEW - withdrawal from tournament
+    // PLAYER ROLE - withdrawal from tournament
     const confirmWithdrawal = () => {
         if (withdrawalButtonText === 'Confirm Withdrawal') {
             const updates = {};
@@ -408,7 +405,7 @@ const MyTournaments = () => {
         }
     }
 
-    // CLUB REP VIEW - Close sign up for tournaments
+    // CLUB REP ROLE - Close sign up for tournaments
     const confirmSignUpClosure = () => {
         if (signUpClosureText === "Confirm Sign Up Closure") {
             const updatedData = []
@@ -444,7 +441,7 @@ const MyTournaments = () => {
         }
     }
 
-    // CLUB REP VIEW - Confirm tournament conclusion
+    // CLUB REP ROLE - Confirm tournament conclusion
     const confirmConclusion = () => { // TODO: make updating functions more reusable
         if (conclusionText === "Confirm Conclusion") {
             const updatedData = []
@@ -479,7 +476,7 @@ const MyTournaments = () => {
         }
     }
 
-    // CLUB REP & ADMIN VIEW - Cancel tournament
+    // CLUB REP & ADMIN ROLE - Cancel tournament
     const confirmCancellation = () => {
         if (cancellationText === "Confirm Cancellation") {
             const updatedData = []

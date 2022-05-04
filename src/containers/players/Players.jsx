@@ -121,6 +121,7 @@ const Players = () => {
     }
 
 
+    // open player details modal
     const handleRowClick = (playerData) => {
         const playerIndex = players.findIndex(el => el.userID === playerData.id)
         const current = players[playerIndex]

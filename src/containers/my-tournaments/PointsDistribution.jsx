@@ -76,17 +76,16 @@ const PointsDistribution = ({
         if (updatedItemIndex !== -1) {
             const updatedItem = updatedPoints[updatedItemIndex]
 
-            if (name === 'playerName') {
+            if (name === 'playerName' && autofillIndex) { // autofill data on dropdown selection
                 updatedItem[name] = `${players[autofillIndex].firstName}\xa0${players[autofillIndex].middleName}\xa0${players[autofillIndex].familyName}`
-
-                if (autofillIndex) {
-                    updatedItem['playerID'] = players[autofillIndex].userID
-                    updatedItem['gender'] = players[autofillIndex].gender
-                    updatedItem['countryOfBirth'] = players[autofillIndex].countryOfBirth
-                    updatedItem['age'] = getAge(players[autofillIndex].dateOfBirth)
-                } 
+                updatedItem['playerID'] = players[autofillIndex].userID
+                updatedItem['gender'] = players[autofillIndex].gender
+                updatedItem['countryOfBirth'] = players[autofillIndex].countryOfBirth
+                updatedItem['age'] = getAge(players[autofillIndex].dateOfBirth)
+                
             } else if (name === 'playerName' && !updatedItem[name]) {
                 updatedItem['playerID'] = '' // clear id if player name is cleared too
+                
             } else {
                 updatedItem[name] = e.target.value
             }
