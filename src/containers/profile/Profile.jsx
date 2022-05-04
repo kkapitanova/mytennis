@@ -88,13 +88,14 @@ const Profile = () => {
         } = data
 
         if (!dataConfirmCheck || !termsCheck ||
-            (!firstName || !middleName ||
+            (!firstName ||
             !familyName || !gender || 
             !countryOfBirth || !dateOfBirth ||
-            !firstName.replace(/^\s+|\s+$/gm,'') || !middleName.replace(/^\s+|\s+$/gm,'') ||
+            !firstName.replace(/^\s+|\s+$/gm,'') ||
             !familyName.replace(/^\s+|\s+$/gm,'') || !gender.replace(/^\s+|\s+$/gm,'') || 
             !countryOfBirth.replace(/^\s+|\s+$/gm,'')) ||
-            !(about !== userData.about || 
+            !(middleName !== userData.middleName || 
+            about !== userData.about || 
             gameInfo?.backhand !== userData.gameInfo?.backhand || 
             gameInfo?.plays !== userData.gameInfo?.plays || 
             phoneNumber !== userData.phoneNumber ||
@@ -257,7 +258,7 @@ const Profile = () => {
                                             size="small"
                                             sx={{marginTop: '20px', width: '20vw', minWidth: 250}}
                                             onChange={handleChange}
-                                            required
+                                            // required
                                             disabled={userData.middleName ? true : false}
                                         />
                                         <TextField 

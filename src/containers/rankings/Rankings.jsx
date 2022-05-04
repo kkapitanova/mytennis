@@ -62,7 +62,6 @@ const Rankings = ({ topTen = false }) => {
     const [currentPlayer, setCurrentPlayer] = useState()
     const [open, setOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
-    const [initialLoad, setInitialLoad] = useState(true)
 
     // fetch the data for the players in the current ranking list
     const fetchPlayers = (keys) => {
