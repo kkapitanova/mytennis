@@ -8,7 +8,6 @@ import {
     getTournamentOnSiteSignupDeadline  
 } from '../../utils/helpers';
 import { useHistory } from 'react-router-dom';
-import { testTournamentData } from '../../data/dummyData';
 import { courtSurfaces, initialTournamentData } from '../../data/constants';
 
 // material imports
