@@ -95,6 +95,7 @@ const TournamentSubmission = () => {
         setOpen(true)
     }
 
+    // preview tournament details and confirm submission
     const confirmSubmission = () => {
         const newPostKey = push(child(dbRef, 'tournaments')).key;
         const updates = {};
@@ -553,7 +554,7 @@ const TournamentSubmission = () => {
                             {/* <Button variant="contained" sx={{height: 40, margin: '0px 10px 10px 0px !important'}} onClick={fillWithTestData}>FILL WITH TEST DATA</Button> uncomment for test purposes only */}
                             {checkIfInfoIsFilledIn() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} sx={{height: 40, margin: '0px 10px 0px 0px !important'}} onClick={clearFields}>Clear Fields</Button>}
                         </div>
-                        {validateFields() && <div className="error">Please fill in all of the fields above.</div>}
+                        {checkIfInfoIsFilledIn() && validateFields() && <div className="error">Please fill in all of the fields above.</div>}
                         <Modal
                             aria-labelledby="transition-modal-title"
                             aria-describedby="transition-modal-description"

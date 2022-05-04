@@ -88,7 +88,6 @@ export const getDateTimeString = dateMillis => {
 export const handleLogout = () => {
     sessionStorage.removeItem('Auth Token');
     sessionStorage.removeItem('userData');
-    toast.success("You have been logged out successfully.")
 }
 
 export const objectToArrayConverter = (obj) => {

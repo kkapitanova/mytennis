@@ -24,6 +24,7 @@ import FormHelperText from '@mui/material/FormHelperText';
 import UpdateIcon from '@mui/icons-material/Update';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ClearIcon from '@mui/icons-material/Clear';
+import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 
 // country dropdown
 import countryList from 'react-select-country-list'
@@ -489,7 +490,7 @@ const Profile = () => {
                                     </FormControl>
                                 </div>
                                 <div className="flex wrap align-center justify-center" style={{marginTop: 10}}>
-                                    <Button variant="contained" sx={{margin: '10px 5px 0px 5px !important'}} type="submit" onClick={handleDataUpdate} disabled={isDisabled()} startIcon={<UpdateIcon />}>Update Profile</Button>
+                                    <Button variant="contained" sx={{margin: '10px 5px 0px 5px !important'}} type="submit" onClick={handleDataUpdate} disabled={isDisabled()} startIcon={isCompleteProfile ? <UpdateIcon /> : <CheckOutlinedIcon />}>{isCompleteProfile ? 'Update Profile' : 'Complete Profile'}</Button>
                                 </div>
                                 <div className="personal-id text-left grey">Note: Your unique personal ID is {data.userID}.</div>
                             </div>}

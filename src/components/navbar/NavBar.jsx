@@ -179,7 +179,7 @@ const NavBar = ({ unauthRoutes, authRoutes, unauthRouteLast }) => {
                     <FontAwesomeIcon icon={expanded ? faTimes : faBars}/>
                 </div>
             </div>
-            <ToastContainer autoClose={5000} />
+            <ToastContainer autoClose={1500} />
         </>
     )
 }

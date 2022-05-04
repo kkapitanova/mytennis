@@ -120,7 +120,7 @@ const Rankings = ({ topTen = false }) => {
             const currentPlayer = players.find(player => player.userID === p)
         
             tableData.push({
-                name: `${currentPlayer?.firstName} ${currentPlayer?.familyName}`,
+                name: `${currentPlayer?.firstName} ${currentPlayer?.middleName && `${currentPlayer?.middleName} `}${currentPlayer?.familyName}`,
                 countryOfBirth: currentPlayer?.countryOfBirth,
                 age: getAge(currentPlayer?.dateOfBirth),
                 pointsWon: rankingData[p]?.pointsWon,
@@ -369,7 +369,7 @@ const Rankings = ({ topTen = false }) => {
                 <Box sx={style} className="flex-column large-modal">
                     <div className="flex justify-between align-center">
                         <div className="flex-column align-start rankings-header">
-                            <h2 className="accent-color modal-title">{currentPlayer?.firstName}&nbsp;{currentPlayer?.familyName}</h2>
+                            <h2 className="accent-color modal-title">{currentPlayer?.firstName} {currentPlayer?.middleName && `${currentPlayer?.middleName} `}{currentPlayer?.familyName}</h2>
                             <div className="flex-column">Ranking:&nbsp;{currentPlayer?.ranking} ({search.ageGroup}&nbsp;{search.genderGroup}&nbsp;{search.draw})</div>
                             <div className="flex-column">Points Won:&nbsp;{currentPlayer?.pointsWon}</div>
                         </div>

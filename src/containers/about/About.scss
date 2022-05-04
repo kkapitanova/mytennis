@@ -1,6 +1,14 @@
 @import '../../styles/variables.scss';
 
-.description > div {
-    margin-top: 10px;
-    max-width: 500px;
+.description {
+    margin-bottom: 20px;
+
+    & > div {
+        margin-top: 10px;
+        max-width: 500px;
+    }
+}
+
+.action-link {
+    margin-top: 30px !important;
 }

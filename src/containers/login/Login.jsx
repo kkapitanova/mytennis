@@ -39,9 +39,6 @@ const Login = () => {
                         sessionStorage.setItem('userData', JSON.stringify(data))
                         setUserData(data)
                         history.push('/profile')
-                        toast.success("You have logged in successfully.")
-                    } else {
-                      toast.info("There is no data available currently.")
                     }
                   }).catch((error) => {
                     console.error(error);

@@ -93,11 +93,11 @@ const Players = () => {
             if ((search.genderGroup === 'All' || player.gender.toLowerCase() === search.genderGroup.toLowerCase()) &&
                 checkAgeGroupMatch(search.ageGroup, getAge(player?.dateOfBirth))) {
                 return {
-                    name: `${player?.firstName} ${player?.familyName}`,
+                    name: `${player?.firstName} ${player?.middleName && `${player?.middleName} `}${player?.familyName}`,
                     countryOfBirth: player?.countryOfBirth,
                     age: getAge(player?.dateOfBirth),
-                    gender: player.gender,
-                    id: player.userID
+                    gender: player?.gender,
+                    id: player?.userID
                 }
             }
         })
@@ -275,7 +275,7 @@ const Players = () => {
                 <Box sx={style} className="large-modal">
                     <div className="flex-column">
                         <div className="flex justify-between align-center">
-                            <h2 className="accent-color modal-title">{currentPlayer?.firstName}&nbsp;{currentPlayer?.familyName}</h2>
+                            <h2 className="accent-color modal-title">{currentPlayer?.firstName} {currentPlayer?.middleName && `${currentPlayer?.middleName } `}{currentPlayer?.familyName}</h2>
                             <div className="close-icon"><ClearIcon className="pointer accent-color" onClick={handleClose}/></div>
                         </div>
                         <div className="flex-column info-section">
