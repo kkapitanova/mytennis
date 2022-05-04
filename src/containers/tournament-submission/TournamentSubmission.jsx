@@ -64,9 +64,10 @@ const TournamentSubmission = () => {
     const [open, setOpen] = useState(false)
     const history = useHistory()
 
-    const fillWithTestData = () => {
-        setTournamentData(testTournamentData)
-    }
+    // uncomment for testing purposes
+    // const fillWithTestData = () => { 
+    //     setTournamentData(testTournamentData)
+    // }
 
     // check if all required fields are filled in based on tournament configurations
     const validateFields = () => {
