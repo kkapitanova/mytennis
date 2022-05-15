@@ -562,7 +562,7 @@ const MyTournaments = () => {
             
             data.forEach(item => {
                 if (item.id === currentTournament.tournamentID) {
-                    // item.status = "Concluded"
+                    item.status = "Concluded"
                 }
                 updatedData.push(item)
             })
@@ -571,7 +571,7 @@ const MyTournaments = () => {
             handleClose()
 
             const updatedTournament = { ...currentTournament, playersSignedUp: {} }
-            // updatedTournament.status = 'Concluded'
+            updatedTournament.status = 'Concluded'
             updatedTournament.playersSignedUp = signedUpPlayers
 
             // update points won within current tournament in DB
