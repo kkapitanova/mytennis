@@ -64,9 +64,44 @@ const TournamentSubmission = () => {
     const history = useHistory()
 
     // uncomment for testing purposes
-    // const fillWithTestData = () => { 
-    //     setTournamentData(testTournamentData)
-    // }
+    const fillWithTestData = () => { 
+        setTournamentData({
+            "ageGroups": [
+                "U60",
+                "60+",
+                "U40"
+              ],
+              "city": "Thessaloniki",
+              "clubName": "TC ThessTennis",
+              "country": "Greece",
+              "courtSurface": "Outdoor Hard",
+              "courtsNumber": "11",
+              "description": "Welcome to the annual Test Tournament here in sunny Thessaloniki! This is the biggest tournament in the history of amateur tennis tournaments here in Greece hosted by your beloved TC ThessTennis.",
+              "doublesDrawSize": "32",
+              "drawType": "singlesAndDoubles",
+              "endDate": "2022-08-29T11:04:47.000Z",
+              "entryTax": "30",
+              "genderGroup": "Mixed",
+              "medicalTeamOnSite": true,
+              "mixedDoublesDrawSize": "16",
+              "onSiteSignupDeadline": "2022-08-21T15:00:46.000Z",
+              "prizeMoney": "50000",
+              "qualification": true,
+              "qualificationEndDate": "2022-08-24T11:04:47.000Z",
+              "qualificationStartDate": "2022-08-22T11:04:47.000Z",
+              "qualifyingDrawSize": "32",
+              "singlesDrawSize": "128",
+              "startDate": "2022-08-22T11:04:46.000Z",
+              "status": "Waiting for Approval",
+              "street": "Tennis Street 14",
+            //   "submissionTime": "2022-05-15T07:29:46.256Z",
+            //   "submittedBy": "SXKC2tpkh6NEfNxho9yjQNcKdC13",
+              "tournamentDirector": "Lucrecia Sanchez",
+              "tournamentDirectorPhone": "+1 (233) 23",
+              "tournamentName": "Thessaloniki Open",
+              "zipCode": "4343"
+        })
+    }
 
     // check if all required fields are filled in based on tournament configurations
     const validateFields = () => {
@@ -551,7 +586,7 @@ const TournamentSubmission = () => {
                         </div>
                         <div className="flex wrap">
                             <Button variant="contained" sx={{height: 40, margin: '0px 10px 10px 0px !important'}} type="submit" disabled={validateFields()} endIcon={<SendIcon />}>Submit</Button> 
-                            {/* <Button variant="contained" sx={{height: 40, margin: '0px 10px 10px 0px !important'}} onClick={fillWithTestData}>FILL WITH TEST DATA</Button> uncomment for test purposes only */}
+                            <Button variant="contained" sx={{height: 40, margin: '0px 10px 10px 0px !important'}} onClick={fillWithTestData}>FILL WITH TEST DATA</Button>
                             {checkIfInfoIsFilledIn() && <Button variant="outlined" height={70} startIcon={<ClearIcon />} sx={{height: 40, margin: '0px 10px 0px 0px !important'}} onClick={clearFields}>Clear Fields</Button>}
                         </div>
                         {checkIfInfoIsFilledIn() && validateFields() && <div className="error">Please fill in all of the fields above.</div>}

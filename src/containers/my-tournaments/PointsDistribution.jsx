@@ -98,7 +98,7 @@ const PointsDistribution = ({
     useEffect(() => {
         let bool = false
 
-        console.log(points)
+        console.log("points", points)
 
         points.forEach(p => {
             for (let key in p) {
