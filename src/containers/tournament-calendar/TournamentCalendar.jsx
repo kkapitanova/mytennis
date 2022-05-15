@@ -596,7 +596,7 @@ const TournamentCalendar = ({ nextTen = false }) => {
                                 >{entryButtonText}</Button>
                             )}
                         </div>}
-                        {isDisabled() && userData?.role === 'player' && <div className="info-message">You are not eligible to sign up for this tournament.</div>}
+                        {isDisabled() && userData?.role === 'player' && currentTournament?.status === 'Sign Up Open' && <div className="info-message">You are not eligible to sign up for this tournament.</div>}
                         {currentTournament?.playersSignedUp && 
                         currentTournament?.playersSignedUp[userData.userID] &&
                         currentTournament?.playersSignedUp[userData.userID].withdrawed === true && 
