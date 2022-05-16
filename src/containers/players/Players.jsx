@@ -90,8 +90,12 @@ const Players = () => {
     const getData = () => {
         // display only the players which match the filters
         const tableData = players.map(player => {
+            const playerName = player.firstName + player.middleName + player.familyName
+
             if ((search.genderGroup === 'All' || player.gender.toLowerCase() === search.genderGroup.toLowerCase()) &&
-                checkAgeGroupMatch(search.ageGroup, getAge(player?.dateOfBirth))) {
+                checkAgeGroupMatch(search.ageGroup, getAge(player?.dateOfBirth)) && 
+                playerName.toLowerCase().includes(search?.name?.toLowerCase()) &&
+                player?.countryOfBirth?.toLowerCase().includes(search?.countryOfBirth.toLowerCase())) {
                 return {
                     name: `${player?.firstName} ${player?.middleName && `${player?.middleName} `}${player?.familyName}`,
                     countryOfBirth: player?.countryOfBirth,
@@ -132,25 +136,26 @@ const Players = () => {
 
     // display the players that match the search
     const handleSearchChange = (e) => {
+        console.log(e)
         const name = e.target.name
         const value = e.target.value
 
-        let sortedAndFilteredData = []
+        // let sortedAndFilteredData = [...categorizedData]
 
         setSearch({
             ...search,
             [name]: value
         })
 
-        if (name === "name") {
-            sortedAndFilteredData = categorizedData.filter(player => player.name.toLowerCase().includes(value.toLowerCase())).filter(player => player.countryOfBirth.toLowerCase().includes(search.countryOfBirth.toLowerCase()));
+        if (name && name === "name") {
+            // sortedAndFilteredData = categorizedData.filter(player => player.name.toLowerCase().includes(value.toLowerCase())).filter(player => player.countryOfBirth.toLowerCase().includes(search.countryOfBirth.toLowerCase()));
         }
 
-        if (name === "countryOfBirth") {
-            sortedAndFilteredData = categorizedData.filter(player => player.name.toLowerCase().includes(search.name.toLowerCase())).filter(player => player.countryOfBirth.toLowerCase().includes(value.toLowerCase()));
+        if (name && name === "countryOfBirth") {
+            // sortedAndFilteredData = categorizedData.filter(player => player.name.toLowerCase().includes(search.name.toLowerCase())).filter(player => player.countryOfBirth.toLowerCase().includes(value.toLowerCase()));
         }
 
-        setData(sortedAndFilteredData)
+        // setData(sortedAndFilteredData)
     }
 
     const filterApplied = () => {
@@ -173,7 +178,7 @@ const Players = () => {
     useEffect(() => {
         getData()
         setData(getData())
-    }, [search.ageGroup, search.genderGroup, players])
+    }, [search, players])
 
     useEffect(() => {
       window.scrollTo(0,0) // avoid scroll preservation because of react router

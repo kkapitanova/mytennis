@@ -81,6 +81,8 @@ const enteredPlayersTableRowHeaders = [
 
 const withdrawedPlayersTableRowHeaders = [
     'Name', 
+    'Age', 
+    'Gender',
     'Withdrawal Date',
     'Status'
 ]
